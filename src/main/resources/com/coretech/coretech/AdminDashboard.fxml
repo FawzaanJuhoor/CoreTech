@@ -76,11 +76,10 @@
 
     <!-- Top Bar -->
     <top>
-        <HBox prefHeight="51.0" prefWidth="700.0" style="-fx-background-color: #2293C3; -fx-padding: 10;">
-            <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: Inder;" text="Dashboard">
-            <padding>
-               <Insets left="400.0" />
-            </padding></Label>
+        <HBox prefHeight="51.0" prefWidth="700.0" style="-fx-background-color: #2293C3; -fx-padding: 10;" alignment="CENTER">
+            <Label text="Dashboard" textAlignment="CENTER" alignment="CENTER"
+                   style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: Inder;"
+                   HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
         </HBox>
     </top>
 
