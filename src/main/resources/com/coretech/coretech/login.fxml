@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.LoginController">
     <children>
         <!-- Top Bar -->
-        <VBox prefHeight="15.0" style="-fx-background-color: #2293C3;" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+        <VBox fx:id="topBar" prefHeight="15.0" style="-fx-background-color: #2293C3;" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
 
         <!-- Bottom Bar -->
-        <VBox prefHeight="15.0" style="-fx-background-color: #2293C3;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
+        <VBox fx:id="bottomBar" prefHeight="15.0" style="-fx-background-color: #2293C3;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
 
-        <!-- Logo Image -->
-        <ImageView fitHeight="150.0" fitWidth="250.0" layoutX="225.0" layoutY="57.0" preserveRatio="true" AnchorPane.leftAnchor="225.0" AnchorPane.rightAnchor="225.0" AnchorPane.topAnchor="57.0">
-            <image>
-                <Image url="@../../../../../../Images/BlackVersion.png" />
-            </image>
-        </ImageView>
+        <!-- Main Container (Centered Content) -->
+        <StackPane fx:id="mainContainer" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <children>
+                <VBox fx:id="contentBox" alignment="CENTER" spacing="12">
+                    <children>
+                        <!-- Logo Image -->
+                        <ImageView fx:id="logoImageView" fitHeight="100.0" fitWidth="180.0" preserveRatio="true">
+                            <image>
+                                <Image url="@../../../../../../Images/BlackVersion.png" />
+                            </image>
+                        </ImageView>
 
-        <!-- Welcome Text -->
-        <Text fill="#2293c3" layoutX="283.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome back!" textAlignment="CENTER" AnchorPane.leftAnchor="283.0" AnchorPane.rightAnchor="282.400390625" AnchorPane.topAnchor="204.533203125">
-            <font>
-                <Font name="Book Antiqua Bold Italic" size="20.0" />
-            </font>
-        </Text>
+                        <!-- Welcome Text -->
+                        <Text fx:id="welcomeText" fill="#2293c3" text="Welcome back!" textAlignment="CENTER">
+                            <font>
+                                <Font name="Book Antiqua Bold Italic" size="18.0" />
+                            </font>
+                        </Text>
 
-        <!-- User ID TextField -->
-        <TextField prefHeight="35.0" promptText="User ID" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="260.0">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </TextField>
+                        <!-- User ID TextField (Fixed Size) -->
+                        <TextField fx:id="userIdTextField" prefHeight="30.0" prefWidth="200.0" minWidth="200.0" maxWidth="200.0" promptText="User ID">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </TextField>
 
-        <!-- Password PasswordField -->
-        <PasswordField prefHeight="35.0" promptText="Password" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="310.0">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </PasswordField>
+                        <!-- Password PasswordField (Fixed Size) -->
+                        <PasswordField fx:id="passwordField" prefHeight="30.0" prefWidth="200.0" minWidth="200.0" maxWidth="200.0" promptText="Password">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </PasswordField>
 
-        <!-- Log In Button -->
-        <Button layoutX="307.0" layoutY="383.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #2293C3; -fx-border-radius: 5px;" text="Log In" textFill="#2293c3" AnchorPane.leftAnchor="307.0" AnchorPane.rightAnchor="306.3333333333333" AnchorPane.topAnchor="383.0">
-            <font>
-                <Font name="System Bold" size="14.0" />
-            </font>
-        </Button>
+                        <!-- Log In Button -->
+                        <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" minWidth="100.0" maxWidth="100.0"
+                                style="-fx-background-color: #FFFFFF; -fx-border-color: #2293C3; -fx-border-radius: 5px;"
+                                text="Log In" textFill="#2293c3">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
     </children>
 </AnchorPane>

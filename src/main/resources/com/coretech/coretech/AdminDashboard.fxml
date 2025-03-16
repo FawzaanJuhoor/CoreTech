@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.AdminDashboardController">
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox prefHeight="600.0" prefWidth="200.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;">
+            <ImageView fitHeight="72.0" fitWidth="143.0">
+                <Image url="@../../../../../../Images/BlackVersion.png" />
+            <VBox.margin>
+               <Insets left="30.0" />
+            </VBox.margin>
+            <effect>
+               <DropShadow offsetY="2.0">
+                  <color>
+                     <Color opacity="0.5896656513214111" />
+                  </color>
+               </DropShadow>
+            </effect> <!-- Keeping image path unchanged -->
+            </ImageView>
+            <Label prefHeight="20.0" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+            <VBox.margin>
+               <Insets bottom="30.0" left="50.0" />
+            </VBox.margin></Label>
+
+            <!-- Buttons with left-aligned text -->
+            <Button onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+
+            <!-- Spacer to push the Log Out button to the bottom -->
+            <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
+                <children>
+                    <Button onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </Button>
+                </children>
+            </VBox>
+
+            <!-- Log Out Button -->
+<!--            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-alignment: center-left;" text="Log Out" />-->
+            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
+        </VBox>
+    </left>
+
+    <!-- Top Bar -->
+    <top>
+        <HBox prefHeight="51.0" prefWidth="700.0" style="-fx-background-color: #2293C3; -fx-padding: 10;">
+            <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: Inder;" text="Dashboard">
+            <padding>
+               <Insets left="400.0" />
+            </padding></Label>
+        </HBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: EFEFEF;">
+            <HBox prefHeight="169.0" prefWidth="467.0" spacing="15" VBox.vgrow="ALWAYS">
+            <children>
+               <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
+               <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
+            </children>
+            </HBox>
+         <HBox VBox.vgrow="ALWAYS">
+            <VBox.margin>
+               <Insets top="30.0" />
+            </VBox.margin>
+            <children>
+                  <AnchorPane prefHeight="302.0" prefWidth="502.0" style="-fx-background-color: white; -fx-pref-width: 400; -fx-pref-height: 300;" HBox.hgrow="ALWAYS">
+                  <padding>
+                     <Insets top="50.0" />
+                  </padding>
+               </AnchorPane>
+            </children>
+         </HBox>
+        </VBox>
+    </center>
+
+    <!-- Right Panel -->
+    <right>
+        <AnchorPane prefHeight="549.0" prefWidth="202.0" style="-fx-border-color: #2293C3;">
+            <Button layoutX="7.0" layoutY="79.0" onAction="#handleAddSalesRep" prefHeight="31.0" prefWidth="187.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Add Sales Rep.">
+                <effect>
+                    <DropShadow height="2.59" offsetY="3.0" radius="0.14749999999999996" width="0.0">
+                        <color>
+                            <Color opacity="0.39817631244659424" />
+                        </color>
+                    </DropShadow>
+                </effect>
+            </Button>
+            <Button layoutX="9.0" layoutY="138.0" onAction="#handleRemoveSalesRep" prefHeight="34.0" prefWidth="186.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Remove Sales Rep." />
+            <Button layoutX="9.0" layoutY="195.0" onAction="#handleUpdateSalesRep" prefHeight="34.0" prefWidth="185.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Update Sales Rep. Info" />
+            <Button layoutX="7.0" layoutY="249.0" onAction="#handleViewSalesRep" prefHeight="34.0" prefWidth="189.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="View All Sales Rep." />
+            <Button layoutX="7.0" layoutY="304.0" onAction="#handleInventory" prefHeight="34.0" prefWidth="188.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Inventory Management" />
+            <Button layoutX="7.0" layoutY="364.0" onAction="#handleReport" prefHeight="34.0" prefWidth="187.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Monthly Report" />
+            <Button layoutX="7.0" layoutY="420.0" onAction="#handleRevenueTracking" prefHeight="36.0" prefWidth="186.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Revenue Tracking" />
+        </AnchorPane>
+    </right>
+
+</BorderPane>
