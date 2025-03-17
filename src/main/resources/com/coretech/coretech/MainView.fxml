@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.MainController">
+
+   <left>
+      <VBox style="-fx-background-color: white; -fx-border-color: #2293c2;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="logoImageView" fitHeight="86.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="25.0" />
+               </VBox.margin>
+               <image>
+                  <Image url="@../../../../../../Images/BlackVersion.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="btnHome" mnemonicParsing="false" prefWidth="149.0" style="-fx-background-color: white; -fx-text-fill: #2293c2; -fx-font-family: inder;" text="Home" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnCustomerManag" mnemonicParsing="false" prefWidth="149.0" style="-fx-background-color: white; -fx-text-fill: #2293c2; -fx-font-family: inder;" text="Customer Management" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnVehicalManag" mnemonicParsing="false" prefWidth="149.0" style="-fx-background-color: white; -fx-text-fill: #2293c2; -fx-font-family: inder;" text="Vehical Management" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnAppoinment" mnemonicParsing="false" prefWidth="149.0" style="-fx-background-color: white; -fx-text-fill: #2293c2; -fx-font-family: inder;" text="Appoinments" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnServicing" mnemonicParsing="false" prefWidth="149.0" style="-fx-background-color: white; -fx-text-fill: #2293c2; -fx-font-family: inder;" text="Servicing" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnLogOut" mnemonicParsing="false" prefWidth="167.0" style="-fx-background-color: #2293C3; -fx-font-family: inder;" text="Log Out" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets top="62.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+
+
+   <right>
+      <VBox prefHeight="364.0" prefWidth="169.0" style="-fx-background-color: white; -fx-border-color: #2293c2;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnAddSalesRep" mnemonicParsing="false" onAction="#handleAddSales" prefHeight="34.0" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c2; -fx-background-color: white; -fx-font-family: inder;" text="Add Sales Rep" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnRemoveSalesRep" mnemonicParsing="false" onAction="#handleRemoveSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: white; -fx-background-color: #2293c2; -fx-font-family: inder;" text="Remove Sales Rep" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnUpdateSalesRep" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Update Sales Rep" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnViewAllSalesRep" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="View All Sales Rep" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnInventoryMang" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Inventory Managment" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnMonthlyReport" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Monthly Report" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="btnRevenueTracking" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Revenue Tracking" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="20.0" left="10.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </right>
+
+
+   <top>
+      <TextField prefHeight="25.0" prefWidth="600.0" style="-fx-background-color: #2293c3; -fx-alignment: center;" text="Dashboard" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextField>
+   </top>
+
+
+
+   <center>
+      <AnchorPane fx:id="centerContainer" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane fx:id="ancpAddSales" visible="false" BorderPane.alignment="CENTER">
+               <children>
+                  <GridPane layoutY="14.0" prefHeight="255.0" prefWidth="283.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="100" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                     </rowConstraints>
+
+                     <Label style="-fx-font-family: inder;" text="Phone Number:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                     <TextField fx:id="txtAddSalePhone" maxWidth="500" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                     <TextField fx:id="txtAddSaleEmail" maxWidth="500" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                     <TextField fx:id="txtAddSalePassword" maxWidth="500" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Role:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                     <MenuButton fx:id="menuAddSaleRole" prefHeight="27.0" prefWidth="151.0" style="-fx-font-family: inder;" text="Select Role" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <items>
+                           <MenuItem text="Sales" />
+                           <MenuItem text="Finance" />
+                        </items>
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </MenuButton>
+                     <Label style="-fx-font-family: inder;" text="Name:" />
+                     <TextField fx:id="txtName" maxWidth="500" style="-fx-font-family: inder;" GridPane.columnIndex="1">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </TextField>
+                  </GridPane>
+
+                  <HBox alignment="CENTER" layoutX="14.0" layoutY="282.0" spacing="50" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.666666666666629">
+                     <Button style="-fx-background-color: #198B2C; -fx-text-fill: white; -fx-font-family: inder;" text="Add" />
+                     <Button style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-family: inder;" text="Cancel" />
+                  </HBox>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </AnchorPane>
+
+            <AnchorPane fx:id="ancpRemoveSales" visible="false" BorderPane.alignment="CENTER">
+               <children>
+                  <TextField fx:id="txtUserID" promptText="UserID" style="-fx-font-family: inder;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="20.0" />
+                  <Button fx:id="btnSearchId" layoutX="195.0" layoutY="20.0" prefHeight="25.0" prefWidth="59.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-family: inder;" text="Search" AnchorPane.leftAnchor="195.0" AnchorPane.topAnchor="20.0" />
+
+                  <GridPane layoutY="56.0" prefHeight="255.0" prefWidth="283.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="100" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints vgrow="ALWAYS" />
+                     </rowConstraints>
+
+                     <Label style="-fx-font-family: inder;" text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <GridPane.margin>
+                           <Insets />
+                        </GridPane.margin></Label>
+                     <TextField fx:id="txtRemoveSaleUserName" maxWidth="500" prefHeight="25.0" prefWidth="153.0" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin></TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Phone No.:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                     <TextField fx:id="txtRemoveSalePhone" maxWidth="500" prefHeight="14.0" prefWidth="141.0" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin></TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                     <TextField fx:id="txtRemoveSaleEmail" maxWidth="500" prefHeight="14.0" prefWidth="141.0" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin></TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                     <TextField fx:id="txtRemoveSalePassword" maxWidth="500" prefHeight="14.0" prefWidth="141.0" style="-fx-font-family: inder;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin></TextField>
+
+                     <Label style="-fx-font-family: inder;" text="Role:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                     <MenuButton fx:id="menuRemoveSaleRole" prefHeight="27.0" prefWidth="141.0" style="-fx-font-family: inder;" text="Select Role" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <items>
+                           <MenuItem text="Action 1" />
+                           <MenuItem text="Action 2" />
+                        </items>
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </MenuButton>
+                  </GridPane>
+
+                  <HBox alignment="CENTER" layoutX="18.0" layoutY="332.0" spacing="50" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="2.6666666666666856">
+                     <Button fx:id="btnDelete" style="-fx-background-color: red; -fx-text-fill: white; -fx-font-family: inder;" text="Delete" />
+                     <Button fx:id="btnCancel" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-family: inder;" text="Cancel" />
+                  </HBox>
+               </children>
+            </AnchorPane>
+
+
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
