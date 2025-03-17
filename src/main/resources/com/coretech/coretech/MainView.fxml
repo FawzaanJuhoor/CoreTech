@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.MainController">
+
    <left>
-      <VBox style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+      <VBox style="-fx-background-color: white; -fx-border-color: #2293c2;" BorderPane.alignment="CENTER">
          <children>
             <ImageView fx:id="logoImageView" fitHeight="86.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
@@ -64,15 +53,17 @@
          </children>
       </VBox>
    </left>
+
+
    <right>
-      <VBox prefHeight="364.0" prefWidth="169.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+      <VBox prefHeight="364.0" prefWidth="169.0" style="-fx-background-color: white; -fx-border-color: #2293c2;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnAddSalesRep" mnemonicParsing="false" prefHeight="34.0" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c2; -fx-background-color: white; -fx-font-family: inder;" text="Add Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnAddSalesRep" mnemonicParsing="false" onAction="#handleAddSales" prefHeight="34.0" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c2; -fx-background-color: white; -fx-font-family: inder;" text="Add Sales Rep" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="btnRemoveSalesRep" mnemonicParsing="false" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: white; -fx-background-color: #2293c2; -fx-font-family: inder;" text="Remove Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnRemoveSalesRep" mnemonicParsing="false" onAction="#handleRemoveSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: white; -fx-background-color: #2293c2; -fx-font-family: inder;" text="Remove Sales Rep" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
@@ -105,6 +96,8 @@
          </children>
       </VBox>
    </right>
+
+
    <top>
       <TextField prefHeight="25.0" prefWidth="600.0" style="-fx-background-color: #2293c3; -fx-alignment: center;" text="Dashboard" BorderPane.alignment="CENTER">
          <font>
@@ -112,10 +105,13 @@
          </font>
       </TextField>
    </top>
+
+
+
    <center>
-      <AnchorPane fx:id="ancpAdminDash" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="centerContainer" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane fx:id="ancpAddSales" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="ancpAddSales" visible="false" BorderPane.alignment="CENTER">
                <children>
                   <GridPane layoutY="14.0" prefHeight="255.0" prefWidth="283.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                      <columnConstraints>
@@ -179,7 +175,7 @@
                </cursor>
             </AnchorPane>
 
-            <AnchorPane fx:id="ancpRemoveSales" visible="false" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="ancpRemoveSales" visible="false" BorderPane.alignment="CENTER">
                <children>
                   <TextField fx:id="txtUserID" promptText="UserID" style="-fx-font-family: inder;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="20.0" />
                   <Button fx:id="btnSearchId" layoutX="195.0" layoutY="20.0" prefHeight="25.0" prefWidth="59.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-family: inder;" text="Search" AnchorPane.leftAnchor="195.0" AnchorPane.topAnchor="20.0" />
@@ -242,32 +238,7 @@
                   </HBox>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="365.0" prefWidth="264.0">
-               <children>
-                  <TextArea layoutX="9.0" layoutY="165.0" prefHeight="197.0" prefWidth="244.0" />
-                  <GridPane layoutX="-3.0" layoutY="3.0" prefHeight="366.6666666666667" prefWidth="271.3333333333333" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints fillHeight="false" maxHeight="176.0" minHeight="10.0" prefHeight="100.0" vgrow="ALWAYS" />
-                    </rowConstraints>
-                     <children>
-                        <TextArea prefHeight="116.0" prefWidth="112.0">
-                           <GridPane.margin>
-                              <Insets left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </TextArea>
-                        <TextArea prefHeight="117.0" prefWidth="112.0" GridPane.columnIndex="1">
-                           <GridPane.margin>
-                              <Insets left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </TextArea>
-                     </children>
-                  </GridPane>
-               </children>
-            </AnchorPane>
+
 
          </children>
       </AnchorPane>
