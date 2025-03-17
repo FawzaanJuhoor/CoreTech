@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.ServicingDetailsController">
+
+    <!-- Top Bar -->
+    <top>
+        <HBox alignment="CENTER" prefHeight="51.0" prefWidth="700.0" style="-fx-background-color: #2293C3; -fx-padding: 10;">
+            <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 25px; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: Inder;" text="Manage Vehicle" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+        </HBox>
+    </top>
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox prefHeight="600.0" prefWidth="200.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;">
+            <ImageView fitHeight="72.0" fitWidth="143.0">
+                <Image url="@../../../../../../Images/BlackVersion.png" />
+                <VBox.margin>
+                    <Insets left="30.0" />
+                </VBox.margin>
+                <effect>
+                    <DropShadow offsetY="2.0">
+                        <color>
+                            <Color opacity="0.5896656513214111" />
+                        </color>
+                    </DropShadow>
+                </effect>
+            </ImageView>
+            <Label prefHeight="20.0" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+                <VBox.margin>
+                    <Insets bottom="30.0" left="50.0" />
+                </VBox.margin>
+            </Label>
+
+            <Button onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: white; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleVehicleManagement" prefHeight="38.0" prefWidth="202.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+            <Button onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </Button>
+
+            <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
+                <children>
+                    <Button onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </Button>
+                </children>
+            </VBox>
+
+            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox alignment="CENTER" spacing="30" style="-fx-padding: 30; -fx-background-color: #EFEFEF; -fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
+            <!-- Form Title -->
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Servicing Details" textAlignment="CENTER" />
+
+            <!-- VIN Search -->
+            <HBox alignment="CENTER" spacing="10">
+                <TextField fx:id="vinTextField" prefHeight="30.0" promptText="Enter VIN" style="-fx-font-size: 12px; -fx-pref-width: 250; -fx-max-width: 300;" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </TextField>
+                <Button onAction="#handleSearch" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-pref-width: 80; -fx-pref-height: 30;" text="SEARCH" />
+                <VBox.margin>
+                    <Insets bottom="20.0" />
+                </VBox.margin>
+            </HBox>
+
+            <!-- Service History Table -->
+            <VBox alignment="CENTER" style="-fx-padding: 10; -fx-background-color: #EFEFEF; -fx-border-color: #EFEFEF;" VBox.vgrow="ALWAYS">
+                <TableView fx:id="serviceHistoryTable" prefHeight="345.0" prefWidth="413.0" style="-fx-border-color: black; -fx-border-width: 1px;">
+                    <columns>
+                        <TableColumn fx:id="dateColumn" prefWidth="117.59998154640198" style="-fx-alignment: CENTER; -fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: black; -fx-border-width: 1px;" text="Date" />
+                        <TableColumn fx:id="descriptionColumn" prefWidth="292.8" style="-fx-alignment: CENTER; -fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: black; -fx-border-width: 1px;" text="Description" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Right Panel -->
+    <right>
+        <AnchorPane prefHeight="549.0" prefWidth="202.0" style="-fx-border-color: #2293C3;">
+            <Button layoutX="4.0" layoutY="170.0" onAction="#handleAddVehicle" prefHeight="31.0" prefWidth="196.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Add Vehicle" />
+            <Button layoutX="6.0" layoutY="233.0" onAction="#handleRemoveVehicle" prefHeight="34.0" prefWidth="192.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Remove Vehicle" />
+            <Button layoutX="4.0" layoutY="297.0" onAction="#handleUpdateVehicle" prefHeight="34.0" prefWidth="193.0" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Update Vehicle Info" />
+            <Button layoutX="6.0" layoutY="363.0" onAction="#handleServicingDetails" prefHeight="34.0" prefWidth="192.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-border-color: #2293C3;" text="Servicing Details" />
+        </AnchorPane>
+    </right>
+
+</BorderPane>
