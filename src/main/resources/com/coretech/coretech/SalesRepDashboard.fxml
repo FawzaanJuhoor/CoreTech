@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.SalesRepDashboardController">
+
+<!-- Left Sidebar -->
+<left>
+    <VBox prefHeight="600.0" prefWidth="200.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;">
+        <ImageView fitHeight="72.0" fitWidth="143.0">
+            <Image url="@../../../../../../Images/BlackVersion.png" />
+            <VBox.margin>
+                <Insets left="30.0" />
+            </VBox.margin>
+            <effect>
+                <DropShadow offsetY="2.0">
+                    <color>
+                        <Color opacity="0.5896656513214111" />
+                    </color>
+                </DropShadow>
+            </effect> <!-- Keeping image path unchanged -->
+        </ImageView>
+        <Label prefHeight="20.0" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+            <VBox.margin>
+                <Insets bottom="30.0" left="50.0" />
+            </VBox.margin></Label>
+
+        <!-- Buttons with left-aligned text -->
+        <Button onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </Button>
+        <Button onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </Button>
+        <Button onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </Button>
+        <Button onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </Button>
+
+        <!-- Spacer to push the Log Out button to the bottom -->
+        <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
+            <children>
+                <Button onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </Button>
+            </children>
+        </VBox>
+
+        <!-- Log Out Button -->
+        <!--            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-alignment: center-left;" text="Log Out" />-->
+        <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
+    </VBox>
+</left>
+
+<!-- Top Bar -->
+<top>
+    <HBox alignment="CENTER" prefHeight="51.0" prefWidth="700.0" style="-fx-background-color: #2293C3; -fx-padding: 10;">
+        <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: Inder;" text="Dashboard" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+    </HBox>
+</top>
+
+<!-- Main Content -->
+<center>
+    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: EFEFEF;">
+        <HBox spacing="15" VBox.vgrow="ALWAYS">
+            <!-- First Card -->
+            <AnchorPane prefHeight="171.0" prefWidth="179.0" style="-fx-background-color: white; -fx-padding: 10;" HBox.hgrow="ALWAYS">
+                <children>
+                    <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <Label text="Number of Customers for the Day" textAlignment="CENTER" />
+                        <Label text="10" textFill="#2293c3">
+                            <font>
+                                <Font size="20.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+<!--                    <ImageView fitHeight="24" fitWidth="24" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0"-->
+<!--                               image="@path/to/customer_icon.png"/>-->
+                </children>
+            </AnchorPane>
+
+            <!-- Second Card -->
+            <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white; -fx-padding: 10;" HBox.hgrow="ALWAYS">
+                <children>
+                    <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <Label text="Upcoming Customer" textAlignment="CENTER" />
+                        <HBox alignment="CENTER" spacing="10">
+                            <Label text="Customer Name" textFill="#2293c3">
+                                <font>
+                                    <Font size="20.0" />
+                                </font>
+                            </Label>
+                            <Label text="8:00am" textFill="#2293c3">
+                                <font>
+                                    <Font size="20.0" />
+                                </font>
+                            </Label>
+                        </HBox>
+                    </VBox>
+<!--                    <ImageView fitHeight="24" fitWidth="24" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0"-->
+<!--                               image="@path/to/user_icon.png"/>-->
+                </children>
+            </AnchorPane>
+        </HBox>
+
+        <HBox VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+            <children>
+                <AnchorPane prefHeight="302.0" prefWidth="502.0" style="-fx-background-color: white; -fx-pref-width: 400; -fx-pref-height: 300;" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets top="50.0" />
+                    </padding>
+                </AnchorPane>
+            </children>
+        </HBox>
+    </VBox>
+</center>
+
+
+</BorderPane>
