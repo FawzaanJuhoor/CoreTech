@@ -244,45 +244,45 @@
 
                      <!-- User ID & Search Button -->
                      <HBox alignment="CENTER" spacing="20">
-                        <TextField fx:id="" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                        <Button fx:id="" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
+                        <TextField fx:id="searchUpdateSalesrep" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Button fx:id="btnSearchUpdateSalesRep" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                      </HBox>
 
                      <!-- User Name -->
                      <HBox alignment="CENTER" spacing="20">
-                        <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120; -fx-font-family: inder;" text="User Name:" />
-                        <TextField fx:id="" prefHeight="30.0" prefWidth="250.0" promptText="Enter User Name" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUpdateSalesUserName" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120; -fx-font-family: inder;" text="User Name:" />
+                        <TextField fx:id="txtUpdateSalesrepName" prefHeight="30.0" prefWidth="250.0" promptText="Enter User Name" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
                      <!-- Phone No -->
                      <HBox alignment="CENTER" spacing="20">
-                        <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Phone No:" />
-                        <TextField fx:id="" promptText="Enter Phone No" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUpdateSalesPhone" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Phone No:" />
+                        <TextField fx:id="txtUpdateSalesPhone" promptText="Enter Phone No" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
                      <!-- Email -->
                      <HBox alignment="CENTER" spacing="20">
-                        <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120; -fx-font-family: inder;" text="Email:" />
-                        <TextField fx:id="" promptText="Enter Email" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUpdateSalesRepEmail" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120; -fx-font-family: inder;" text="Email:" />
+                        <TextField fx:id="txtUpdateSalesRepEmail" promptText="Enter Email" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
                      <!-- Password -->
                      <HBox alignment="CENTER" spacing="20">
-                        <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Password:" />
-                        <TextField fx:id="" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUpdateSalesPassword" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Password:" />
+                        <TextField fx:id="txtUpdateSalesPassword" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
 
                      <!-- Role -->
                      <HBox alignment="CENTER" spacing="20">
-                        <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Role:" />
-                        <ComboBox promptText="Select Role" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUpdateSalesRep" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Role:" />
+                        <ComboBox fx:id="comboUpdateSalesRole" promptText="Select Role" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
                      <!-- Buttons -->
                      <HBox alignment="CENTER" spacing="40" style="-fx-padding: 30;">
-                        <Button fx:id="" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="UPDATE" />
-                        <Button fx:id="" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="CANCEL" />
+                        <Button fx:id="btnUpdateSalesUpdate" onAction="#handleUpdateSalesUpdate" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="UPDATE" />
+                        <Button fx:id="btnUpdateSalesCancle" onAction="#handleUpdateSalesCancle" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="CANCEL" />
                      </HBox>
                   </VBox>
                </children>

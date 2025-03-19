@@ -88,4 +88,10 @@ public class MainController {
 
     public void handleHome(ActionEvent actionEvent) {
     }
+
+    public void handleUpdateSalesUpdate(ActionEvent actionEvent) {
+    }
+
+    public void handleUpdateSalesCancle(ActionEvent actionEvent) {
+    }
 }
