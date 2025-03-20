@@ -86,7 +86,7 @@
 
     <!-- Main Content -->
     <center>
-        <VBox alignment="CENTER" spacing="30" style="-fx-padding: 30; -fx-background-color: #EFEFEF; -fx-border-color: #2293C3;">
+        <VBox visible="false" alignment="CENTER" spacing="30" style="-fx-padding: 30; -fx-background-color: #EFEFEF; -fx-border-color: #2293C3;">
             <!-- Form Title -->
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Add Sales Representative" textAlignment="CENTER" />
 
