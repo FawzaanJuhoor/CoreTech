@@ -19,7 +19,7 @@ public class UpdateCustomerController {
     private TextArea textarea;
 
     @FXML
-    private Button addButton;
+    private Button UpdateButton;
 
     @FXML
     private Button cancelButton;
@@ -30,16 +30,16 @@ public class UpdateCustomerController {
     @FXML
     public void initialize() {
         // Set welcome text dynamically (if needed)
-        welcomeLabel.setText("Welcome, Sales Rep");
+//        welcomeLabel.setText("Welcome, Sales Rep");
 
 
         // Event handlers
-        addButton.setOnAction(e -> handleAdd());
+        UpdateButton.setOnAction(e -> handleUpdate());
         cancelButton.setOnAction(e -> handleCancel());
     }
 
     @FXML
-    private void handleAdd() {
+    private void handleUpdate() {
         // Get input values
         String userName = userNameField.getText();
         String phoneNo = phoneNoField.getText();

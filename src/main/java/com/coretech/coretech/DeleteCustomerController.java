@@ -19,7 +19,7 @@ public class DeleteCustomerController {
     private TextArea textarea;
 
     @FXML
-    private Button addButton;
+    private Button deleteButton;
 
     @FXML
     private Button cancelButton;
@@ -30,16 +30,16 @@ public class DeleteCustomerController {
     @FXML
     public void initialize() {
         // Set welcome text dynamically (if needed)
-        welcomeLabel.setText("Welcome, Sales Rep");
+//        welcomeLabel.setText("Welcome, Sales Rep");
 
 
         // Event handlers
-        addButton.setOnAction(e -> handleAdd());
+        deleteButton.setOnAction(e -> handleDelete());
         cancelButton.setOnAction(e -> handleCancel());
     }
 
     @FXML
-    private void handleAdd() {
+    private void handleDelete() {
         // Get input values
         String userName = userNameField.getText();
         String phoneNo = phoneNoField.getText();

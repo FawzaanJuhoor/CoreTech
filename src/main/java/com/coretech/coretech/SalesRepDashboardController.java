@@ -7,15 +7,14 @@ import javafx.scene.control.Label;
 public class SalesRepDashboardController {
     @FXML
     private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
-    @FXML
-    private Button addSalesRepButton, removeSalesRepButton, updateSalesRepButton, viewSalesRepButton, inventoryButton, reportButton, revenueButton;
+
     @FXML
     private Label welcomeLabel;
 
     @FXML
     public void initialize() {
         // Set welcome text dynamically (if needed)
-        welcomeLabel.setText("Welcome, Admin");
+//        welcomeLabel.setText("Welcome, Admin");
 
         // Event handlers
         homeButton.setOnAction(e -> handleHome());
@@ -24,10 +23,6 @@ public class SalesRepDashboardController {
         appointmentButton.setOnAction(e -> handleAppointments());
         serviceButton.setOnAction(e -> handleServicing());
         logoutButton.setOnAction(e -> handleLogout());
-
-        addSalesRepButton.setOnAction(e -> handleAddCustomer());
-        removeSalesRepButton.setOnAction(e -> handleUpdateCustomer());
-        updateSalesRepButton.setOnAction(e -> handleRemoveCustomer());
 
     }
 
@@ -61,19 +56,6 @@ public class SalesRepDashboardController {
         System.out.println("Logging Out...");
     }
 
-    @FXML
-    private void handleAddCustomer() {
-        System.out.println("Add Sales Rep Clicked");
-    }
 
-    @FXML
-    private void handleRemoveCustomer() {
-        System.out.println("Remove Sales Rep Clicked");
-    }
-
-    @FXML
-    private void handleUpdateCustomer() {
-        System.out.println("Update Sales Rep Info Clicked");
-    }
 
 }

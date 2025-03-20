@@ -119,8 +119,8 @@
 
                   <!-- Buttons -->
                   <HBox alignment="CENTER" spacing="40" style="-fx-padding: 30;">
-                      <Button style="-fx-background-color: #198B2C; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="ADD" />
-                      <Button style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="CANCEL" />
+                      <Button fx:id="addButton" style="-fx-background-color: #198B2C; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="ADD" />
+                      <Button fx:id="cancelButton" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="CANCEL" />
                   </HBox>
               </VBox>
             </children>

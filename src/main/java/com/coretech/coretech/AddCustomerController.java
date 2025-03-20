@@ -30,7 +30,7 @@ public class AddCustomerController {
     @FXML
     public void initialize() {
         // Set welcome text dynamically (if needed)
-        welcomeLabel.setText("Welcome, Sales Rep");
+//        welcomeLabel.setText("Welcome, Sales Rep");
 
 
         // Event handlers

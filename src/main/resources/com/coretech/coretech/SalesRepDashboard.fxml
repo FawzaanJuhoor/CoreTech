@@ -37,22 +37,22 @@
             </VBox.margin></Label>
 
         <!-- Buttons with left-aligned text -->
-        <Button onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home">
+        <Button fx:id="homeButton" onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
         </Button>
-        <Button onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
+        <Button fx:id="customerButton" onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
         </Button>
-        <Button onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management">
+        <Button fx:id="vehicleButton" onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
         </Button>
-        <Button onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
+        <Button fx:id="appointmentButton" onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
@@ -61,7 +61,7 @@
         <!-- Spacer to push the Log Out button to the bottom -->
         <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
             <children>
-                <Button onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
+                <Button fx:id="serviceButton" onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                     </padding>
@@ -71,7 +71,7 @@
 
         <!-- Log Out Button -->
         <!--            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-alignment: center-left;" text="Log Out" />-->
-        <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
+        <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
     </VBox>
 </left>
 
