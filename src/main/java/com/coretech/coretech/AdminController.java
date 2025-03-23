@@ -6,9 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
-import javax.swing.text.html.StyleSheet;
-
-public class MainController {
+public class AdminController {
 
     @FXML public VBox ancpRevenueTracking;
     @FXML private Button btnRevenueTracking;
