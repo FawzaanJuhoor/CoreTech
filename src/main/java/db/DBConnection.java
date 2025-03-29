@@ -12,5 +12,10 @@ public class DBConnection {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
+
+//    public static Connection getConnection() {
+//        System.out.println("DB connection not set up yet.");
+//        return null;
+//    }
 }
 

@@ -1,25 +1,19 @@
 package com.coretech.coretech;
 
-import javafx.event.ActionEvent;
 import db.DBConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
-import util.PasswordUtil;
 
-import java.io.IOException;
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class LoginController {

@@ -1,14 +1,27 @@
 package com.coretech.coretech;
 
+import Models.Admin;
+import db.AdminDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class AdminController {
 
     @FXML public VBox ancpRevenueTracking;
+    public TextField txtUsername;
+    public TextField txtPhone;
+    public TextField txtEmail;
+    public PasswordField txtPassword;
+    @FXML
+    private ComboBox<String> comboRole;
     @FXML private Button btnRevenueTracking;
 
     @FXML private Button btnInventoryMang;
@@ -200,10 +213,32 @@ public class AdminController {
     void handleAppointments(ActionEvent event) { }
 
     @FXML
-    void handleVehicleManagement(ActionEvent event) { }
+    void handleVehicleManagement(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainVehicleManagement.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Vehicle Management");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
-    void handleCustomerManagement(ActionEvent event) { }
+    void handleCustomerManagement(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainCustomerManagement.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Customer Management");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void handleHome(ActionEvent event) {
@@ -217,4 +252,25 @@ public class AdminController {
     void handleUpdateSalesCancle(ActionEvent event) { }
 
 
+
+
+//Forms Buttons
+    public void handleAdd(ActionEvent actionEvent) {
+        String username = txtUsername.getText();
+        String phone = txtPhone.getText();
+        String email = txtEmail.getText();
+        String password = txtPassword.getText();
+        String role = comboRole.getValue();
+
+        if (username.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || role == null) {
+            System.out.println("All fields must be filled.");
+            return;
+        }
+
+        Admin admin = new Admin(username, phone, email, password, role);
+        AdminDAO.insertAdmin(admin);
+    }
+
+    public void handleCancelAdd(ActionEvent actionEvent) {
+    }
 }
