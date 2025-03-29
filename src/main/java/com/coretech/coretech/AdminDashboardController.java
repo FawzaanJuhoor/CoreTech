@@ -19,23 +19,23 @@ public class AdminDashboardController {
     @FXML
     public void initialize() {
         // Set welcome text dynamically (if needed)
-        welcomeLabel.setText("Welcome, Admin");
+//        welcomeLabel.setText("Welcome, Admin");
 
         // Event handlers
-        homeButton.setOnAction(e -> handleHome());
-        customerButton.setOnAction(e -> handleCustomerManagement());
-        vehicleButton.setOnAction(e -> handleVehicleManagement());
-        appointmentButton.setOnAction(e -> handleAppointments());
-        serviceButton.setOnAction(e -> handleServicing());
-        logoutButton.setOnAction(e -> handleLogout());
+//        homeButton.setOnAction(e -> handleHome());
+//        customerButton.setOnAction(e -> handleCustomerManagement());
+//        vehicleButton.setOnAction(e -> handleVehicleManagement());
+//        appointmentButton.setOnAction(e -> handleAppointments());
+//        serviceButton.setOnAction(e -> handleServicing());
+//        logoutButton.setOnAction(e -> handleLogout());
 
-        addSalesRepButton.setOnAction(e -> handleAddSalesRep());
-        removeSalesRepButton.setOnAction(e -> handleRemoveSalesRep());
-        updateSalesRepButton.setOnAction(e -> handleUpdateSalesRep());
-        viewSalesRepButton.setOnAction(e -> handleViewSalesRep());
-        inventoryButton.setOnAction(e -> handleInventory());
-        reportButton.setOnAction(e -> handleReport());
-        revenueButton.setOnAction(e -> handleRevenueTracking());
+//        addSalesRepButton.setOnAction(e -> handleAddSalesRep());
+//        removeSalesRepButton.setOnAction(e -> handleRemoveSalesRep());
+//        updateSalesRepButton.setOnAction(e -> handleUpdateSalesRep());
+//        viewSalesRepButton.setOnAction(e -> handleViewSalesRep());
+//        inventoryButton.setOnAction(e -> handleInventory());
+//        reportButton.setOnAction(e -> handleReport());
+//        revenueButton.setOnAction(e -> handleRevenueTracking());
     }
 
     @FXML

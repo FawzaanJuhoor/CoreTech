@@ -60,11 +60,38 @@ VALUES (seq_user.NEXTVAL, 'bhakti', 9876543210, 'bhakti@example.com',
 INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
 VALUES (seq_user.NEXTVAL, 'frin', 9876543210, 'frin@example.com', 
         '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Admin');
---INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
---VALUES (seq_user.NEXTVAL, 'sales1', 9876504321, 'sales1@example.com', 
---        hash_password('sales123'), 'Sales Representative');
-
+INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
+VALUES (seq_user.NEXTVAL, 'fawzzan', 9876543210, 'fawzzan@example.com', 
+        '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Admin');
+        
+INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
+VALUES (seq_user.NEXTVAL, 'abc', 9876543210, 'abc@example.com', 
+        '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Sales Representative');
+INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
+VALUES (seq_user.NEXTVAL, 'xyz', 9876543210, 'xyz@example.com', 
+        '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Sales Representative');
 commit;
+
+CREATE OR REPLACE PROCEDURE GET_USER_PASSWORD_ROLE(
+    p_username IN VARCHAR2,
+    p_password OUT VARCHAR2,
+    p_role OUT VARCHAR2
+) AS
+BEGIN
+    SELECT Password, Role INTO p_password, p_role
+    FROM SystemUser 
+    WHERE UserName = p_username;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_password := NULL;
+        p_role := NULL;
+END;
+/
+
+
+DROP PROCEDURE GET_USER_PASSWORD;
+
 CREATE TABLE Customer (
     CustomerID INT PRIMARY KEY,
     CustomerName VARCHAR(50) NOT NULL,
