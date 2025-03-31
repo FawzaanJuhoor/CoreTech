@@ -93,12 +93,32 @@ END;
 DROP PROCEDURE GET_USER_PASSWORD;
 
 CREATE TABLE Customer (
-    CustomerID INT PRIMARY KEY,
+    CustomerID INT DEFAULT seq_customer.NEXTVAL PRIMARY KEY,
     CustomerName VARCHAR(50) NOT NULL,
     PhoneNo NUMBER(10,0),
     EmailID VARCHAR(100),
     Address VARCHAR(255)
 );
+
+CREATE OR REPLACE PROCEDURE InsertCustomer(
+    p_CustomerName IN VARCHAR2,
+    p_PhoneNo IN VARCHAR2,
+    p_EmailID IN VARCHAR2,
+    p_Address IN VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO Customer (CustomerName, PhoneNo, EmailID, Address)
+    VALUES (p_CustomerName, p_PhoneNo, p_EmailID, p_Address);
+
+    COMMIT; 
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END InsertCustomer;
+/
+
 
 CREATE TABLE Vehicle (
     VehicleID INT PRIMARY KEY,
