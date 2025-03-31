@@ -72,7 +72,6 @@ VALUES (seq_user.NEXTVAL, 'xyz', 9876543210, 'xyz@example.com',
         '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Sales Representative');
 commit;
 
-
 CREATE OR REPLACE PROCEDURE GET_USER_PASSWORD_ROLE(
     p_username IN VARCHAR2,
     p_password OUT VARCHAR2,
@@ -87,39 +86,6 @@ EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_password := NULL;
         p_role := NULL;
-END;
-/
-
-
--- This procedure is used to add a new user to the SystemUser table
-CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER(
-    p_username IN VARCHAR2,
-    p_phoneno  IN VARCHAR2,
-    p_emailid  IN VARCHAR2,
-    p_password IN VARCHAR2,
-    p_role     IN VARCHAR2
-) AS
-BEGIN
-    INSERT INTO SystemUser (USERNAME, PHONENO, EMAILID, PASSWORD, ROLE)
-    VALUES (p_username, p_phoneno, p_emailid, p_password, p_role);
-    
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-
--- This procedure is used to get all the user of a systemUser Table
-CREATE OR REPLACE PROCEDURE GET_ALL_SYSTEM_USERS (
-    p_cursor OUT SYS_REFCURSOR
-)
-AS
-BEGIN
-    OPEN p_cursor FOR
-        SELECT USERID, USERNAME, PHONENO, ROLE
-        FROM SYSTEMUSER;
 END;
 /
 
@@ -153,20 +119,187 @@ EXCEPTION
 END InsertCustomer;
 /
 
+CREATE OR REPLACE PROCEDURE UpdateCustomer(
+    p_CustomerName IN VARCHAR2,
+    p_PhoneNo IN VARCHAR2,
+    p_EmailID IN VARCHAR2,
+    p_Address IN VARCHAR2
+)
+AS
+BEGIN
+    UPDATE Customer 
+    SET CustomerName = p_CustomerName,EmailID = p_EmailID, Address = p_Address
+    WHERE PhoneNo = p_PhoneNo;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END UpdateCustomer;
+/
+
+CREATE OR REPLACE PROCEDURE DeleteCustomer(
+    p_PhoneNo IN VARCHAR2
+)
+AS
+BEGIN
+    DELETE FROM Customer WHERE PhoneNo = p_PhoneNo;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END DeleteCustomer;
+/
+
+CREATE OR REPLACE PROCEDURE SearchCustomer(
+    p_CustomerName OUT VARCHAR2,
+    p_PhoneNo IN VARCHAR2,
+    o_EmailID OUT VARCHAR2,
+    o_Address OUT VARCHAR2
+)
+AS
+BEGIN
+    SELECT CustomerName, EmailID, Address 
+    INTO p_CustomerName, o_EmailID, o_Address
+    FROM Customer
+    WHERE PhoneNo = p_PhoneNo;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_CustomerName := NULL;
+        o_EmailID := NULL;
+        o_Address := NULL;
+END SearchCustomer;
+/
+
 
 CREATE TABLE Vehicle (
-    VehicleID INT PRIMARY KEY,
+    VehicleID INT DEFAULT seq_vehicle.NEXTVAL PRIMARY KEY,
     CustomerID INT,
     Make VARCHAR(100),
     Model VARCHAR(100),
     Year NUMBER(4),
-    VIN CHAR(17),
+    VIN CHAR(17) UNIQUE,
     ServiceHistory VARCHAR(255),
     CONSTRAINT fk_vehicle_customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
+CREATE OR REPLACE PROCEDURE InsertVehicle(
+    p_CustomerID IN NUMBER,
+    p_Make IN VARCHAR2,
+    p_Model IN VARCHAR2,
+    p_Year IN NUMBER,
+    p_VIN IN CHAR,
+    p_ServiceHistory IN VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO Vehicle (CustomerID, Make, Model, Year, VIN, ServiceHistory)
+    VALUES (p_CustomerID, p_Make, p_Model, p_Year, p_VIN, p_ServiceHistory);
+    
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END InsertVehicle;
+/
+
+CREATE OR REPLACE PROCEDURE UpdateVehicleByCustomerID(
+    p_CustomerID IN NUMBER,
+    p_VIN IN CHAR,
+    p_Make IN VARCHAR2,
+    p_Model IN VARCHAR2,
+    p_Year IN NUMBER,
+    p_ServiceHistory IN VARCHAR2
+)
+AS
+BEGIN
+    UPDATE Vehicle
+    SET Make = p_Make, Model = p_Model, Year = p_Year, ServiceHistory = p_ServiceHistory
+    WHERE CustomerID = p_CustomerID AND VIN = p_VIN;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END UpdateVehicleByCustomerID;
+/
+
+CREATE OR REPLACE PROCEDURE DeleteVehicle(
+    p_VIN IN CHAR
+)
+AS
+BEGIN
+    DELETE FROM Vehicle WHERE VIN = p_VIN;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END DeleteVehicle;
+/
+
+CREATE OR REPLACE PROCEDURE SearchVehicle(
+    p_VIN IN CHAR,
+    o_CustomerID OUT NUMBER,
+    o_Make OUT VARCHAR2,
+    o_Model OUT VARCHAR2,
+    o_Year OUT NUMBER,
+    o_ServiceHistory OUT VARCHAR2
+)
+AS
+BEGIN
+    SELECT CustomerID, Make, Model, Year, ServiceHistory
+    INTO o_CustomerID, o_Make, o_Model, o_Year, o_ServiceHistory
+    FROM Vehicle
+    WHERE VIN = p_VIN;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        o_CustomerID := NULL;
+        o_Make := NULL;
+        o_Model := NULL;
+        o_Year := NULL;
+        o_ServiceHistory := NULL;
+END SearchVehicle;
+/
+
+CREATE OR REPLACE PROCEDURE GetCustomerIDByEmail(
+    p_Email IN VARCHAR2,
+    o_CustomerID OUT NUMBER
+)
+AS
+BEGIN
+    SELECT CustomerID INTO o_CustomerID FROM Customer WHERE EmailID = p_Email;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        o_CustomerID := NULL;
+END GetCustomerIDByEmail;
+/
+
+
 CREATE TABLE Mechanic (
-    MechanicID INT PRIMARY KEY,
+    MechanicID INT DEFAULT seq_mechanic.NEXTVAL PRIMARY KEY,
     MechanicName VARCHAR(50) NOT NULL,
     Expertise VARCHAR(255),
     PhoneNo NUMBER(10,0),
