@@ -90,6 +90,8 @@ EXCEPTION
 END;
 /
 
+
+-- This procedure is used to add a new user to the SystemUser table
 CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER(
     p_username IN VARCHAR2,
     p_phoneno  IN VARCHAR2,
@@ -106,6 +108,18 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE;
+END;
+/
+
+-- This procedure is used to get all the user of a systemUser Table
+CREATE OR REPLACE PROCEDURE GET_ALL_SYSTEM_USERS (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT USERID, USERNAME, PHONENO, ROLE
+        FROM SYSTEMUSER;
 END;
 /
 
