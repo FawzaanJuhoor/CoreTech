@@ -8,5 +8,6 @@ module com.coretech.coretech {
     requires jbcrypt;
 
     opens com.coretech.coretech to javafx.fxml;
+    opens Models to javafx.base, javafx.fxml;
     exports com.coretech.coretech;
 }
