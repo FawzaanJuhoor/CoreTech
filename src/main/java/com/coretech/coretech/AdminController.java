@@ -1,29 +1,41 @@
 package com.coretech.coretech;
 
 import Models.Admin;
+import Models.NewAdmin;
 import db.AdminDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class AdminController {
 
     @FXML public VBox ancpRevenueTracking;
-    public TextField txtUsername;
-    public TextField txtPhone;
-    public TextField txtEmail;
-    public PasswordField txtPassword;
-    @FXML
-    private ComboBox<String> comboRole;
-    @FXML private Button btnRevenueTracking;
+    @FXML public TextField txtUsername;
+    @FXML public TextField txtPhone;
+    @FXML public TextField txtEmail;
+    @FXML public PasswordField txtPassword;
+    @FXML private ComboBox<String> comboRole;
 
+
+    @FXML private TableView<NewAdmin> tableView;
+    @FXML private TableColumn<NewAdmin, Integer> userId;
+    @FXML private TableColumn<NewAdmin, String> userName;
+    @FXML private TableColumn<NewAdmin, String> phoneNo;
+    @FXML private TableColumn<NewAdmin, String> role;
+
+
+    @FXML private Button btnRevenueTracking;
     @FXML private Button btnInventoryMang;
 
     @FXML private VBox ancpViewAllSalesRep;
@@ -88,6 +100,17 @@ public class AdminController {
         btnRevenueRevenue.setOnAction(event -> showPanel(ancpMonthlyReportRevenueSummary));
 
         btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
+
+
+
+//        display all sales representative into table
+        userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        userName.setCellValueFactory(new PropertyValueFactory<>("username"));
+        phoneNo.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        role.setCellValueFactory(new PropertyValueFactory<>("role"));
+
+        ObservableList<NewAdmin> adminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+        tableView.setItems(adminData);
     }
 
     /**
@@ -273,4 +296,39 @@ public class AdminController {
 
     public void handleCancelAdd(ActionEvent actionEvent) {
     }
+
+    public void handledeleteButton(ActionEvent actionEvent) {
+
+    }
+
+
+    public void handlecancelDeleteButton(ActionEvent actionEvent) {
+    }
+
+
+    
+    
+    
+    
+
+    public void handleDeleteItemFromInventory(ActionEvent actionEvent) {
+    }
+
+    public void handleUpdateItemToInventory(ActionEvent actionEvent) {
+    }
+
+    public void handleAddItemtoInventory(ActionEvent actionEvent) {
+    }
+
+
+    public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
+    }
+
+    public void handleGeneratePdfMonthlyReportInventory(ActionEvent actionEvent) {
+    }
+
+    public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
+    }
+
+
 }
