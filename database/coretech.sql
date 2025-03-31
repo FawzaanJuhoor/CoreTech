@@ -72,6 +72,7 @@ VALUES (seq_user.NEXTVAL, 'xyz', 9876543210, 'xyz@example.com',
         '$2a$12$SiuF4D3vGru4GSXi2j/id.aW6ggvC3xWKLnVffXDZXiCMT9uAw66S', 'Sales Representative');
 commit;
 
+
 CREATE OR REPLACE PROCEDURE GET_USER_PASSWORD_ROLE(
     p_username IN VARCHAR2,
     p_password OUT VARCHAR2,
@@ -86,6 +87,25 @@ EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_password := NULL;
         p_role := NULL;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER(
+    p_username IN VARCHAR2,
+    p_phoneno  IN VARCHAR2,
+    p_emailid  IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_role     IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO SystemUser (USERNAME, PHONENO, EMAILID, PASSWORD, ROLE)
+    VALUES (p_username, p_phoneno, p_emailid, p_password, p_role);
+    
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
 END;
 /
 
