@@ -1,13 +1,47 @@
 package com.coretech.coretech;
 
+import Models.Vehicle;
+import db.VehicleDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class MainVehicleController {
 
+    public TextField addEmailField;
+    public VBox centerPane;
+    public TextField addMake;
+    public TextField addModel;
+    public TextField addYear;
+    public TextField addVin;
+    public TextField addServiceHistory;
+    public Button addButton;
+    public Button cancelAddButton;
+    public TextField updateVinSearchField;
+    public Button updateSearchButton;
+    public TextField updateEmailField;
+    public TextField updateMakeField;
+    public TextField updateModelField;
+    public TextField updateYearField;
+    public TextField updateVinField;
+    public TextField updateServiceHistoryField;
+    public Button updateButton;
+    public Button updateCancelButton;
+    public TextField removeVinSearchField;
+    public Button removeSearchButton;
+    public TextField removeEmailField;
+    public TextField removeMakeField;
+    public TextField removeModelField;
+    public TextField removeYearField;
+    public TextField removeVinField;
+    public TextField removeServiceHistoryField;
+    public Button removeButton;
+    public Button removeCancelButton;
+    public TableView serviceHistoryTable;
+    public TableColumn dateColumn;
+    public TableColumn descriptionColumn;
+    public VBox spacer;
     // References to forms in the center pane
     @FXML
     private VBox addForm;
@@ -159,5 +193,16 @@ public class MainVehicleController {
     private void handleLogout() {
         System.out.println("Logging out...");
     }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+
 
 }

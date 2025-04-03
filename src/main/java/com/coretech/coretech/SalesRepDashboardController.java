@@ -1,8 +1,16 @@
 package com.coretech.coretech;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.util.Objects;
 
 public class SalesRepDashboardController {
     @FXML
@@ -22,7 +30,7 @@ public class SalesRepDashboardController {
         vehicleButton.setOnAction(e -> handleVehicleManagement());
         appointmentButton.setOnAction(e -> handleAppointments());
         serviceButton.setOnAction(e -> handleServicing());
-        logoutButton.setOnAction(e -> handleLogout());
+        logoutButton.setOnAction(e -> handleLogout(e));
 
     }
 
@@ -51,11 +59,23 @@ public class SalesRepDashboardController {
         System.out.println("Servicing Clicked");
     }
 
-    @FXML
-    private void handleLogout() {
-        System.out.println("Logging Out...");
-    }
 
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            // Get current stage
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            // Load the login page
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
+            stage.setScene(new Scene(root));
+            stage.setTitle("Login");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

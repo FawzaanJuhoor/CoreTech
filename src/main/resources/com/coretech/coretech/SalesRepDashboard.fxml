@@ -70,8 +70,8 @@
         </VBox>
 
         <!-- Log Out Button -->
-        <!--            <Button onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-alignment: center-left;" text="Log Out" />-->
-        <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" />
+        <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0"
+                style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out"/>
     </VBox>
 </left>
 

@@ -1,6 +1,11 @@
 package com.coretech.coretech;
 
+import Models.Admin;
+import Models.Customer;
+import db.AdminDAO;
+import db.CustomerDAO;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -160,124 +165,134 @@ public class MainCustomerController {
         }
 
         // Add customer logic (e.g., save to database)
-        System.out.println("Adding Customer:");
-        System.out.println("Name: " + name);
-        System.out.println("Phone No: " + phoneNo);
-        System.out.println("Email: " + email);
-        System.out.println("Address: " + address);
+          Customer customer = new Customer(name, phoneNo, email, address);
+        boolean isInserted = CustomerDAO.insertCustomer(customer);
 
-        // Clear fields after adding
-        clearAddForm();
+        if (isInserted) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Customer added successfully!");
+            clearAddForm();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add customer. Please try again.");
+        }
     }
 
-    // Handle Update Button Click
     @FXML
-    private void handleUpdate() {
-        // Get input values
-        String name = updateCustomerNameField.getText().trim();
-        String phoneNo = updatePhoneNoField.getText().trim();
-        String email = updateEmailField.getText().trim();
-        String address = updateAddressField.getText().trim();
+    private void handleUpdateSearch() {
+        String phone = updateSearchField.getText().trim();
 
-        // Validate inputs
-        if (name.isEmpty() || phoneNo.isEmpty() || email.isEmpty() || address.isEmpty()) {
-            System.out.println("Please fill in all fields.");
+        if (phone.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Phone Number.");
             return;
         }
 
-        // Update customer logic (e.g., save to database)
-        System.out.println("Updating Customer:");
-        System.out.println("Name: " + name);
-        System.out.println("Phone No: " + phoneNo);
-        System.out.println("Email: " + email);
-        System.out.println("Address: " + address);
+        Customer customer = CustomerDAO.searchCustomer(phone);
 
+        if (customer != null) {
+            updateCustomerNameField.setText(customer.getCustomerName());
+            updatePhoneNoField.setText(customer.getPhoneNo());
+            updateEmailField.setText(customer.getEmailID());
+            updateAddressField.setText(customer.getAddress());
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given details.");
+        }
+    }
+
+    @FXML
+    private void handleUpdate() {
+        String name = updateCustomerNameField.getText().trim();
+        String phone = updatePhoneNoField.getText().trim();
+        String email = updateEmailField.getText().trim();
+        String address = updateAddressField.getText().trim();
+
+        if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || address.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please fill in all fields.");
+            return;
+        }
+
+        Customer customer = new Customer(name, phone, email, address);
+        boolean isUpdated = CustomerDAO.updateCustomer(customer);
+
+        if (isUpdated) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Customer updated successfully!");
+        } else {
+            clearUpdateForm();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update customer.");
+        }
         // Clear fields after updating
         clearUpdateForm();
     }
 
-    // Handle Delete Button Click
     @FXML
-    private void handleDelete() {
-        // Get input values
-        String name = deleteCustomerNameField.getText().trim();
-        String phoneNo = deletePhoneNoField.getText().trim();
-        String email = deleteEmailField.getText().trim();
-        String address = deleteAddressField.getText().trim();
+    private void handleDeleteSearch() {
+        String phone = deleteSearchField.getText().trim();
 
-        // Validate inputs
-        if (name.isEmpty() || phoneNo.isEmpty() || email.isEmpty() || address.isEmpty()) {
-            System.out.println("Please fill in all fields.");
+        if (phone.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Phone Number.");
             return;
         }
 
-        // Delete customer logic (e.g., remove from database)
-        System.out.println("Deleting Customer:");
-        System.out.println("Name: " + name);
-        System.out.println("Phone No: " + phoneNo);
-        System.out.println("Email: " + email);
-        System.out.println("Address: " + address);
+        Customer customer = CustomerDAO.searchCustomer(phone);
 
-        // Clear fields after deleting
-        clearDeleteForm();
+        if (customer != null) {
+            deleteCustomerNameField.setText(customer.getCustomerName());
+            deletePhoneNoField.setText(customer.getPhoneNo());
+            deleteEmailField.setText(customer.getEmailID());
+            deleteAddressField.setText(customer.getAddress());
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given details.");
+        }
+    }
+
+    @FXML
+    private void handleDelete() {
+        String phone = deletePhoneNoField.getText().trim();
+
+        if (phone.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please Phone Number.");
+            return;
+        }
+
+        boolean isDeleted = CustomerDAO.deleteCustomer(phone);
+
+        if (isDeleted) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Customer deleted successfully!");
+            clearDeleteForm();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to delete customer.");
+            clearDeleteForm();
+        }
+    }
+
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     // Handle Cancel Button Click (Add Form)
     @FXML
     private void handleCancelAdd() {
         clearAddForm();
-        hideAllForms();
+//        hideAllForms();
     }
 
     // Handle Cancel Button Click (Update Form)
     @FXML
     private void handleCancelUpdate() {
         clearUpdateForm();
-        hideAllForms();
+//        hideAllForms();
     }
 
     // Handle Cancel Button Click (Delete Form)
     @FXML
     private void handleCancelDelete() {
         clearDeleteForm();
-        hideAllForms();
+//        hideAllForms();
     }
 
-    // Handle Search Button Click (Update Form)
-    @FXML
-    private void handleUpdateSearch() {
-        String searchText = updateSearchField.getText().trim();
-        if (searchText.isEmpty()) {
-            System.out.println("Please enter a search term.");
-            return;
-        }
-
-        // Search logic (e.g., fetch customer details from database)
-        System.out.println("Searching for customer: " + searchText);
-        // Example: Populate fields with fetched data
-        updateCustomerNameField.setText("Fetched Name");
-        updatePhoneNoField.setText("Fetched Phone No");
-        updateEmailField.setText("Fetched Email");
-        updateAddressField.setText("Fetched Address");
-    }
-
-    // Handle Search Button Click (Delete Form)
-    @FXML
-    private void handleDeleteSearch() {
-        String searchText = deleteSearchField.getText().trim();
-        if (searchText.isEmpty()) {
-            System.out.println("Please enter a search term.");
-            return;
-        }
-
-        // Search logic (e.g., fetch customer details from database)
-        System.out.println("Searching for customer: " + searchText);
-        // Example: Populate fields with fetched data
-        deleteCustomerNameField.setText("Fetched Name");
-        deletePhoneNoField.setText("Fetched Phone No");
-        deleteEmailField.setText("Fetched Email");
-        deleteAddressField.setText("Fetched Address");
-    }
 
     // Clear Add Form fields
     private void clearAddForm() {
