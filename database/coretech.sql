@@ -318,6 +318,39 @@ BEGIN
 END;
 /
 
+--Add Sales or Admin User
+CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER (
+    p_username IN VARCHAR2,
+    p_phone    IN NUMBER,
+    p_email    IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_role     IN VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO SystemUser (UserName, PhoneNo, EmailID, password, Role)
+    VALUES (p_username, p_phone, p_email, p_password, p_role);
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE_APPLICATION_ERROR(-20001, 'Error inserting system user: ' || SQLERRM);
+END;
+/
+
+--get all system users
+CREATE OR REPLACE PROCEDURE GET_ALL_SYSTEM_USERS (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT USERID, USERNAME, PHONENO, ROLE
+        FROM SYSTEMUSER;
+END;
+/
+
 
 
 

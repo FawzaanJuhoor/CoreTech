@@ -25,6 +25,31 @@ public class AdminController {
     @FXML public TextField txtPhone;
     @FXML public TextField txtEmail;
     @FXML public PasswordField txtPassword;
+
+    public TextField txtUserID;
+    public Button btnSearchId;
+    public TextField txtRemoveSaleUserName;
+    public TextField txtRemoveSalePhone;
+    public TextField txtRemoveSaleEmail;
+    public TextField txtRemoveSalePassword;
+    public Button deleteButton;
+    public Button cancelDeleteButton;
+
+    public TextField searchUpdateSalesrep;
+    public Button btnSearchUpdateSalesRep;
+    public Label lblUpdateSalesUserName;
+    public TextField txtUpdateSalesrepName;
+    public Label lblUpdateSalesPhone;
+    public TextField txtUpdateSalesPhone;
+    public Label lblUpdateSalesRepEmail;
+    public TextField txtUpdateSalesRepEmail;
+    public Label lblUpdateSalesPassword;
+    public TextField txtUpdateSalesPassword;
+    public Label lblUpdateSalesRep;
+    public ComboBox comboUpdateSalesRole;
+    public Button updateButton;
+    public Button cancelUpdateButton;
+
     @FXML private ComboBox<String> comboRole;
 
 
@@ -286,15 +311,47 @@ public class AdminController {
         String role = comboRole.getValue();
 
         if (username.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || role == null) {
-            System.out.println("All fields must be filled.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText(null);
+            alert.setContentText("All fields must be filled.");
+            alert.showAndWait();
             return;
         }
 
         Admin admin = new Admin(username, phone, email, password, role);
-        AdminDAO.insertAdmin(admin);
+        boolean success = AdminDAO.insertAdmin(admin);
+
+        if (success) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Person added successfully.");
+            alert.showAndWait();
+
+            // Optionally clear the form
+            txtUsername.clear();
+            txtPhone.clear();
+            txtEmail.clear();
+            txtPassword.clear();
+            comboRole.setValue(null);
+
+            // Refresh table data
+            ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+            tableView.setItems(updatedAdminData);
+
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to add sales representative. Please try again.");
+            alert.showAndWait();
+        }
+
     }
 
     public void handleCancelAdd(ActionEvent actionEvent) {
+
     }
 
     public void handledeleteButton(ActionEvent actionEvent) {
@@ -303,6 +360,13 @@ public class AdminController {
 
 
     public void handlecancelDeleteButton(ActionEvent actionEvent) {
+    }
+
+
+    public void handleupdatebtn(ActionEvent actionEvent) {
+    }
+
+    public void handleCancelUpdate(ActionEvent actionEvent) {
     }
 
 
@@ -329,6 +393,7 @@ public class AdminController {
 
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
     }
+
 
 
 }
