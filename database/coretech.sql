@@ -194,6 +194,24 @@ CREATE TABLE Vehicle (
     CONSTRAINT fk_vehicle_customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
+CREATE OR REPLACE FUNCTION GetCustomerIdByEmail(p_email VARCHAR2)
+RETURN NUMBER
+IS
+    v_customer_id NUMBER;
+BEGIN
+    SELECT CustomerID INTO v_customer_id
+    FROM Customer
+    WHERE EmailID = p_email;
+
+    RETURN v_customer_id;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN -1;
+END;
+/
+
+
+
 CREATE OR REPLACE PROCEDURE InsertVehicle(
     p_CustomerID IN NUMBER,
     p_Make IN VARCHAR2,
@@ -212,23 +230,28 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
-END InsertVehicle;
+END;
 /
 
-CREATE OR REPLACE PROCEDURE UpdateVehicleByCustomerID(
-    p_CustomerID IN NUMBER,
-    p_VIN IN CHAR,
-    p_Make IN VARCHAR2,
-    p_Model IN VARCHAR2,
-    p_Year IN NUMBER,
-    p_ServiceHistory IN VARCHAR2
+CREATE OR REPLACE PROCEDURE UpdateVehicle(
+    p_VIN             IN VARCHAR2,
+    p_CustomerID      IN NUMBER,
+    p_Make            IN VARCHAR2,
+    p_Model           IN VARCHAR2,
+    p_Year            IN NUMBER,
+    p_ServiceHistory  IN VARCHAR2
 )
-AS
+IS
 BEGIN
     UPDATE Vehicle
-    SET Make = p_Make, Model = p_Model, Year = p_Year, ServiceHistory = p_ServiceHistory
-    WHERE CustomerID = p_CustomerID AND VIN = p_VIN;
-
+    SET
+        CustomerID = p_CustomerID,
+        Make = p_Make,
+        Model = p_Model,
+        Year = p_Year,
+        ServiceHistory = p_ServiceHistory
+    WHERE VIN = p_VIN;
+ 
     IF SQL%ROWCOUNT > 0 THEN
         COMMIT;
     ELSE
@@ -238,64 +261,64 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
-END UpdateVehicleByCustomerID;
+END;
 /
 
-CREATE OR REPLACE PROCEDURE DeleteVehicle(
-    p_VIN IN CHAR
+CREATE OR REPLACE PROCEDURE GetVehicleByVIN (
+    p_vin IN Vehicle.VIN%TYPE,
+    p_customer_id OUT Vehicle.CustomerID%TYPE,
+    p_make OUT Vehicle.Make%TYPE,
+    p_model OUT Vehicle.Model%TYPE,
+    p_year OUT Vehicle.Year%TYPE,
+    p_service_history OUT Vehicle.ServiceHistory%TYPE
 )
-AS
-BEGIN
-    DELETE FROM Vehicle WHERE VIN = p_VIN;
-
-    IF SQL%ROWCOUNT > 0 THEN
-        COMMIT;
-    ELSE
-        ROLLBACK;
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
-END DeleteVehicle;
-/
-
-CREATE OR REPLACE PROCEDURE SearchVehicle(
-    p_VIN IN CHAR,
-    o_CustomerID OUT NUMBER,
-    o_Make OUT VARCHAR2,
-    o_Model OUT VARCHAR2,
-    o_Year OUT NUMBER,
-    o_ServiceHistory OUT VARCHAR2
-)
-AS
+IS
 BEGIN
     SELECT CustomerID, Make, Model, Year, ServiceHistory
-    INTO o_CustomerID, o_Make, o_Model, o_Year, o_ServiceHistory
+    INTO p_customer_id, p_make, p_model, p_year, p_service_history
     FROM Vehicle
-    WHERE VIN = p_VIN;
+    WHERE VIN = p_vin;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        o_CustomerID := NULL;
-        o_Make := NULL;
-        o_Model := NULL;
-        o_Year := NULL;
-        o_ServiceHistory := NULL;
-END SearchVehicle;
+        p_customer_id := NULL;
+        p_make := NULL;
+        p_model := NULL;
+        p_year := NULL;
+        p_service_history := NULL;
+END;
 /
 
-CREATE OR REPLACE PROCEDURE GetCustomerIDByEmail(
-    p_Email IN VARCHAR2,
-    o_CustomerID OUT NUMBER
+CREATE OR REPLACE FUNCTION GetEmailByCustomerId (
+    p_customer_id IN Customer.CustomerID%TYPE
+) RETURN VARCHAR2
+IS
+    v_email Customer.EmailID%TYPE;
+BEGIN
+    SELECT EmailID INTO v_email FROM Customer WHERE CustomerID = p_customer_id;
+    RETURN v_email;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE DeleteVehicleByVIN (
+    p_vin IN Vehicle.VIN%TYPE
 )
 AS
 BEGIN
-    SELECT CustomerID INTO o_CustomerID FROM Customer WHERE EmailID = p_Email;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        o_CustomerID := NULL;
-END GetCustomerIDByEmail;
+    DELETE FROM Vehicle WHERE VIN = p_vin;
+    
+    IF SQL%ROWCOUNT = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Vehicle not found');
+    END IF;
+    
+    COMMIT;
+END;
 /
+
+
 
 
 CREATE TABLE Mechanic (

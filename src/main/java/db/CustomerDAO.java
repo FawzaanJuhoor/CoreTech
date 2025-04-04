@@ -2,12 +2,55 @@ package db;
 
 import Models.Customer;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class CustomerDAO {
+
+    public static int getCustomerIdByEmail(String email) {
+        String sql = "{ ? = call GetCustomerIdByEmail(?) }";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            // Register output parameter
+            stmt.registerOutParameter(1, java.sql.Types.INTEGER);
+            // Set input parameter
+            stmt.setString(2, email);
+
+            stmt.execute();
+
+            return stmt.getInt(1); // Get the returned CustomerID
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static String getEmailByCustomerId(int customerId) {
+        String sql = "{? = CALL GetEmailByCustomerId(?)}"; // Calling the function
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            // Register return type (first parameter)
+            stmt.registerOutParameter(1, Types.VARCHAR);
+
+            // Set input parameter (customerId)
+            stmt.setInt(2, customerId);
+
+            // Execute the function
+            stmt.execute();
+
+            // Retrieve the result
+            return stmt.getString(1);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ""; // Return empty string if email is not found
+    }
+
 
     public static boolean insertCustomer(Customer customer) {
         String sql = "{CALL InsertCustomer(?, ?, ?, ?)}"; // Calling the stored procedure
