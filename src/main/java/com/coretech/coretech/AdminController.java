@@ -25,6 +25,32 @@ public class AdminController {
     @FXML public TextField txtPhone;
     @FXML public TextField txtEmail;
     @FXML public PasswordField txtPassword;
+
+    @FXML public TextField txtUserID;
+    @FXML public Button btnSearchId;
+    @FXML public TextField txtRemoveSaleUserName;
+    @FXML public TextField txtRemoveSalePhone;
+    @FXML public TextField txtRemoveSaleEmail;
+    @FXML public TextField txtRemoveSalePassword;
+    @FXML private ComboBox<String> comboRemoveSalesRole;
+    @FXML public Button deleteButton;
+    @FXML public Button cancelDeleteButton;
+
+    @FXML public TextField searchUpdateSalesrep;
+    @FXML public Button btnSearchUpdateSalesRep;
+    @FXML public Label lblUpdateSalesUserName;
+    @FXML public TextField txtUpdateSalesrepName;
+    @FXML public Label lblUpdateSalesPhone;
+    @FXML public TextField txtUpdateSalesPhone;
+    @FXML public Label lblUpdateSalesRepEmail;
+    @FXML public TextField txtUpdateSalesRepEmail;
+    @FXML public Label lblUpdateSalesPassword;
+    @FXML public TextField txtUpdateSalesPassword;
+    @FXML public Label lblUpdateSalesRep;
+    @FXML private ComboBox<String> comboUpdateSalesRole;
+    @FXML public Button updateButton;
+    @FXML public Button cancelUpdateButton;
+
     @FXML private ComboBox<String> comboRole;
 
 
@@ -286,23 +312,142 @@ public class AdminController {
         String role = comboRole.getValue();
 
         if (username.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || role == null) {
-            System.out.println("All fields must be filled.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText(null);
+            alert.setContentText("All fields must be filled.");
+            alert.showAndWait();
             return;
         }
 
         Admin admin = new Admin(username, phone, email, password, role);
-        AdminDAO.insertAdmin(admin);
+        boolean success = AdminDAO.insertAdmin(admin);
+
+        if (success) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Person added successfully.");
+            alert.showAndWait();
+
+            // Optionally clear the form
+            txtUsername.clear();
+            txtPhone.clear();
+            txtEmail.clear();
+            txtPassword.clear();
+            comboRole.setValue(null);
+
+            // Refresh table data
+            ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+            tableView.setItems(updatedAdminData);
+
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to add sales representative. Please try again.");
+            alert.showAndWait();
+        }
+
     }
 
     public void handleCancelAdd(ActionEvent actionEvent) {
-    }
-
-    public void handledeleteButton(ActionEvent actionEvent) {
 
     }
+
+    public void handleDeleteSearch(ActionEvent actionEvent) {
+        String username = txtRemoveSaleUserName.getText().trim();
+
+        if (username.isEmpty()) {
+            showAlert("Input Required", "Please enter a username to search.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Admin admin = AdminDAO.getAdminByUsername(username); // reuse method
+
+        if (admin != null) {
+            txtRemoveSaleUserName.setText(admin.getUsername());
+            txtRemoveSalePhone.setText(admin.getPhone());
+            txtRemoveSaleEmail.setText(admin.getEmail());
+            txtRemoveSalePassword.setText(admin.getPassword());
+            comboRemoveSalesRole.setValue(admin.getRole());
+        } else {
+            showAlert("Not Found", "No user found with that username.", Alert.AlertType.INFORMATION);
+        }
+    }
+
+
+    private void clearRemoveForm() {
+        txtUserID.clear();
+        txtRemoveSaleUserName.clear();
+        txtRemoveSalePhone.clear();
+        txtRemoveSaleEmail.clear();
+        txtRemoveSalePassword.clear();
+        comboRemoveSalesRole.setValue(null);
+    }
+
+
 
 
     public void handlecancelDeleteButton(ActionEvent actionEvent) {
+    }
+
+
+    public void handleUpdateSearchbtn(ActionEvent actionEvent) {
+        String username = searchUpdateSalesrep.getText().trim();
+
+        if (username.isEmpty()) {
+            showAlert("Missing Input", "Please enter a username to search.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Admin foundAdmin = AdminDAO.getAdminByUsername(username); // 🔁 we'll define this next
+        if (foundAdmin != null) {
+            txtUpdateSalesrepName.setText(foundAdmin.getUsername());
+            txtUpdateSalesPhone.setText(foundAdmin.getPhone());
+            txtUpdateSalesRepEmail.setText(foundAdmin.getEmail());
+            txtUpdateSalesPassword.setText(foundAdmin.getPassword());
+            comboUpdateSalesRole.setValue(foundAdmin.getRole());
+        } else {
+            showAlert("User Not Found", "No user found with username: " + username, Alert.AlertType.INFORMATION);
+        }
+    }
+
+    @FXML
+    public void handleupdatebtn(ActionEvent event) {
+        String username = txtUpdateSalesrepName.getText();
+        String phone = txtUpdateSalesPhone.getText();
+        String email = txtUpdateSalesRepEmail.getText();
+        String password = txtUpdateSalesPassword.getText();
+        String role = comboUpdateSalesRole.getValue();
+
+        if (username.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || role == null) {
+            showAlert("Validation Error", "All fields must be filled out.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Admin admin = new Admin(username, phone, email, password, role);
+        boolean updated = AdminDAO.updateAdminByUsername(admin);
+
+        if (updated) {
+            showAlert("Success", "Sales representative updated successfully!", Alert.AlertType.INFORMATION);
+        } else {
+            showAlert("Update Failed", "Could not update. Check console for error.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+
+
+    public void handleCancelUpdate(ActionEvent actionEvent) {
     }
 
 
@@ -328,6 +473,15 @@ public class AdminController {
     }
 
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
+    }
+
+
+    public ComboBox<String> getComboRemoveSalesRole() {
+        return comboRemoveSalesRole;
+    }
+
+    public void setComboRemoveSalesRole(ComboBox<String> comboRemoveSalesRole) {
+        this.comboRemoveSalesRole = comboRemoveSalesRole;
     }
 
 

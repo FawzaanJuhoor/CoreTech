@@ -320,6 +320,83 @@ BEGIN
 END;
 /
 
+--Add Sales or Admin User
+CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER (
+    p_username IN VARCHAR2,
+    p_phone    IN NUMBER,
+    p_email    IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_role     IN VARCHAR2
+)
+AS
+BEGIN
+    INSERT INTO SystemUser (UserName, PhoneNo, EmailID, password, Role)
+    VALUES (p_username, p_phone, p_email, p_password, p_role);
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE_APPLICATION_ERROR(-20001, 'Error inserting system user: ' || SQLERRM);
+END;
+/
+
+--get all system users
+CREATE OR REPLACE PROCEDURE GET_ALL_SYSTEM_USERS (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT USERID, USERNAME, PHONENO, ROLE
+        FROM SYSTEMUSER;
+END;
+/
+
+--Update system user by id
+CREATE OR REPLACE PROCEDURE UPDATE_USER_BY_USERNAME (
+    p_username IN VARCHAR2,
+    p_phone    IN NUMBER,
+    p_email    IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_role     IN VARCHAR2
+)
+AS
+BEGIN
+    UPDATE SystemUser
+    SET
+        PhoneNo  = p_phone,
+        EmailID  = p_email,
+        Password = p_password,
+        Role     = p_role
+    WHERE LOWER(UserName) = LOWER(p_username);  -- ✅ Important: match case-insensitively
+
+    IF SQL%ROWCOUNT = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'User not found with given username.');
+    END IF;
+
+    COMMIT;
+END;
+/
+
+
+--Delete system user by name
+CREATE OR REPLACE PROCEDURE DELETE_USER_BY_USERNAME (
+    p_username IN VARCHAR2
+)
+AS
+BEGIN
+    DELETE FROM SystemUser
+    WHERE LOWER(UserName) = LOWER(p_username);
+
+    IF SQL%ROWCOUNT = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No user found with that username.');
+    END IF;
+
+    COMMIT;
+END;
+/
+
 
 
 
