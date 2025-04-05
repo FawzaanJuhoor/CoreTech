@@ -338,7 +338,7 @@
                            <!-- User ID & Search Button -->
                            <HBox alignment="CENTER" spacing="20">
                               <TextField fx:id="txtUserID" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                              <Button fx:id="btnSearchId" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
+                              <Button fx:id="btnSearchId" onAction="#handleUpdateSearchbtn" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                            </HBox>
 
                            <!-- User Name -->
@@ -369,7 +369,7 @@
                            <!-- Role -->
                            <HBox alignment="CENTER" spacing="20">
                               <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Role:" />
-                              <ComboBox promptText="Select Role" style="-fx-pref-width: 250; -fx-font-size: 14px;">
+                              <ComboBox fx:id="comboRemoveSalesRole" promptText="Select Role" style="-fx-pref-width: 250; -fx-font-size: 14px;">
                                  <items>
                                     <FXCollections fx:factory="observableArrayList">
                                        <String fx:value="Admin" />
@@ -381,7 +381,7 @@
 
                            <!-- Buttons -->
                            <HBox alignment="CENTER" spacing="40" style="-fx-padding: 30;">
-                              <Button fx:id="deleteButton"  onAction="#handledeleteButton" style="-fx-background-color: #D9534F; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="DELETE">
+                              <Button fx:id="deleteButton"  onAction="#handleupdatebtn" style="-fx-background-color: #D9534F; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="DELETE">
                                  <graphic>
                                     <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -428,7 +428,7 @@
                      <!-- User ID & Search Button -->
                      <HBox alignment="CENTER" spacing="20">
                         <TextField fx:id="searchUpdateSalesrep" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                        <Button fx:id="btnSearchUpdateSalesRep" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
+                        <Button fx:id="btnSearchUpdateSalesRep" onAction="#handleUpdateSearchbtn" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                      </HBox>
 
                      <!-- User Name -->
