@@ -228,7 +228,7 @@
 
                         <!-- Search Bar -->
                         <HBox alignment="CENTER" spacing="10">
-                            <TextField fx:id="updateSearchField" prefHeight="30.0" promptText="Search phone No" style="-fx-font-size: 12px; -fx-pref-width: 250; -fx-max-width: 300;" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="updateSearchField" prefHeight="30.0" promptText="Search EmailID" style="-fx-font-size: 12px; -fx-pref-width: 250; -fx-max-width: 300;" HBox.hgrow="ALWAYS" />
                             <Button fx:id="updateSearchButton" onAction="#handleUpdateSearch" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-pref-width: 80; -fx-pref-height: 30;" text="SEARCH" />
                         </HBox>
 
@@ -297,7 +297,7 @@
 
                         <!-- Search Bar -->
                         <HBox alignment="CENTER" spacing="10">
-                            <TextField fx:id="deleteSearchField" prefHeight="30.0" promptText="Search Customer" style="-fx-font-size: 12px; -fx-pref-width: 250; -fx-max-width: 300;" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="deleteSearchField" prefHeight="30.0" promptText="Search EmailID" style="-fx-font-size: 12px; -fx-pref-width: 250; -fx-max-width: 300;" HBox.hgrow="ALWAYS" />
                             <Button fx:id="deleteSearchButton" onAction="#handleDeleteSearch" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-pref-width: 80; -fx-pref-height: 30;" text="SEARCH" />
                         </HBox>
 

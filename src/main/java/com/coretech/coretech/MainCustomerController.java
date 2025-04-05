@@ -178,14 +178,14 @@ public class MainCustomerController {
 
     @FXML
     private void handleUpdateSearch() {
-        String phone = updateSearchField.getText().trim();
+        String email = updateSearchField.getText().trim();
 
-        if (phone.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Phone Number.");
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Email ID.");
             return;
         }
 
-        Customer customer = CustomerDAO.searchCustomer(phone);
+        Customer customer = CustomerDAO.searchCustomer(email); // Search by email
 
         if (customer != null) {
             updateCustomerNameField.setText(customer.getCustomerName());
@@ -197,6 +197,20 @@ public class MainCustomerController {
         }
     }
 
+    /**
+     * Disables the email field so it cannot be modified.
+     */
+    private void disableEmailField() {
+        updateEmailField.setDisable(true);
+    }
+
+    /**
+     * Enables the email field when a new customer search is performed.
+     */
+    @FXML
+    private void enableEmailField() {
+        updateEmailField.setDisable(false);
+    }
     @FXML
     private void handleUpdate() {
         String name = updateCustomerNameField.getText().trim();
@@ -218,48 +232,67 @@ public class MainCustomerController {
             clearUpdateForm();
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update customer.");
         }
+        // Keep email field disabled after updating
+        disableEmailField();
+
         // Clear fields after updating
         clearUpdateForm();
     }
 
     @FXML
     private void handleDeleteSearch() {
-        String phone = deleteSearchField.getText().trim();
+        String email = deleteSearchField.getText().trim();
 
-        if (phone.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Phone Number.");
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Email ID.");
             return;
         }
 
-        Customer customer = CustomerDAO.searchCustomer(phone);
+        Customer customer = CustomerDAO.searchCustomer(email); // Search by email instead of phone number
 
         if (customer != null) {
             deleteCustomerNameField.setText(customer.getCustomerName());
             deletePhoneNoField.setText(customer.getPhoneNo());
             deleteEmailField.setText(customer.getEmailID());
             deleteAddressField.setText(customer.getAddress());
+            disableDeleteFields(); // Disable fields after deletion
+
         } else {
             showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given details.");
+
         }
     }
 
+    private void disableDeleteFields() {
+        deleteCustomerNameField.setDisable(true);
+        deletePhoneNoField.setDisable(true);
+        deleteEmailField.setDisable(true);
+        deleteAddressField.setDisable(true);
+
+    }
+
+
     @FXML
     private void handleDelete() {
-        String phone = deletePhoneNoField.getText().trim();
+        String email = deleteEmailField.getText().trim(); // Get email instead of phone number
 
-        if (phone.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Please Phone Number.");
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter Email ID.");
             return;
         }
 
-        boolean isDeleted = CustomerDAO.deleteCustomer(phone);
+        boolean isDeleted = CustomerDAO.deleteCustomer(email); // Delete by email
 
         if (isDeleted) {
             showAlert(Alert.AlertType.INFORMATION, "Success", "Customer deleted successfully!");
             clearDeleteForm();
+            disableDeleteFields(); // Disable fields after deletion
+
         } else {
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to delete customer.");
             clearDeleteForm();
+            disableDeleteFields(); // Disable fields after deletion
+
         }
     }
 
@@ -290,6 +323,7 @@ public class MainCustomerController {
     @FXML
     private void handleCancelDelete() {
         clearDeleteForm();
+
 //        hideAllForms();
     }
 
@@ -309,6 +343,8 @@ public class MainCustomerController {
         updatePhoneNoField.clear();
         updateEmailField.clear();
         updateAddressField.clear();
+        updateEmailField.setDisable(true); // Keep email field disabled
+
     }
 
     // Clear Delete Form fields
@@ -318,6 +354,8 @@ public class MainCustomerController {
         deletePhoneNoField.clear();
         deleteEmailField.clear();
         deleteAddressField.clear();
+
+        disableDeleteFields(); // Disable fields after deletion
     }
 
     // Navigation methods (example implementations)

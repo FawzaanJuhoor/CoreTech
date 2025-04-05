@@ -96,7 +96,7 @@ CREATE TABLE Customer (
     CustomerID INT DEFAULT seq_customer.NEXTVAL PRIMARY KEY,
     CustomerName VARCHAR(50) NOT NULL,
     PhoneNo NUMBER(10,0),
-    EmailID VARCHAR(100),
+    EmailID VARCHAR(100) UNIQUE,
     Address VARCHAR(255)
 );
 
@@ -144,11 +144,11 @@ END UpdateCustomer;
 /
 
 CREATE OR REPLACE PROCEDURE DeleteCustomer(
-    p_PhoneNo IN VARCHAR2
+    p_EmailID IN VARCHAR2
 )
 AS
 BEGIN
-    DELETE FROM Customer WHERE PhoneNo = p_PhoneNo;
+    DELETE FROM Customer WHERE EmailID = p_EmailID;
 
     IF SQL%ROWCOUNT > 0 THEN
         COMMIT;
@@ -162,23 +162,25 @@ EXCEPTION
 END DeleteCustomer;
 /
 
+
 CREATE OR REPLACE PROCEDURE SearchCustomer(
     p_CustomerName OUT VARCHAR2,
-    p_PhoneNo IN VARCHAR2,
-    o_EmailID OUT VARCHAR2,
-    o_Address OUT VARCHAR2
+    p_EmailID      IN  VARCHAR2,
+    p_PhoneNo      OUT VARCHAR2,
+    p_Address      OUT VARCHAR2
 )
 AS
 BEGIN
-    SELECT CustomerName, EmailID, Address 
-    INTO p_CustomerName, o_EmailID, o_Address
+    SELECT CustomerName, PhoneNo, Address
+    INTO p_CustomerName, p_PhoneNo, p_Address
     FROM Customer
-    WHERE PhoneNo = p_PhoneNo;
+    WHERE EmailID = p_EmailID;
+
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_CustomerName := NULL;
-        o_EmailID := NULL;
-        o_Address := NULL;
+        p_PhoneNo := NULL;
+        p_Address := NULL;
 END SearchCustomer;
 /
 
