@@ -99,13 +99,13 @@ public class CustomerDAO {
 
 
     // Delete Customer
-    public static boolean deleteCustomer(String phoneNo) {
+    public static boolean deleteCustomer(String emailID) {
         String sql = "{CALL DeleteCustomer(?)}";
 
         try (Connection conn = DBConnection.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            stmt.setString(1, phoneNo);
+            stmt.setString(1, emailID);  // Now using email instead of phone number
 
             stmt.execute();
             System.out.println("Customer deleted successfully!");
@@ -118,24 +118,24 @@ public class CustomerDAO {
     }
 
     //search Customer
-    public static Customer searchCustomer(String phoneNo) {
+    public static Customer searchCustomer(String emailID) {
         String sql = "{CALL SearchCustomer(?, ?, ?, ?)}";
 
         try (Connection conn = DBConnection.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.registerOutParameter(1, java.sql.Types.VARCHAR); // Output parameter for customer name
-            stmt.setString(2, phoneNo);
-            stmt.registerOutParameter(3, java.sql.Types.VARCHAR); // Output parameter for EmailID
+            stmt.setString(2, emailID);  // Search by email instead of phone number
+            stmt.registerOutParameter(3, java.sql.Types.VARCHAR); // Output parameter for PhoneNo
             stmt.registerOutParameter(4, java.sql.Types.VARCHAR); // Output parameter for Address
 
             stmt.execute();
 
-            String customerName = stmt.getString(3);
-            String emailID = stmt.getString(3);
+            String customerName = stmt.getString(1);
+            String phoneNo = stmt.getString(3);
             String address = stmt.getString(4);
 
-            if (customerName != null && emailID != null && address != null) {
+            if (customerName != null && phoneNo != null && address != null) {
                 return new Customer(customerName, phoneNo, emailID, address);
             }
 
@@ -144,6 +144,7 @@ public class CustomerDAO {
         }
         return null;
     }
+
 
 
 //    // View Customers

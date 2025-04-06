@@ -1,8 +1,14 @@
 package com.coretech.coretech;
 
+import Models.Appointment;
+import db.AppointmentDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+
+import java.sql.Connection;
+import java.time.LocalDate;
 
 public class AddAppointmentController {
 
@@ -33,6 +39,7 @@ public class AddAppointmentController {
     @FXML private Button updateAppointmentButton;
     @FXML private Button cancelAppointmentButton;
     @FXML private Button searchAppointmentsButton;
+    private Connection connection;
 
     @FXML
     public void initialize() {
@@ -52,4 +59,49 @@ public class AddAppointmentController {
     @FXML private void handleUpdateAppointment() { System.out.println("Update Appointment clicked"); }
     @FXML private void handleCancelAppointment() { System.out.println("Cancel Appointment clicked"); }
     @FXML private void handleSearchAppointments() { System.out.println("Search Appointments clicked"); }
+
+    public void BookAppointment(ActionEvent actionEvent) {
+        try {
+            String vin = vinTextField.getText().trim();
+            int customerId = Integer.parseInt(customerIdTextField.getText().trim());
+            String serviceType = serviceTypeTextField.getText().trim();
+            LocalDate serviceDate = serviceDatePicker.getValue();
+
+            if (vin.isEmpty() || serviceType.isEmpty() || serviceDate == null) {
+                showAlert(Alert.AlertType.WARNING, "Please fill in all fields.");
+                return;
+            }
+
+            Appointment appointment = new Appointment(vin, customerId, serviceType, serviceDate);
+            AppointmentDAO appointmentDAO = new AppointmentDAO(connection);
+
+            boolean success = appointmentDAO.addAppointment(appointment);
+            if (success) {
+                showAlert(Alert.AlertType.INFORMATION, "Appointment successfully booked.");
+                clearForm();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Failed to book appointment.");
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Customer ID must be a number.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "An unexpected error occurred.");
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void clearForm() {
+        vinTextField.clear();
+        customerIdTextField.clear();
+        serviceTypeTextField.clear();
+        serviceDatePicker.setValue(null);
+    }
 }
