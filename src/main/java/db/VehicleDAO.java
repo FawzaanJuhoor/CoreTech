@@ -50,6 +50,7 @@ public class VehicleDAO {
         return false;
     }
 
+
     public static Vehicle searchVehicleByVIN(String vin) {
         String sql = "{CALL GetVehicleByVIN(?, ?, ?, ?, ?, ?)}"; // Call to stored procedure
 
@@ -105,5 +106,26 @@ public class VehicleDAO {
         }
         return false; // Return false if deletion fails
     }
+
+    public static int getVehicleIdByVIN(String vin) {
+        String sql = "{CALL GetVehicleIdByVIN(?, ?)}"; // Calling the stored procedure
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, vin); // Set the VIN parameter
+            stmt.registerOutParameter(2, java.sql.Types.INTEGER); // Register output parameter
+
+            stmt.execute();  // Execute the procedure
+
+            return stmt.getInt(2);  // Get the result (VehicleID) from the output parameter
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;  // If something goes wrong, return -1
+    }
+
 
 }

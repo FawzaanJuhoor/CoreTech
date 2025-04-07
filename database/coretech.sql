@@ -405,13 +405,55 @@ CREATE TABLE Mechanic (
     MechanicName VARCHAR(50) NOT NULL,
     Expertise VARCHAR(255),
     PhoneNo NUMBER(10,0),
-    EmailID VARCHAR(100)
+    EmailID VARCHAR(100) UNIQUE
 );
+
+CREATE OR REPLACE PROCEDURE InsertSampleMechanics AS
+BEGIN
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('John Carter', 'Engine Repair', 9876543210, 'john.carter@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Emily Davis', 'Transmission Systems', 9123456780, 'emily.davis@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Michael Smith', 'Brake Systems', 9988776655, 'michael.smith@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Sarah Johnson', 'Electrical Systems', 9765432101, 'sarah.johnson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('David Wilson', 'Air Conditioning', 9090909090, 'david.wilson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Laura Brown', 'Suspension and Steering', 9812345678, 'laura.brown@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('James Miller', 'Fuel Systems', 9944221100, 'james.miller@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Olivia Taylor', 'Hybrid Vehicles', 9001122334, 'olivia.taylor@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Daniel Moore', 'Clutch and Gearbox', 9345678923, 'daniel.moore@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Sophia Anderson', 'Bodywork and Painting', 9871212121, 'sophia.anderson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Christopher Thomas', 'Wheel Alignment', 9012345678, 'chris.thomas@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Isabella Jackson', 'Cooling Systems', 9888877665, 'isabella.jackson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Matthew White', 'Engine Diagnostics', 9776655443, 'matthew.white@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Ava Harris', 'Emission Control', 9665544332, 'ava.harris@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Joshua Martin', 'Diesel Engines', 9554433221, 'joshua.martin@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Grace Thompson', 'Electric Vehicles', 9898989898, 'grace.thompson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Andrew Garcia', 'Hydraulics', 9321654789, 'andrew.garcia@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Chloe Martinez', 'Tire and Rim Repair', 9111223344, 'chloe.martinez@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Ethan Robinson', 'Auto Electricals', 9223344556, 'ethan.robinson@example.com');
+    INSERT INTO Mechanic (MechanicName, Expertise, PhoneNo, EmailID) VALUES ('Lily Clark', 'Interior Repairs', 9334455667, 'lily.clark@example.com');
+
+    COMMIT;
+END InsertSampleMechanics;
+/
+
+BEGIN
+    InsertSampleMechanics;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE get_all_mechanics (
+    p_mechanics OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_mechanics FOR
+        SELECT MechanicID, MechanicName, Expertise FROM Mechanic;
+END;
+/
 
 
 
 CREATE TABLE ServiceAppointment (
-    AppointmentID INT PRIMARY KEY,
+    AppointmentID INT DEFAULT seq_appointment.NEXTVAL PRIMARY KEY,
     VehicleID INT,
     MechanicID INT,
     UserID INT,
@@ -422,6 +464,127 @@ CREATE TABLE ServiceAppointment (
     CONSTRAINT fk_appointment_mechanic FOREIGN KEY (MechanicID) REFERENCES Mechanic(MechanicID),
     CONSTRAINT fk_appointment_user FOREIGN KEY (UserID) REFERENCES SystemUser(UserID)
 );
+
+CREATE OR REPLACE PROCEDURE GetVehicleIdByVIN (
+    p_VIN IN VARCHAR2,           -- Input parameter for VIN
+    p_VehicleID OUT INT          -- Output parameter for VehicleID
+)
+AS
+BEGIN
+    -- Query to select VehicleID based on VIN
+    SELECT VehicleID
+    INTO p_VehicleID
+    FROM Vehicle
+    WHERE VIN = p_VIN;
+
+EXCEPTION
+    -- If no data is found for the VIN, handle the exception
+    WHEN NO_DATA_FOUND THEN
+        p_VehicleID := -1;  -- Return -1 if VIN not found
+    WHEN OTHERS THEN
+        -- Handle other exceptions
+        p_VehicleID := -1;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE InsertAppointment (
+    p_VehicleID IN INT,                 -- Input parameter for VehicleID
+    p_MechanicID IN INT,                -- Input parameter for MechanicID
+    p_UserID IN INT,                    -- Input parameter for UserID
+    p_ServiceType IN VARCHAR2,          -- Input parameter for ServiceType
+    p_ServiceDate IN DATE,              -- Input parameter for ServiceDate
+    p_ServiceStatus IN VARCHAR2         -- Input parameter for ServiceStatus
+)
+AS
+BEGIN
+    -- Insert the appointment into ServiceAppointment table
+    INSERT INTO ServiceAppointment (
+        VehicleID, MechanicID, UserID, ServiceType, ServiceDate, ServiceStatus
+    ) VALUES (
+        p_VehicleID, p_MechanicID, p_UserID, p_ServiceType, p_ServiceDate, p_ServiceStatus
+    );
+
+    -- Commit the transaction
+    COMMIT;
+
+EXCEPTION
+    -- Exception handling if anything goes wrong
+    WHEN OTHERS THEN
+        -- Rollback in case of error
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END InsertAppointment;
+/
+
+
+CREATE OR REPLACE PROCEDURE get_appointment_by_id (
+    p_appointment_id IN ServiceAppointment.AppointmentID%TYPE,
+    p_vin OUT Vehicle.VIN%TYPE,
+    p_service_type OUT ServiceAppointment.ServiceType%TYPE,
+    p_service_date OUT ServiceAppointment.ServiceDate%TYPE,
+    p_status OUT ServiceAppointment.ServiceStatus%TYPE,
+    p_mechanic_id OUT ServiceAppointment.MechanicID%TYPE
+)
+AS
+BEGIN
+    SELECT v.VIN, a.ServiceType, a.ServiceDate, a.ServiceStatus, a.MechanicID
+    INTO p_vin, p_service_type, p_service_date, p_status, p_mechanic_id
+    FROM ServiceAppointment a
+    JOIN Vehicle v ON a.VehicleID = v.VehicleID
+    WHERE a.AppointmentID = p_appointment_id;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_vin := NULL;
+        p_service_type := NULL;
+        p_service_date := NULL;
+        p_status := NULL;
+        p_mechanic_id := NULL;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE update_appointment_by_id (
+    p_appointment_id IN ServiceAppointment.AppointmentID%TYPE,
+    p_service_type   IN ServiceAppointment.ServiceType%TYPE,
+    p_service_date   IN ServiceAppointment.ServiceDate%TYPE,
+    p_status         IN ServiceAppointment.ServiceStatus%TYPE,
+    p_mechanic_id    IN ServiceAppointment.MechanicID%TYPE
+)
+AS
+BEGIN
+    UPDATE ServiceAppointment
+    SET ServiceType = p_service_type,
+        ServiceDate = p_service_date,
+        ServiceStatus = p_status,
+        MechanicID = p_mechanic_id
+    WHERE AppointmentID = p_appointment_id;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error in update_appointment_by_id: ' || SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE delete_appointment_by_id (
+    p_appointment_id IN ServiceAppointment.AppointmentID%TYPE
+)
+AS
+BEGIN
+    DELETE FROM ServiceAppointment
+    WHERE AppointmentID = p_appointment_id;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error in delete_appointment_by_id: ' || SQLERRM);
+END;
+/
+
+
 
 CREATE TABLE Invoice (
     InvoiceID INT PRIMARY KEY,

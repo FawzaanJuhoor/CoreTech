@@ -1,16 +1,35 @@
 package Models;
+
 import java.time.LocalDate;
+
 public class Appointment {
+    private int appointmentId;
     private String vin;
-    private int customerId;
     private String serviceType;
     private LocalDate serviceDate;
+    private String status;
+    private int mechanicId;
 
-    public Appointment(String vin, int customerId, String serviceType, LocalDate serviceDate) {
+    // Default constructor
+    public Appointment() {}
+
+    // Constructor with parameters
+    public Appointment(int appointmentId, String vin, String serviceType, LocalDate serviceDate, String status, int mechanicId) {
+        this.appointmentId = appointmentId;
         this.vin = vin;
-        this.customerId = customerId;
         this.serviceType = serviceType;
         this.serviceDate = serviceDate;
+        this.status = status;
+        this.mechanicId = mechanicId;
+    }
+
+    // Getters and setters
+    public int getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(int appointmentId) {
+        this.appointmentId = appointmentId;
     }
 
     public String getVin() {
@@ -19,14 +38,6 @@ public class Appointment {
 
     public void setVin(String vin) {
         this.vin = vin;
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
     }
 
     public String getServiceType() {
@@ -43,5 +54,33 @@ public class Appointment {
 
     public void setServiceDate(LocalDate serviceDate) {
         this.serviceDate = serviceDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getMechanicId() {
+        return mechanicId;
+    }
+
+    public void setMechanicId(int mechanicId) {
+        this.mechanicId = mechanicId;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "appointmentId=" + appointmentId +
+                ", vin='" + vin + '\'' +
+                ", serviceType='" + serviceType + '\'' +
+                ", serviceDate=" + serviceDate +
+                ", status='" + status + '\'' +
+                ", mechanicId=" + mechanicId +
+                '}';
     }
 }
