@@ -18,6 +18,15 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Optional;
 
+import javafx.scene.control.Alert;
+import javafx.stage.FileChooser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import java.io.File;
+
 public class AdminController {
 
     @FXML public VBox ancpRevenueTracking;
@@ -32,6 +41,9 @@ public class AdminController {
     @FXML public TextField txtRemoveSalePhone;
     @FXML public TextField txtRemoveSaleEmail;
     @FXML public TextField txtRemoveSalePassword;
+
+
+
     @FXML private TableColumn<NewAdmin, Void> updateDelete;
     @FXML private ComboBox<String> comboRemoveSalesRole;
     @FXML public Button deleteButton;
@@ -71,12 +83,22 @@ public class AdminController {
     @FXML private TableView<?> InventorytableView;
     @FXML private VBox ancpInventoryMng;
 
+//    Monthly Report Servicing
+    @FXML public TextField searchDateYearServicing;
+    @FXML public Button btnGenerateServicing;
+    @FXML public TableColumn custName;
+    @FXML public TableColumn custVehicle;
+    @FXML public TableColumn serviceType;
+    @FXML public TableColumn cost;
     @FXML private VBox ancpMonthlyReportServicing;
     @FXML private TableView<?> InventoryMntlyRprttableView;
+    @FXML public Button btnGeneratePdfMonthlyReportServicing;
 
+    //    Monthly Report Inventory
     @FXML private VBox ancpMonthlyReportInventory;
     @FXML private TableView<?> ServicingMntlyRprttableView;
 
+    //    Monthly Report Revenue Summary
     @FXML private VBox ancpMonthlyReportRevenueSummary;
     @FXML private TableView<?> RevenueMntlyRprttableView;
 
@@ -515,13 +537,87 @@ public class AdminController {
     public void handleAddItemtoInventory(ActionEvent actionEvent) {
     }
 
+//PDF generator part
+    //    Monthly report of Servicing
+public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
+    try (PDDocument document = new PDDocument()) {
+        PDPage page = new PDPage();
+        document.addPage(page);
 
-    public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+        float yStart = 750;
+        float margin = 50;
+        float leading = 20;
+
+        // Title
+        contentStream.beginText();
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
+        contentStream.newLineAtOffset(margin, yStart);
+        contentStream.showText("Monthly Servicing Report");
+        contentStream.endText();
+
+        float y = yStart - 30;
+
+        // Table Headers
+        contentStream.beginText();
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+        contentStream.newLineAtOffset(margin, y);
+        contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
+        contentStream.endText();
+        y -= leading;
+
+        // Sample Hardcoded Rows
+        String[][] rows = {
+                {"Alice Johnson", "Honda Civic", "Oil Change", "$80"},
+                {"Bob Singh", "Toyota Corolla", "Brake Repair", "$150"},
+                {"Ravi Kumar", "Hyundai Elantra", "Tire Rotation", "$50"},
+                {"Jessica Brown", "Ford Escape", "Engine Diagnostics", "$120"}
+        };
+
+        contentStream.setFont(PDType1Font.HELVETICA, 12);
+        for (String[] row : rows) {
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, y);
+            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", row[0], row[1], row[2], row[3]));
+            contentStream.endText();
+            y -= leading;
+        }
+
+        contentStream.close();
+
+        // Save Dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF");
+        fileChooser.setInitialFileName("MonthlyServicingReport.pdf");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            document.save(file);
+            showAlert("PDF Generated", "The monthly servicing report PDF was successfully created.");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        showAlert("Error", "Could not generate PDF: " + e.getMessage());
     }
 
+}
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+    //    Monthly report of Inventory
     public void handleGeneratePdfMonthlyReportInventory(ActionEvent actionEvent) {
     }
 
+    //    Monthly report of Revenue Summary
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
     }
 
