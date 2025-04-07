@@ -32,6 +32,7 @@ public class AdminController {
     @FXML public TextField txtRemoveSalePhone;
     @FXML public TextField txtRemoveSaleEmail;
     @FXML public TextField txtRemoveSalePassword;
+    @FXML private TableColumn<NewAdmin, Void> updateDelete;
     @FXML private ComboBox<String> comboRemoveSalesRole;
     @FXML public Button deleteButton;
     @FXML public Button cancelDeleteButton;
@@ -137,6 +138,8 @@ public class AdminController {
 
         ObservableList<NewAdmin> adminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
         tableView.setItems(adminData);
+
+
     }
 
     /**
@@ -352,30 +355,70 @@ public class AdminController {
     }
 
     public void handleCancelAdd(ActionEvent actionEvent) {
-
+        clearAddForm();
     }
 
+    private void clearAddForm() {
+        txtUsername.clear();
+        txtPhone.clear();
+        txtEmail.clear();
+        txtPassword.clear();
+        comboRole.setValue(null);
+    }
+
+
+//Delete Page buttons
+
     public void handleDeleteSearch(ActionEvent actionEvent) {
-        String username = txtRemoveSaleUserName.getText().trim();
+        String username = txtUserID.getText().trim();
 
         if (username.isEmpty()) {
-            showAlert("Input Required", "Please enter a username to search.", Alert.AlertType.WARNING);
+            showAlert("Missing Input", "Please enter a username to search.", Alert.AlertType.WARNING);
             return;
         }
 
-        Admin admin = AdminDAO.getAdminByUsername(username); // reuse method
-
-        if (admin != null) {
-            txtRemoveSaleUserName.setText(admin.getUsername());
-            txtRemoveSalePhone.setText(admin.getPhone());
-            txtRemoveSaleEmail.setText(admin.getEmail());
-            txtRemoveSalePassword.setText(admin.getPassword());
-            comboRemoveSalesRole.setValue(admin.getRole());
+        Admin foundAdmin = AdminDAO.getAdminByUsername(username);
+        if (foundAdmin != null) {
+            txtRemoveSaleUserName.setText(foundAdmin.getUsername());
+            txtRemoveSalePhone.setText(foundAdmin.getPhone());
+            txtRemoveSaleEmail.setText(foundAdmin.getEmail());
+            txtRemoveSalePassword.setText(foundAdmin.getPassword());
+            comboRemoveSalesRole.setValue(foundAdmin.getRole());
         } else {
-            showAlert("Not Found", "No user found with that username.", Alert.AlertType.INFORMATION);
+            showAlert("User Not Found", "No user found with username: " + username, Alert.AlertType.INFORMATION);
         }
     }
 
+    public void handledeletebtn(ActionEvent actionEvent) {
+        String username = txtUserID.getText().trim();
+
+        if (username.isEmpty()) {
+            showAlert("Missing Input", "Please search and select a user to delete.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirm Delete");
+        confirmation.setHeaderText("Are you sure you want to delete this user?");
+        confirmation.setContentText("Username: " + username);
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            boolean deleted = AdminDAO.deleteAdminByUsername(username);
+
+            if (deleted) {
+                showAlert("Success", "User deleted successfully.", Alert.AlertType.INFORMATION);
+                clearRemoveForm();
+
+                // Refresh the TableView (if you want to reflect the change)
+                ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+                tableView.setItems(updatedAdminData);
+
+            } else {
+                showAlert("Delete Failed", "Could not delete the user. Please try again.", Alert.AlertType.ERROR);
+            }
+        }
+    }
 
     private void clearRemoveForm() {
         txtUserID.clear();
@@ -386,13 +429,13 @@ public class AdminController {
         comboRemoveSalesRole.setValue(null);
     }
 
-
-
-
     public void handlecancelDeleteButton(ActionEvent actionEvent) {
+        clearRemoveForm();
     }
 
 
+
+//Update Person Page buttons
     public void handleUpdateSearchbtn(ActionEvent actionEvent) {
         String username = searchUpdateSalesrep.getText().trim();
 
@@ -401,7 +444,7 @@ public class AdminController {
             return;
         }
 
-        Admin foundAdmin = AdminDAO.getAdminByUsername(username); // 🔁 we'll define this next
+        Admin foundAdmin = AdminDAO.getAdminByUsername(username);
         if (foundAdmin != null) {
             txtUpdateSalesrepName.setText(foundAdmin.getUsername());
             txtUpdateSalesPhone.setText(foundAdmin.getPhone());
@@ -444,10 +487,17 @@ public class AdminController {
         alert.showAndWait();
     }
 
-
-
+    private void clearUpdateForm() {
+        searchUpdateSalesrep.clear();
+        txtUpdateSalesrepName.clear();
+        txtUpdateSalesPhone.clear();
+        txtUpdateSalesRepEmail.clear();
+        txtUpdateSalesPassword.clear();
+        comboUpdateSalesRole.setValue(null);
+    }
 
     public void handleCancelUpdate(ActionEvent actionEvent) {
+        clearUpdateForm();
     }
 
 
