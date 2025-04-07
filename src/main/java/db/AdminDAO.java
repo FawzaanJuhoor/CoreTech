@@ -78,11 +78,10 @@ public class AdminDAO {
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Update failed: " + e.getMessage()); // 🔥 log the real error
+            System.out.println("Update failed: " + e.getMessage());
             return false;
         }
     }
-
 
     public static Admin getAdminByUsername(String username) {
         String sql = "SELECT UserName, PhoneNo, EmailID, Password, Role FROM SystemUser WHERE LOWER(UserName) = LOWER(?)";
@@ -106,6 +105,22 @@ public class AdminDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean deleteAdminByUsername(String username) {
+        String query = "DELETE FROM SystemUser WHERE username = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 
