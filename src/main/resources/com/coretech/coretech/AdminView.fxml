@@ -29,7 +29,7 @@
                </DropShadow>
             </effect>
          </ImageView>
-         <Label style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+         <Label fx:id="welcomeLabel" style="-fx-font-size: 14px; -fx-text-fill: black;">
             <VBox.margin>
                <Insets bottom="30.0" left="50.0" />
             </VBox.margin>
@@ -125,7 +125,7 @@
          </VBox>
 
          <!-- Log Out Button -->
-         <Button maxWidth="Infinity" onAction="#handleLogout" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" HBox.hgrow="ALWAYS">
+         <Button maxWidth="Infinity" fx:id="logoutButton" onAction="#handleLogout" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" HBox.hgrow="ALWAYS">
             <graphic>
                <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                   <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">

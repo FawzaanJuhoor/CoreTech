@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
+import javafx.stage.WindowEvent;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -27,7 +28,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.File;
 
-public class AdminController {
+public class AdminController extends BaseController {
 
     @FXML public VBox ancpRevenueTracking;
     @FXML public TextField txtUsername;
@@ -41,7 +42,8 @@ public class AdminController {
     @FXML public TextField txtRemoveSalePhone;
     @FXML public TextField txtRemoveSaleEmail;
     @FXML public TextField txtRemoveSalePassword;
-
+    public Label welcomeLabel;
+    public Button logoutButton;
 
 
     @FXML private TableColumn<NewAdmin, Void> updateDelete;
@@ -124,8 +126,11 @@ public class AdminController {
     @FXML private Button btnInventoryRevenue;
     @FXML private Button btnRevenueRevenue;
 
+   
     @FXML
     public void initialize() {
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
+
         // Show dashboard initially
         showPanel(ancpDashboard);
 
@@ -149,6 +154,7 @@ public class AdminController {
         btnRevenueRevenue.setOnAction(event -> showPanel(ancpMonthlyReportRevenueSummary));
 
         btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
+        logoutButton.setOnAction(e -> handleLogout());
 
 
 
@@ -163,6 +169,7 @@ public class AdminController {
 
 
     }
+
 
     /**
      * Shows the selected VBox panel and hides the others.
@@ -278,7 +285,9 @@ public class AdminController {
 
     // Left-side section handler stubs (implement as needed)
     @FXML
-    void handleLogout(ActionEvent event) { }
+    private void handleLogout() {
+        logout(welcomeLabel); // Use common logout method from BaseController
+    }
 
     @FXML
     void handleServicing(ActionEvent event) { }

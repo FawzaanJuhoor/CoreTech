@@ -1,18 +1,16 @@
 package com.coretech.coretech;
 
+import Models.UserSession;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
-import java.util.Objects;
-
-public class SalesRepDashboardController {
+public class SalesRepDashboardController extends BaseController {
     @FXML
     private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
 
@@ -21,61 +19,57 @@ public class SalesRepDashboardController {
 
     @FXML
     public void initialize() {
-        // Set welcome text dynamically (if needed)
-//        welcomeLabel.setText("Welcome, Admin");
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
         // Event handlers
-        homeButton.setOnAction(e -> handleHome());
-        customerButton.setOnAction(e -> handleCustomerManagement());
-        vehicleButton.setOnAction(e -> handleVehicleManagement());
-        appointmentButton.setOnAction(e -> handleAppointments());
-        serviceButton.setOnAction(e -> handleServicing());
-        logoutButton.setOnAction(e -> handleLogout(e));
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
 
     }
 
+
     @FXML
-    private void handleHome() {
+    private void handleHome(ActionEvent event) {
         System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleCustomerManagement() {
+    private void handleCustomerManagement(ActionEvent event) {
         System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleVehicleManagement() {
+    private void handleVehicleManagement(ActionEvent event) {
         System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleAppointments() {
+    private void handleAppointments(ActionEvent event) {
         System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleServicing() {
+    private void handleServicing(ActionEvent event) {
         System.out.println("Servicing Clicked");
     }
 
 
 
     @FXML
-    private void handleLogout(ActionEvent event) {
-        try {
-            // Get current stage
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            // Load the login page
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
-            stage.setScene(new Scene(root));
-            stage.setTitle("Login");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void handleLogout() {
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
-
 
 }

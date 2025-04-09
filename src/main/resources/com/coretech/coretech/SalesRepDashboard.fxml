@@ -31,7 +31,7 @@
                 </DropShadow>
             </effect> <!-- Keeping image path unchanged -->
         </ImageView>
-        <Label prefHeight="20.0" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+        <Label prefHeight="20.0" fx:id="welcomeLabel" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;">
             <VBox.margin>
                 <Insets bottom="30.0" left="50.0" />
             </VBox.margin></Label>
