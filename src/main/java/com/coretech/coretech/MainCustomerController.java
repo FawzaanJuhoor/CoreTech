@@ -12,77 +12,112 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Controller class for managing customer-related operations in the CoreTech application.
+ * Handles adding, updating, and deleting customer records through a JavaFX user interface.
+ */
 public class MainCustomerController {
 
     // FXML elements for buttons
+    /** Button to trigger the add customer form display. */
     @FXML
     private Button addCustomerButton;
+    /** Button to trigger the update customer form display. */
     @FXML
     private Button updateCustomerButton;
+    /** Button to trigger the delete customer form display. */
     @FXML
     private Button deleteCustomerButton;
 
     // FXML elements for Add Customer Form
+    /** VBox containing the add customer form elements. */
     @FXML
     private VBox addCustomerForm;
+    /** TextField for entering the customer's name in the add form. */
     @FXML
     private TextField addCustomerNameField;
+    /** TextField for entering the customer's phone number in the add form. */
     @FXML
     private TextField addPhoneNoField;
+    /** TextField for entering the customer's email in the add form. */
     @FXML
     private TextField addEmailField;
+    /** TextArea for entering the customer's address in the add form. */
     @FXML
     private TextArea addAddressField;
+    /** Button to submit the add customer form. */
     @FXML
     private Button addButton;
+    /** Button to cancel the add customer operation. */
     @FXML
     private Button cancelAddButton;
 
     // FXML elements for Update Customer Form
+    /** VBox containing the update customer form elements. */
     @FXML
     private VBox updateCustomerForm;
+    /** TextField for searching a customer by email in the update form. */
     @FXML
     private TextField updateSearchField;
+    /** Button to search for a customer in the update form. */
     @FXML
     private Button updateSearchButton;
+    /** TextField for updating the customer's name. */
     @FXML
     private TextField updateCustomerNameField;
+    /** TextField for updating the customer's phone number. */
     @FXML
     private TextField updatePhoneNoField;
+    /** TextField for updating the customer's email. */
     @FXML
     private TextField updateEmailField;
+    /** TextArea for updating the customer's address. */
     @FXML
     private TextArea updateAddressField;
+    /** Button to submit the update customer form. */
     @FXML
     private Button updateButton;
+    /** Button to cancel the update customer operation. */
     @FXML
     private Button cancelUpdateButton;
 
     // FXML elements for Delete Customer Form
+    /** VBox containing the delete customer form elements. */
     @FXML
     private VBox deleteCustomerForm;
+    /** TextField for searching a customer by email in the delete form. */
     @FXML
     private TextField deleteSearchField;
+    /** Button to search for a customer in the delete form. */
     @FXML
     private Button deleteSearchButton;
+    /** TextField displaying the customer's name in the delete form. */
     @FXML
     private TextField deleteCustomerNameField;
+    /** TextField displaying the customer's phone number in the delete form. */
     @FXML
     private TextField deletePhoneNoField;
+    /** TextField displaying the customer's email in the delete form. */
     @FXML
     private TextField deleteEmailField;
+    /** TextArea displaying the customer's address in the delete form. */
     @FXML
     private TextArea deleteAddressField;
+    /** Button to confirm customer deletion. */
     @FXML
     private Button deleteButton;
+    /** Button to cancel the delete customer operation. */
     @FXML
     private Button cancelDeleteButton;
 
-    // Main content pane
+    /** Main content pane for displaying forms. */
     @FXML
     private StackPane contentPane;
 
-    // Initialize method (called when the FXML is loaded)
+    /**
+     * Initializes the controller after the FXML file has been loaded.
+     * Hides all forms and clears active button styles on startup.
+     */
     @FXML
     public void initialize() {
         // Hide all forms initially
@@ -90,6 +125,12 @@ public class MainCustomerController {
         // Set the default active button (e.g., none)
         clearActiveButtons();
     }
+
+    /**
+     * Sets the specified button as active by applying a highlighted style.
+     *
+     * @param activeButton the button to set as active, or null to clear all highlights
+     */
 
     // Helper method to set the active button
     private void setActiveButton(Button activeButton) {
@@ -106,12 +147,19 @@ public class MainCustomerController {
         }
     }
 
+    /**
+     * Clears the active style from all navigation buttons, resetting them to default.
+     */
     // Helper method to clear the active class from all buttons
     private void clearActiveButtons() {
         addCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
         updateCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
         deleteCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
     }
+
+    /**
+     * Hides all customer management forms and removes them from layout management.
+     */
     // Hide all forms
     private void hideAllForms() {
         addCustomerForm.setVisible(false);
@@ -122,6 +170,9 @@ public class MainCustomerController {
         deleteCustomerForm.setManaged(false);
     }
 
+    /**
+     * Displays the add customer form and highlights the add customer button.
+     */
     // Show Add Customer Form
     @FXML
     private void showAddCustomerForm() {
@@ -131,6 +182,9 @@ public class MainCustomerController {
         setActiveButton(addCustomerButton); // Highlight the Add button
     }
 
+    /**
+     * Displays the update customer form and highlights the update customer button.
+     */
     // Show Update Customer Form
     @FXML
     private void showUpdateCustomerForm() {
@@ -140,6 +194,9 @@ public class MainCustomerController {
         setActiveButton(updateCustomerButton); // Highlight the Update button
     }
 
+    /**
+     * Displays the delete customer form and highlights the delete customer button.
+     */
     // Show Delete Customer Form
     @FXML
     private void showDeleteCustomerForm() {
@@ -149,6 +206,9 @@ public class MainCustomerController {
         setActiveButton(deleteCustomerButton); // Highlight the Delete button
     }
 
+    /**
+     * Handles the addition of a new customer by collecting form data and saving it to the database.
+     */
     // Handle Add Button Click
     @FXML
     private void handleAdd() {
@@ -176,6 +236,9 @@ public class MainCustomerController {
         }
     }
 
+    /**
+     * Searches for a customer by email and populates the update form with their details.
+     */
     @FXML
     private void handleUpdateSearch() {
         String email = updateSearchField.getText().trim();
@@ -211,6 +274,10 @@ public class MainCustomerController {
     private void enableEmailField() {
         updateEmailField.setDisable(false);
     }
+
+    /**
+     * Handles the update of an existing customer's details in the database.
+     */
     @FXML
     private void handleUpdate() {
         String name = updateCustomerNameField.getText().trim();
@@ -239,6 +306,9 @@ public class MainCustomerController {
         clearUpdateForm();
     }
 
+    /**
+     * Searches for a customer by email and populates the delete form with their details.
+     */
     @FXML
     private void handleDeleteSearch() {
         String email = deleteSearchField.getText().trim();
@@ -263,6 +333,9 @@ public class MainCustomerController {
         }
     }
 
+    /**
+     * Disables all fields in the delete form after a customer is found or deleted.
+     */
     private void disableDeleteFields() {
         deleteCustomerNameField.setDisable(true);
         deletePhoneNoField.setDisable(true);
@@ -271,7 +344,9 @@ public class MainCustomerController {
 
     }
 
-
+    /**
+     * Handles the deletion of a customer from the database using their email.
+     */
     @FXML
     private void handleDelete() {
         String email = deleteEmailField.getText().trim(); // Get email instead of phone number
@@ -296,7 +371,13 @@ public class MainCustomerController {
         }
     }
 
-
+    /**
+     * Displays an alert dialog with the specified type, title, and message.
+     *
+     * @param alertType the type of alert (e.g., INFORMATION, ERROR)
+     * @param title the title of the alert dialog
+     * @param message the message to display in the alert
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -305,21 +386,27 @@ public class MainCustomerController {
         alert.showAndWait();
     }
 
-    // Handle Cancel Button Click (Add Form)
+    /**
+     * Cancels the add operation and clears the add form fields.
+     */
     @FXML
     private void handleCancelAdd() {
         clearAddForm();
 //        hideAllForms();
     }
 
-    // Handle Cancel Button Click (Update Form)
+    /**
+     * Cancels the update operation and clears the update form fields.
+     */
     @FXML
     private void handleCancelUpdate() {
         clearUpdateForm();
 //        hideAllForms();
     }
 
-    // Handle Cancel Button Click (Delete Form)
+    /**
+     * Cancels the delete operation and clears the delete form fields.
+     */
     @FXML
     private void handleCancelDelete() {
         clearDeleteForm();
@@ -328,7 +415,9 @@ public class MainCustomerController {
     }
 
 
-    // Clear Add Form fields
+    /**
+     * Clears all fields in the add customer form.
+     */
     private void clearAddForm() {
         addCustomerNameField.clear();
         addPhoneNoField.clear();
@@ -336,7 +425,9 @@ public class MainCustomerController {
         addAddressField.clear();
     }
 
-    // Clear Update Form fields
+    /**
+     * Clears all fields in the update customer form and disables the email field.
+     */
     private void clearUpdateForm() {
         updateSearchField.clear();
         updateCustomerNameField.clear();
@@ -347,7 +438,9 @@ public class MainCustomerController {
 
     }
 
-    // Clear Delete Form fields
+    /**
+     * Clears all fields in the delete customer form and disables them.
+     */
     private void clearDeleteForm() {
         deleteSearchField.clear();
         deleteCustomerNameField.clear();
@@ -358,37 +451,54 @@ public class MainCustomerController {
         disableDeleteFields(); // Disable fields after deletion
     }
 
-    // Navigation methods (example implementations)
+    /**
+     * Handles navigation to the home section (placeholder implementation).
+     */
     @FXML
     private void handleHome() {
         System.out.println("Navigating to Home...");
         // Add navigation logic here
     }
 
+    /**
+     * Handles navigation to the customer management section (placeholder implementation).
+     */
     @FXML
     private void handleCustomerManagement() {
         System.out.println("Navigating to Customer Management...");
         // Add navigation logic here
     }
 
+    /**
+     * Handles navigation to the vehicle management section (placeholder implementation).
+     */
     @FXML
     private void handleVehicleManagement() {
         System.out.println("Navigating to Vehicle Management...");
         // Add navigation logic here
     }
 
+    /**
+     * Handles navigation to the appointments section (placeholder implementation).
+     */
     @FXML
     private void handleAppointments() {
         System.out.println("Navigating to Appointments...");
         // Add navigation logic here
     }
 
+    /**
+     * Handles navigation to the servicing section (placeholder implementation).
+     */
     @FXML
     private void handleServicing() {
         System.out.println("Navigating to Servicing...");
         // Add navigation logic here
     }
 
+    /**
+     * Handles logout operation (placeholder implementation).
+     */
     @FXML
     private void handleLogout() {
         System.out.println("Logging out...");
