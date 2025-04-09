@@ -14,8 +14,9 @@ public class SalesRepDashboardController extends BaseController {
     @FXML
     private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
 
+
     @FXML
-    private Label welcomeLabel;
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
 
     @FXML
     public void initialize() {

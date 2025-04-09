@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-public class ViewVehicleController {
+public class ViewVehicleController{
 
     public Button viewVehicleButton;
     public TableView viewVehicleTable;
@@ -86,11 +86,11 @@ public class ViewVehicleController {
     @FXML
     private Button servicingDetailsButton;
 
+
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
-        // Initialize search type options
 
         // Set up column value factories
         idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
@@ -340,33 +340,41 @@ public class ViewVehicleController {
 
     // Navigation methods (same as CustomerController)
     @FXML
-    private void handleHome() {
-        System.out.println("Navigating to Home");
+    private void handleHome(ActionEvent event) {
+        System.out.println("Home Clicked");
+
+
     }
 
     @FXML
-    private void handleCustomerManagement() {
-        System.out.println("Navigating to Customer Management");
+    private void handleCustomerManagement(ActionEvent event) {
+        System.out.println("Customer Management Clicked");
+
+
     }
 
     @FXML
-    private void handleVehicleManagement() {
-        System.out.println("Navigating to Vehicle Management");
+    private void handleVehicleManagement(ActionEvent event) {
+        System.out.println("Vehicle Management Clicked");
+
+
     }
 
     @FXML
-    private void handleAppointments() {
-        System.out.println("Navigating to Appointments");
+    private void handleAppointments(ActionEvent event) {
+        System.out.println("Appointments Clicked");
+
+
     }
 
     @FXML
-    private void handleServicing() {
-        System.out.println("Navigating to Servicing");
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("Logging out");
+
     }
 
     @FXML

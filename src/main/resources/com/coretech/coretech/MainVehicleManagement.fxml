@@ -24,10 +24,9 @@
         </HBox>
     </top>
 
-    <!-- Left Sidebar -->
     <left>
-        <VBox minWidth="150.0" maxWidth="250.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
-            <ImageView fitHeight="72.0" fitWidth="143.0" preserveRatio="true">
+        <VBox prefHeight="600.0" prefWidth="200.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;">
+            <ImageView fitHeight="72.0" fitWidth="143.0">
                 <Image url="@../../../Images/BlackVersion.png" />
                 <VBox.margin>
                     <Insets left="30.0" />
@@ -38,16 +37,15 @@
                             <Color opacity="0.5896656513214111" />
                         </color>
                     </DropShadow>
-                </effect>
+                </effect> <!-- Keeping image path unchanged -->
             </ImageView>
-            <Label style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+            <Label prefHeight="20.0" fx:id="welcomeLabel" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;">
                 <VBox.margin>
                     <Insets bottom="30.0" left="50.0" />
-                </VBox.margin>
-            </Label>
+                </VBox.margin></Label>
 
-            <!-- Home Button -->
-            <Button onAction="#handleHome" style="-fx-background-color: white; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <!-- Buttons with left-aligned text -->
+            <Button fx:id="homeButton" onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: white; -fx-text-fill: black; -fx-alignment: center-left;" text="Home">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -62,9 +60,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Customer Management Button -->
-            <Button onAction="#handleCustomerManagement" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="customerButton" onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -79,9 +75,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Vehicle Management Button -->
-            <Button onAction="#handleVehicleManagement" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="vehicleButton" onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: black; -fx-alignment: center-left;" text="Vehicle Management">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -96,9 +90,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Appointments Button -->
-            <Button onAction="#handleAppointments" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="appointmentButton" onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -114,10 +106,10 @@
                 </padding>
             </Button>
 
-            <!-- Spacer and Servicing Button -->
+            <!-- Spacer to push the LogOut button to the bottom -->
             <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
                 <children>
-                    <Button onAction="#handleServicing" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <Button fx:id="serviceButton" onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
                         <graphic>
                             <HBox alignment="CENTER_LEFT" spacing="10">
                                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -136,7 +128,8 @@
             </VBox>
 
             <!-- Log Out Button -->
-            <Button onAction="#handleLogout" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0"
+                    style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">

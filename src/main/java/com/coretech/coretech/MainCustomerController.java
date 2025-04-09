@@ -165,7 +165,7 @@ public class MainCustomerController {
         }
 
         // Add customer logic (e.g., save to database)
-          Customer customer = new Customer(name, phoneNo, email, address);
+        Customer customer = new Customer(name, phoneNo, email, address);
         boolean isInserted = CustomerDAO.insertCustomer(customer);
 
         if (isInserted) {

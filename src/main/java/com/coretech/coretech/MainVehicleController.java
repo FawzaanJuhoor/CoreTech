@@ -6,11 +6,31 @@ import db.VehicleDAO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-public class MainVehicleController {
+public class MainVehicleController extends BaseController{
 
+    @FXML
+    private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
+
+    @FXML
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
+
+    @FXML
+    public void initialize() {
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
+
+        // Event handlers
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
+
+    }
     public TextField addEmailField;
     public VBox centerPane;
     public TextField addMake;
@@ -165,35 +185,42 @@ public class MainVehicleController {
         servicingDetailsButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;");
     }
 
-    // Other button handlers (same as before)
     @FXML
-    private void handleHome() {
-        System.out.println("Navigating to Home.");
+    private void handleHome(ActionEvent event) {
+        System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleCustomerManagement() {
-        System.out.println("Navigating to Customer Management.");
+    private void handleCustomerManagement(ActionEvent event) {
+        System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleVehicleManagement() {
-        System.out.println("Navigating to Vehicle Management.");
+    private void handleVehicleManagement(ActionEvent event) {
+        System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleAppointments() {
-        System.out.println("Navigating to Appointments.");
+    private void handleAppointments(ActionEvent event) {
+        System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleServicing() {
-        System.out.println("Navigating to Servicing.");
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("Logging out...");
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

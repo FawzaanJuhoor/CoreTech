@@ -28,7 +28,7 @@
                         <!-- Logo Image -->
                         <ImageView fx:id="logoImageView" fitHeight="100.0" fitWidth="180.0" preserveRatio="true">
                             <image>
-                                <Image url="@../../../../../../Images/BlackVersion.png" />
+                                <Image url="@../../../Images/BlackVersion.png" />
                             </image>
                         </ImageView>
 
