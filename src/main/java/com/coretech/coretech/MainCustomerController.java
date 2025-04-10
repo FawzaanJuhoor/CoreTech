@@ -6,18 +6,18 @@ import db.AdminDAO;
 import db.CustomerDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 /**
  * Controller class for managing customer-related operations in the CoreTech application.
  * Handles adding, updating, and deleting customer records through a JavaFX user interface.
  */
-public class MainCustomerController {
+public class MainCustomerController extends BaseController{
     public Button viewCustomerButton;
 
     // FXML elements for buttons
@@ -115,13 +115,42 @@ public class MainCustomerController {
     /** Main content pane for displaying forms. */
     @FXML
     private StackPane contentPane;
+    @FXML private VBox viewForm;
+
+    @FXML private TextField viewCustomerSearchField;
+    @FXML private Button viewCustomerSearchButton;
+
+    @FXML private TableView<Customer> customerTable;
+    @FXML private TableColumn<Customer, Integer> idColumn;
+    @FXML private TableColumn<Customer, String> nameColumn;
+    @FXML private TableColumn<Customer, String> emailColumn;
+    @FXML private TableColumn<Customer, String> phoneColumn;
+    @FXML private TableColumn<Customer, String> addressColumn;
+    @FXML private TableColumn<Customer, Void> actionColumn;
 
     /**
      * Initializes the controller after the FXML file has been loaded.
      * Hides all forms and clears active button styles on startup.
      */
+
+    @FXML
+    private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
+
+    @FXML
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
+
     @FXML
     public void initialize() {
+
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
+
+        // Event handlers
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
         // Hide all forms initially
         hideAllForms();
         // Set the default active button (e.g., none)
@@ -157,6 +186,8 @@ public class MainCustomerController {
         addCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
         updateCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
         deleteCustomerButton.setStyle("-fx-background-color: white; " + "-fx-text-fill: #2293C3; " + "-fx-border-color: #2293C3"); // Reset to default style
+        viewCustomerButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;");
+
     }
 
     /**
@@ -170,7 +201,10 @@ public class MainCustomerController {
         updateCustomerForm.setManaged(false);
         deleteCustomerForm.setVisible(false);
         deleteCustomerForm.setManaged(false);
+        viewForm.setVisible(false);
+        viewForm.setManaged(false);
     }
+
 
     /**
      * Displays the add customer form and highlights the add customer button.
@@ -457,56 +491,55 @@ public class MainCustomerController {
      * Handles navigation to the home section (placeholder implementation).
      */
     @FXML
-    private void handleHome() {
-        System.out.println("Navigating to Home...");
-        // Add navigation logic here
+    private void handleHome(ActionEvent event) {
+        System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
     }
 
-    /**
-     * Handles navigation to the customer management section (placeholder implementation).
-     */
     @FXML
-    private void handleCustomerManagement() {
-        System.out.println("Navigating to Customer Management...");
-        // Add navigation logic here
+    private void handleCustomerManagement(ActionEvent event) {
+        System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Home", (Node) event.getSource());
     }
 
-    /**
-     * Handles navigation to the vehicle management section (placeholder implementation).
-     */
     @FXML
-    private void handleVehicleManagement() {
-        System.out.println("Navigating to Vehicle Management...");
-        // Add navigation logic here
+    private void handleVehicleManagement(ActionEvent event) {
+        System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Home", (Node) event.getSource());
     }
 
-    /**
-     * Handles navigation to the appointments section (placeholder implementation).
-     */
     @FXML
-    private void handleAppointments() {
-        System.out.println("Navigating to Appointments...");
-        // Add navigation logic here
+    private void handleAppointments(ActionEvent event) {
+        System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Home", (Node) event.getSource());
     }
 
-    /**
-     * Handles navigation to the servicing section (placeholder implementation).
-     */
     @FXML
-    private void handleServicing() {
-        System.out.println("Navigating to Servicing...");
-        // Add navigation logic here
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
     }
 
-    /**
-     * Handles logout operation (placeholder implementation).
-     */
     @FXML
     private void handleLogout() {
-        System.out.println("Logging out...");
-        // Add logout logic here
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
 
-    public void showViewCustomerForm(ActionEvent actionEvent) {
+    @FXML
+    private void handleViewCustomer() {
+        // Hide other forms
+        hideAllForms();
+        viewForm.setVisible(true);
+        viewForm.setManaged(true);
+        setActiveButton(viewCustomerButton); // if you have a button highlighter
+        
+        loadCustomers(); // Optional: Load table data
+    }
+    private void loadCustomers() {
+        customerTable.getItems().clear();
+//        List<Customer> customers = CustomerDAO.getAllCustomers(); // if you have DAO
+//        customerTable.getItems().addAll(customers);
+    }
+
+    public void handleViewCustomerSearch(ActionEvent actionEvent) {
     }
 }

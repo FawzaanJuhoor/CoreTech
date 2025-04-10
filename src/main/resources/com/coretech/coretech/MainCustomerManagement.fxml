@@ -14,6 +14,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.TextArea?>
 
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
 <BorderPane prefWidth="800" prefHeight="600" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.MainCustomerController">
     <!-- Top Bar -->
     <top>
@@ -23,9 +26,10 @@
     </top>
 
     <!-- Left Sidebar -->
+    <!-- Left Sidebar -->
     <left>
-        <VBox minWidth="150.0" maxWidth="250.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
-            <ImageView fitHeight="72.0" fitWidth="143.0" preserveRatio="true">
+        <VBox prefHeight="600.0" prefWidth="200.0" spacing="12" style="-fx-background-color: white; -fx-border-color: #2293C3;">
+            <ImageView fitHeight="72.0" fitWidth="143.0">
                 <Image url="@../../../Images/BlackVersion.png" />
                 <VBox.margin>
                     <Insets left="30.0" />
@@ -36,16 +40,15 @@
                             <Color opacity="0.5896656513214111" />
                         </color>
                     </DropShadow>
-                </effect>
+                </effect> <!-- Keeping image path unchanged -->
             </ImageView>
-            <Label style="-fx-font-size: 14px; -fx-text-fill: black;" text="Welcome, Name">
+            <Label prefHeight="20.0" fx:id="welcomeLabel" prefWidth="119.0" style="-fx-font-size: 14px; -fx-text-fill: black;">
                 <VBox.margin>
                     <Insets bottom="30.0" left="50.0" />
-                </VBox.margin>
-            </Label>
+                </VBox.margin></Label>
 
-            <!-- Home Button -->
-            <Button onAction="#handleHome" style="-fx-background-color: white; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Home" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <!-- Buttons with left-aligned text -->
+            <Button fx:id="homeButton" onAction="#handleHome" prefHeight="26.0" prefWidth="199.0" style="-fx-background-color: white; -fx-text-fill: black; -fx-alignment: center-left;" text="Home">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -60,9 +63,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Customer Management Button -->
-            <Button onAction="#handleCustomerManagement" style="-fx-background-color: #A7DAF8; -fx-text-fill: black; -fx-alignment: center-left;" text="Customer Management" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="customerButton" onAction="#handleCustomerManagement" prefHeight="26.0" prefWidth="180.0" style="-fx-background-color: #A7DAF8; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Customer Management">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -77,9 +78,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Vehicle Management Button -->
-            <Button onAction="#handleVehicleManagement" style="-fx-background-color: white; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Vehicle Management" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="vehicleButton" onAction="#handleVehicleManagement" prefHeight="26.0" prefWidth="192.0" style="-fx-background-color: white; -fx-text-fill: black; -fx-alignment: center-left;" text="Vehicle Management">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -94,9 +93,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
             </Button>
-
-            <!-- Appointments Button -->
-            <Button onAction="#handleAppointments" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="appointmentButton" onAction="#handleAppointments" prefHeight="26.0" prefWidth="166.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Appointments">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -112,10 +109,10 @@
                 </padding>
             </Button>
 
-            <!-- Spacer and Servicing Button -->
+            <!-- Spacer to push the LogOut button to the bottom -->
             <VBox fx:id="spacer" VBox.vgrow="ALWAYS">
                 <children>
-                    <Button onAction="#handleServicing" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <Button fx:id="serviceButton" onAction="#handleServicing" prefHeight="26.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000; -fx-alignment: center-left;" text="Servicing">
                         <graphic>
                             <HBox alignment="CENTER_LEFT" spacing="10">
                                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -134,7 +131,8 @@
             </VBox>
 
             <!-- Log Out Button -->
-            <Button onAction="#handleLogout" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="26.0" prefWidth="201.0"
+                    style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Log Out">
                 <graphic>
                     <HBox alignment="CENTER_LEFT" spacing="10"> <!-- Add spacing between icon and text -->
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
@@ -151,7 +149,6 @@
             </Button>
         </VBox>
     </left>
-
     <!-- Main Content -->
     <center>
         <BorderPane>
@@ -359,6 +356,40 @@
                             </Button>
                         </HBox>
                     </VBox>
+
+                    <!--view form-->
+                    <VBox fx:id="viewForm" alignment="CENTER" spacing="25"
+                          style="-fx-padding: 30; -fx-background-color: #EFEFEF;"
+                          visible="false" managed="false" VBox.vgrow="ALWAYS">
+
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="View Customers" />
+
+                        <HBox alignment="CENTER" spacing="10">
+                            <TextField fx:id="viewCustomerSearchField" prefHeight="30.0" promptText="Enter Email"
+                                       style="-fx-font-size: 12px; -fx-pref-width: 250;" />
+                            <Button fx:id="viewCustomerSearchButton" onAction="#handleViewCustomerSearch"
+                                    style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px;"
+                                    text="SEARCH" />
+                        </HBox>
+
+                        <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-padding: 0;">
+                            <content>
+                                <HBox>
+                                    <TableView fx:id="customerTable" minWidth="1000">
+                                        <columns>
+                                            <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
+                                            <TableColumn fx:id="nameColumn" text="Name" prefWidth="150" />
+                                            <TableColumn fx:id="emailColumn" text="Email" prefWidth="200" />
+                                            <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="150" />
+                                            <TableColumn fx:id="addressColumn" text="Address" prefWidth="300" />
+                                            <TableColumn fx:id="actionColumn" text="Actions" prefWidth="120" />
+                                        </columns>
+                                    </TableView>
+                                </HBox>
+                            </content>
+                        </ScrollPane>
+                    </VBox>
+
                 </StackPane>
             </center>
 
@@ -370,7 +401,7 @@
                             style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Add a Customer" />
                     <Button fx:id="updateCustomerButton" onAction="#showUpdateCustomerForm" prefHeight="40" prefWidth="200"
                             style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Update Customer Details" />
-                    <Button fx:id="viewCustomerButton" onAction="#showViewCustomerForm" prefHeight="40" prefWidth="180"
+                    <Button fx:id="viewCustomerButton" onAction="#handleViewCustomer" prefHeight="40" prefWidth="180"
                             style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="View Customer" />
                     <Button fx:id="deleteCustomerButton" onAction="#showDeleteCustomerForm" prefHeight="40" prefWidth="180"
                             style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Remove a Customer" />
