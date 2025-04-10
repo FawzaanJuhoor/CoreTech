@@ -43,21 +43,21 @@ public class SalesRepDashboardController extends BaseController {
     @FXML
     private void handleCustomerManagement(ActionEvent event) {
         System.out.println("Customer Management Clicked");
-        switchScene("MainCustomerManagement.fxml", "Home", (Node) event.getSource());
+        switchScene("MainCustomerManagement.fxml", "Customer", (Node) event.getSource());
 
     }
 
     @FXML
     private void handleVehicleManagement(ActionEvent event) {
         System.out.println("Vehicle Management Clicked");
-        switchScene("MainVehicleManagement.fxml", "Home", (Node) event.getSource());
+        switchScene("MainVehicleManagement.fxml", "Vehicle", (Node) event.getSource());
 
     }
 
     @FXML
     private void handleAppointments(ActionEvent event) {
         System.out.println("Appointments Clicked");
-        switchScene("MainAppointmentManagement.fxml", "Home", (Node) event.getSource());
+        switchScene("MainAppointmentManagement.fxml", "Appointment", (Node) event.getSource());
 
     }
 
