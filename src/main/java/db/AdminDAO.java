@@ -1,5 +1,6 @@
 package db;
 import Models.Admin;
+import Models.MonthlyInventoryReport;
 import Models.MonthlyServiceReport;
 import Models.NewAdmin;
 import javafx.collections.FXCollections;
@@ -160,6 +161,41 @@ public class AdminDAO {
 
         return reportList;
     }
+
+    public static ObservableList<MonthlyInventoryReport> getMonthlyInventoryReport() {
+        ObservableList<MonthlyInventoryReport> reportList = FXCollections.observableArrayList();
+
+        String query = "SELECT ItemName, Quantity, MinStockLevel FROM Inventory";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String itemName = rs.getString("ItemName");
+                int quantityUsed = rs.getInt("Quantity");
+                int remainingStock = rs.getInt("MinStockLevel");
+
+                reportList.add(new MonthlyInventoryReport(itemName, quantityUsed, remainingStock));
+
+                // Temporary Debugging Line (to verify data)
+                System.out.println(itemName + " | " + quantityUsed + " | " + remainingStock);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("SQL Error: " + e.getMessage());
+        }
+
+        // Temporary Debugging Line (Check size of returned data)
+        System.out.println("Total rows fetched: " + reportList.size());
+
+        return reportList;
+    }
+
+
+
+
 
 }
 

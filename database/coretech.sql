@@ -621,6 +621,13 @@ CREATE TABLE Inventory (
     UpdatedDate TIMESTAMP
 );
 
+INSERT INTO Inventory (ItemID, ItemName, Quantity, Price, MinStockLevel, UpdatedDate) 
+VALUES (1, 'Oil Filter', 100, 15.50, 25, TIMESTAMP '2025-04-01 09:30:00');
+
+INSERT INTO Inventory (ItemID, ItemName, Quantity, Price, MinStockLevel, UpdatedDate) 
+VALUES (2, 'Brake Pads', 75, 35.00, 20, TIMESTAMP '2025-04-03 14:15:00');
+
+
 CREATE TABLE ServiceInventory (
     AppointmentID INT,
     ItemID INT,

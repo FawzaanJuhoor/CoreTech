@@ -2,6 +2,7 @@ package com.coretech.coretech;
 import Models.*;
 
 import db.AdminDAO;
+import db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -100,7 +101,12 @@ public class AdminController extends BaseController {
 
     //    Monthly Report Inventory
     @FXML private VBox ancpMonthlyReportInventory;
-    @FXML private TableView<MonthlyServiceReport> ServicingMntlyRprttableView;
+    @FXML private TableView<MonthlyInventoryReport> ServicingMntlyRprttableView;
+    @FXML private TableColumn<MonthlyInventoryReport, String> itemNameService;
+    @FXML private TableColumn<MonthlyInventoryReport, Integer> quantityUsed;
+    @FXML private TableColumn<MonthlyInventoryReport, Integer> leftStock;
+    @FXML
+    private TextField searchDateYearInventory;
 
     //    Monthly Report Revenue Summary
     @FXML private VBox ancpMonthlyReportRevenueSummary;
@@ -221,10 +227,13 @@ public class AdminController extends BaseController {
         serviceType.setCellValueFactory(data -> data.getValue().serviceTypeProperty());
         cost.setCellValueFactory(data -> data.getValue().costProperty().asObject());
 
-
-
+// for monthly report of inventory
+        itemNameService.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        quantityUsed.setCellValueFactory(new PropertyValueFactory<>("quantityUsed"));
+        leftStock.setCellValueFactory(new PropertyValueFactory<>("leftStock"));
+        ObservableList<MonthlyInventoryReport> inventoryReport = AdminDAO.getMonthlyInventoryReport();
+        ServicingMntlyRprttableView.setItems(inventoryReport);
     }
-
 
     /**
      * Shows the selected VBox panel and hides the others.
@@ -726,62 +735,76 @@ public class AdminController extends BaseController {
 
     //    Monthly report of Inventory
     public void handleGeneratePdfMonthlyReportInventory(ActionEvent actionEvent) {
+        ObservableList<MonthlyInventoryReport> reportData = ServicingMntlyRprttableView.getItems();
+
+        if (reportData == null || reportData.isEmpty()) {
+            showAlert("No Data", "No data available to export.");
+            return;
+        }
+
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-            float yStart = 750;
-            float margin = 50;
-            float leading = 20;
+            final float yStart = 750;
+            final float margin = 50;
+            final float leading = 20;
+            float currentY = yStart;
 
-            // Title
+            // Title Section
             contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-            contentStream.newLineAtOffset(margin, yStart);
-            contentStream.showText("Monthly Revenue Summary");
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
+            contentStream.newLineAtOffset(margin, currentY);
+            contentStream.showText("Monthly Inventory Report");
             contentStream.endText();
 
-            float y = yStart - 30;
+            currentY -= (leading * 2);
 
             // Table Headers
             contentStream.beginText();
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            contentStream.newLineAtOffset(margin, y);
-            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
+            contentStream.newLineAtOffset(margin, currentY);
+            contentStream.showText(String.format("%-30s%-20s%-20s", "Item Name", "Quantity Used", "Remaining Stock"));
             contentStream.endText();
-            y -= leading;
 
-            // Sample Hardcoded Rows
-            String[][] rows = {
-                    {"Alice Johnson", "Honda Civic", "Oil Change", "$80"},
-                    {"Bob Singh", "Toyota Corolla", "Brake Repair", "$150"},
-                    {"Ravi Kumar", "Hyundai Elantra", "Tire Rotation", "$50"},
-                    {"Jessica Brown", "Ford Escape", "Engine Diagnostics", "$120"}
-            };
+            currentY -= leading;
 
             contentStream.setFont(PDType1Font.HELVETICA, 12);
-            for (String[] row : rows) {
+
+            // Data Rows
+            for (MonthlyInventoryReport item : reportData) {
+                if (currentY < 60) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    currentY = yStart;
+                }
+
                 contentStream.beginText();
-                contentStream.newLineAtOffset(margin, y);
-                contentStream.showText(String.format("%-20s %-20s %-20s %-10s", row[0], row[1], row[2], row[3]));
+                contentStream.newLineAtOffset(margin, currentY);
+                contentStream.showText(String.format("%-30s%-20d%-20d",
+                        item.getItemName(),
+                        item.getQuantityUsed(),
+                        item.getLeftStock()));
                 contentStream.endText();
-                y -= leading;
+                currentY -= leading;
             }
 
             contentStream.close();
 
-            // Save Dialog
+            // File Save Dialog
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save PDF");
-            fileChooser.setInitialFileName("MonthlyRevenueSummary.pdf");
+            fileChooser.setInitialFileName("MonthlyInventoryReport.pdf");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
             File file = fileChooser.showSaveDialog(null);
 
             if (file != null) {
                 document.save(file);
-                showAlert("PDF Generated", "The monthly Revenue Summary report PDF was successfully created.");
+                showAlert("PDF Generated", "The Monthly Inventory Report PDF was successfully created.");
             }
 
         } catch (Exception e) {
