@@ -1,8 +1,8 @@
 package com.coretech.coretech;
+import Models.*;
 
-import Models.Admin;
-import Models.NewAdmin;
 import db.AdminDAO;
+import db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,8 +12,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import Models.MonthlyServiceReport;
+
 
 import java.io.IOException;
 import java.util.Optional;
@@ -21,6 +24,8 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.WindowEvent;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -30,7 +35,7 @@ import java.io.File;
 
 public class AdminController extends BaseController {
 
-    @FXML public VBox ancpRevenueTracking;
+        @FXML public VBox ancpRevenueTracking;
     @FXML public TextField txtUsername;
     @FXML public TextField txtPhone;
     @FXML public TextField txtEmail;
@@ -82,23 +87,26 @@ public class AdminController extends BaseController {
     @FXML private VBox ancpViewAllSalesRep;
     @FXML private Button btnViewAllSalesRep;
 
-    @FXML private TableView<?> InventorytableView;
     @FXML private VBox ancpInventoryMng;
 
-//    Monthly Report Servicing
+    //    Monthly Report Servicing
     @FXML public TextField searchDateYearServicing;
     @FXML public Button btnGenerateServicing;
-    @FXML public TableColumn custName;
-    @FXML public TableColumn custVehicle;
-    @FXML public TableColumn serviceType;
-    @FXML public TableColumn cost;
+    @FXML private TableColumn<MonthlyServiceReport, String> custName;
+    @FXML private TableColumn<MonthlyServiceReport, String> custVehicle;
+    @FXML private TableColumn<MonthlyServiceReport, String> serviceType;
+    @FXML private TableColumn<MonthlyServiceReport, Double> cost;
     @FXML private VBox ancpMonthlyReportServicing;
-    @FXML private TableView<?> InventoryMntlyRprttableView;
-    @FXML public Button btnGeneratePdfMonthlyReportServicing;
+    @FXML private TableView<MonthlyServiceReport> InventoryMntlyRprttableView;    @FXML public Button btnGeneratePdfMonthlyReportServicing;
 
     //    Monthly Report Inventory
     @FXML private VBox ancpMonthlyReportInventory;
-    @FXML private TableView<?> ServicingMntlyRprttableView;
+    @FXML private TableView<MonthlyInventoryReport> ServicingMntlyRprttableView;
+    @FXML private TableColumn<MonthlyInventoryReport, String> itemNameService;
+    @FXML private TableColumn<MonthlyInventoryReport, Integer> quantityUsed;
+    @FXML private TableColumn<MonthlyInventoryReport, Integer> leftStock;
+    @FXML
+    private TextField searchDateYearInventory;
 
     //    Monthly Report Revenue Summary
     @FXML private VBox ancpMonthlyReportRevenueSummary;
@@ -126,7 +134,19 @@ public class AdminController extends BaseController {
     @FXML private Button btnInventoryRevenue;
     @FXML private Button btnRevenueRevenue;
 
-   
+    //    Add item to inventory
+    @FXML private TableView<Inventory> InventorytableView;
+    @FXML private TableColumn<Inventory, String> itemId;
+    @FXML private TableColumn<Inventory, String> itemName;
+    @FXML private TableColumn<Inventory, Integer> quantity;
+    @FXML private TableColumn<Inventory, Double> price;
+    @FXML private TableColumn<Inventory, String> stockLvl;
+    @FXML private TableColumn<Inventory, String> lstUpdateDate;
+
+    private final ObservableList<Inventory> inventoryList = FXCollections.observableArrayList();
+
+
+
     @FXML
     public void initialize() {
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
@@ -157,7 +177,6 @@ public class AdminController extends BaseController {
         logoutButton.setOnAction(e -> handleLogout());
 
 
-
 //        display all sales representative into table
         userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
         userName.setCellValueFactory(new PropertyValueFactory<>("username"));
@@ -167,9 +186,54 @@ public class AdminController extends BaseController {
         ObservableList<NewAdmin> adminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
         tableView.setItems(adminData);
 
+//        Add item into inventory
+        // Inventory TableView setup
+        InventorytableView.setEditable(true);
+        InventorytableView.setItems(inventoryList);
 
+// Column bindings
+        itemId.setCellValueFactory(cellData -> cellData.getValue().itemIdProperty());
+        itemId.setCellFactory(TextFieldTableCell.forTableColumn());
+        itemId.setOnEditCommit(event -> event.getRowValue().setItemId(event.getNewValue()));
+
+        itemName.setCellValueFactory(cellData -> cellData.getValue().itemNameProperty());
+        itemName.setCellFactory(TextFieldTableCell.forTableColumn());
+        itemName.setOnEditCommit(event -> event.getRowValue().setItemName(event.getNewValue()));
+
+        quantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
+        quantity.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        quantity.setOnEditCommit(event -> event.getRowValue().setQuantity(event.getNewValue()));
+
+        price.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
+        price.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        price.setOnEditCommit(event -> event.getRowValue().setPrice(event.getNewValue()));
+
+        stockLvl.setCellValueFactory(cellData -> cellData.getValue().stockLvlProperty());
+        stockLvl.setCellFactory(TextFieldTableCell.forTableColumn());
+        stockLvl.setOnEditCommit(event -> event.getRowValue().setStockLvl(event.getNewValue()));
+
+        lstUpdateDate.setCellValueFactory(cellData -> cellData.getValue().lstUpdateDateProperty());
+        lstUpdateDate.setCellFactory(TextFieldTableCell.forTableColumn());
+        lstUpdateDate.setOnEditCommit(event -> event.getRowValue().setLstUpdateDate(event.getNewValue()));
+
+
+//        For monthly report
+        ObservableList<MonthlyServiceReport> report = AdminDAO.getMonthlyServiceReport();
+        InventoryMntlyRprttableView.setItems(report);
+
+
+        custName.setCellValueFactory(data -> data.getValue().customerNameProperty());
+        custVehicle.setCellValueFactory(data -> data.getValue().vehicleProperty());
+        serviceType.setCellValueFactory(data -> data.getValue().serviceTypeProperty());
+        cost.setCellValueFactory(data -> data.getValue().costProperty().asObject());
+
+// for monthly report of inventory
+        itemNameService.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        quantityUsed.setCellValueFactory(new PropertyValueFactory<>("quantityUsed"));
+        leftStock.setCellValueFactory(new PropertyValueFactory<>("leftStock"));
+        ObservableList<MonthlyInventoryReport> inventoryReport = AdminDAO.getMonthlyInventoryReport();
+        ServicingMntlyRprttableView.setItems(inventoryReport);
     }
-
 
     /**
      * Shows the selected VBox panel and hides the others.
@@ -177,7 +241,7 @@ public class AdminController extends BaseController {
     private void showPanel(VBox panelToShow) {
         VBox[] allPanels = {
                 ancpDashboard, ancpAddSales, ancpRemoveSales, ancpUpdateSalesRep, ancpViewAllSalesRep,
-                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, ancpRevenueTracking
+                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, ancpRevenueTracking,
         };
 
         for (VBox panel : allPanels) {
@@ -208,9 +272,10 @@ public class AdminController extends BaseController {
             btnViewAllSalesRep.setStyle(HIGHLIGHT_STYLE);
         } else if (activePanel == ancpInventoryMng) {
             btnInventoryMang.setStyle(HIGHLIGHT_STYLE);
-        } else if (activePanel == ancpRevenueTracking) {
-            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);
-        }else if (activePanel == ancpMonthlyReportServicing ||
+        }
+        else if (activePanel == ancpRevenueTracking) {
+            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);}
+        else if (activePanel == ancpMonthlyReportServicing ||
                 activePanel == ancpMonthlyReportInventory ||
                 activePanel == ancpMonthlyReportRevenueSummary) {
             btnMonthlyReport.setStyle(HIGHLIGHT_STYLE);
@@ -232,6 +297,16 @@ public class AdminController extends BaseController {
     private static final String HIGHLIGHT_STYLE = "-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-family: inder;";
 
     // Handler methods (if you use them in FXML)
+
+
+    //    Add, update and delete item in inventory
+    @FXML private VBox addItemPane;
+    @FXML private VBox updateItemPane;
+    @FXML private VBox removeItemPane;
+
+    @FXML private Button btnAddItem;
+    @FXML private Button btnUpdateItem;
+    @FXML private Button btnDeleteItem;
 
     @FXML
     void handleAddSales(ActionEvent event) {
@@ -334,10 +409,13 @@ public class AdminController extends BaseController {
     @FXML
     void handleUpdateSalesCancle(ActionEvent event) { }
 
+//        Add, update and delete in inventory
 
 
 
-//Forms Buttons
+
+
+    //Forms Buttons
     public void handleAdd(ActionEvent actionEvent) {
         String username = txtUsername.getText();
         String phone = txtPhone.getText();
@@ -466,7 +544,7 @@ public class AdminController extends BaseController {
 
 
 
-//Update Person Page buttons
+    //Update Person Page buttons
     public void handleUpdateSearchbtn(ActionEvent actionEvent) {
         String username = searchUpdateSalesrep.getText().trim();
 
@@ -532,10 +610,14 @@ public class AdminController extends BaseController {
     }
 
 
-    
-    
-    
-    
+
+    //Add item to inventory
+    public void handleAddItemtoInventory(ActionEvent actionEvent) {
+        Inventory newItem = new Inventory("", "", 0, 0.0, "", "");
+        inventoryList.add(newItem);
+        InventorytableView.scrollTo(newItem);
+    }
+
 
     public void handleDeleteItemFromInventory(ActionEvent actionEvent) {
     }
@@ -543,76 +625,105 @@ public class AdminController extends BaseController {
     public void handleUpdateItemToInventory(ActionEvent actionEvent) {
     }
 
-    public void handleAddItemtoInventory(ActionEvent actionEvent) {
+
+
+
+    //    add, update and delete item in inventory
+    private void showInventoryPane(VBox paneToShow) {
+        VBox[] inventoryPanes = { addItemPane, updateItemPane, removeItemPane };
+
+        for (VBox pane : inventoryPanes) {
+            pane.setVisible(false);
+            pane.setManaged(false);
+        }
+
+        if (paneToShow != null) {
+            paneToShow.setVisible(true);
+            paneToShow.setManaged(true);
+        }
     }
 
-//PDF generator part
+
+    //PDF generator part
     //    Monthly report of Servicing
-public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
-    try (PDDocument document = new PDDocument()) {
-        PDPage page = new PDPage();
-        document.addPage(page);
+    public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
 
-        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-        float yStart = 750;
-        float margin = 50;
-        float leading = 20;
+            float yStart = 750;
+            float margin = 50;
+            float leading = 20;
 
-        // Title
-        contentStream.beginText();
-        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-        contentStream.newLineAtOffset(margin, yStart);
-        contentStream.showText("Monthly Servicing Report");
-        contentStream.endText();
-
-        float y = yStart - 30;
-
-        // Table Headers
-        contentStream.beginText();
-        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-        contentStream.newLineAtOffset(margin, y);
-        contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
-        contentStream.endText();
-        y -= leading;
-
-        // Sample Hardcoded Rows
-        String[][] rows = {
-                {"Alice Johnson", "Honda Civic", "Oil Change", "$80"},
-                {"Bob Singh", "Toyota Corolla", "Brake Repair", "$150"},
-                {"Ravi Kumar", "Hyundai Elantra", "Tire Rotation", "$50"},
-                {"Jessica Brown", "Ford Escape", "Engine Diagnostics", "$120"}
-        };
-
-        contentStream.setFont(PDType1Font.HELVETICA, 12);
-        for (String[] row : rows) {
+            // Title
             contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
+            contentStream.newLineAtOffset(margin, yStart);
+            contentStream.showText("Monthly Servicing Report");
+            contentStream.endText();
+
+            float y = yStart - 30;
+
+            // Table Headers
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
             contentStream.newLineAtOffset(margin, y);
-            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", row[0], row[1], row[2], row[3]));
+            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
             contentStream.endText();
             y -= leading;
+
+            // Loop through real TableView data
+            ObservableList<MonthlyServiceReport> reportList = InventoryMntlyRprttableView.getItems();
+
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            for (MonthlyServiceReport report : reportList) {
+                String customer = report.getCustomerName();
+                String vehicle = report.getVehicle();
+                String service = report.getServiceType();
+                String costStr = report.getCost() > 0 ? String.format("$%.2f", report.getCost()) : "";
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, y);
+                contentStream.showText(String.format("%-20s %-20s %-20s %-10s", customer, vehicle, service, costStr));
+                contentStream.endText();
+                y -= leading;
+
+                // Start new page if needed
+                if (y < 50) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = yStart;
+                }
+            }
+
+            contentStream.close();
+
+            // Save Dialog
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save PDF");
+            fileChooser.setInitialFileName("MonthlyServicingReport.pdf");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+            File file = fileChooser.showSaveDialog(null);
+
+            if (file != null) {
+                document.save(file);
+                showAlert("PDF Generated", "The monthly servicing report PDF was successfully created.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not generate PDF: " + e.getMessage());
         }
-
-        contentStream.close();
-
-        // Save Dialog
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save PDF");
-        fileChooser.setInitialFileName("MonthlyServicingReport.pdf");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        File file = fileChooser.showSaveDialog(null);
-
-        if (file != null) {
-            document.save(file);
-            showAlert("PDF Generated", "The monthly servicing report PDF was successfully created.");
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        showAlert("Error", "Could not generate PDF: " + e.getMessage());
     }
 
-}
+
+
+
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -624,10 +735,149 @@ public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
 
     //    Monthly report of Inventory
     public void handleGeneratePdfMonthlyReportInventory(ActionEvent actionEvent) {
+        ObservableList<MonthlyInventoryReport> reportData = ServicingMntlyRprttableView.getItems();
+
+        if (reportData == null || reportData.isEmpty()) {
+            showAlert("No Data", "No data available to export.");
+            return;
+        }
+
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            final float yStart = 750;
+            final float margin = 50;
+            final float leading = 20;
+            float currentY = yStart;
+
+            // Title Section
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
+            contentStream.newLineAtOffset(margin, currentY);
+            contentStream.showText("Monthly Inventory Report");
+            contentStream.endText();
+
+            currentY -= (leading * 2);
+
+            // Table Headers
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.newLineAtOffset(margin, currentY);
+            contentStream.showText(String.format("%-30s%-20s%-20s", "Item Name", "Quantity Used", "Remaining Stock"));
+            contentStream.endText();
+
+            currentY -= leading;
+
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+
+            // Data Rows
+            for (MonthlyInventoryReport item : reportData) {
+                if (currentY < 60) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    currentY = yStart;
+                }
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, currentY);
+                contentStream.showText(String.format("%-30s%-20d%-20d",
+                        item.getItemName(),
+                        item.getQuantityUsed(),
+                        item.getLeftStock()));
+                contentStream.endText();
+                currentY -= leading;
+            }
+
+            contentStream.close();
+
+            // File Save Dialog
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save PDF");
+            fileChooser.setInitialFileName("MonthlyInventoryReport.pdf");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+            File file = fileChooser.showSaveDialog(null);
+
+            if (file != null) {
+                document.save(file);
+                showAlert("PDF Generated", "The Monthly Inventory Report PDF was successfully created.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not generate PDF: " + e.getMessage());
+        }
     }
+
 
     //    Monthly report of Revenue Summary
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            float yStart = 750;
+            float margin = 50;
+            float leading = 20;
+
+            // Title
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
+            contentStream.newLineAtOffset(margin, yStart);
+            contentStream.showText("Monthly Revenue Summary");
+            contentStream.endText();
+
+            float y = yStart - 30;
+
+            // Table Headers
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.newLineAtOffset(margin, y);
+            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
+            contentStream.endText();
+            y -= leading;
+
+            // Sample Hardcoded Rows
+            String[][] rows = {
+                    {"Alice Johnson", "Honda Civic", "Oil Change", "$80"},
+                    {"Bob Singh", "Toyota Corolla", "Brake Repair", "$150"},
+                    {"Ravi Kumar", "Hyundai Elantra", "Tire Rotation", "$50"},
+                    {"Jessica Brown", "Ford Escape", "Engine Diagnostics", "$120"}
+            };
+
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            for (String[] row : rows) {
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, y);
+                contentStream.showText(String.format("%-20s %-20s %-20s %-10s", row[0], row[1], row[2], row[3]));
+                contentStream.endText();
+                y -= leading;
+            }
+
+            contentStream.close();
+
+            // Save Dialog
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save PDF");
+            fileChooser.setInitialFileName("MonthlyRevenueSummary.pdf");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+            File file = fileChooser.showSaveDialog(null);
+
+            if (file != null) {
+                document.save(file);
+                showAlert("PDF Generated", "The monthly Revenue Summary report PDF was successfully created.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not generate PDF: " + e.getMessage());
+        }
     }
 
 
@@ -638,6 +888,7 @@ public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
     public void setComboRemoveSalesRole(ComboBox<String> comboRemoveSalesRole) {
         this.comboRemoveSalesRole = comboRemoveSalesRole;
     }
+
 
 
 }
