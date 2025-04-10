@@ -3,6 +3,8 @@ package db;
 import Models.Vehicle;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VehicleDAO {
 
@@ -51,41 +53,98 @@ public class VehicleDAO {
     }
 
 
-    public static Vehicle searchVehicleByVIN(String vin) {
-        String sql = "{CALL GetVehicleByVIN(?, ?, ?, ?, ?, ?)}"; // Call to stored procedure
+//    public static Vehicle searchVehicleByVIN(String vin) {
+//        String sql = "{CALL GetVehicleByVIN(?, ?, ?, ?, ?, ?)}"; // Call to stored procedure
+//
+//        try (Connection conn = DBConnection.getConnection();
+//             CallableStatement stmt = conn.prepareCall(sql)) {
+//
+//            // Set input parameter (VIN)
+//            stmt.setString(1, vin);
+//
+//            // Register output parameters
+//            stmt.registerOutParameter(2, Types.INTEGER); // CustomerID
+//            stmt.registerOutParameter(3, Types.VARCHAR); // Make
+//            stmt.registerOutParameter(4, Types.VARCHAR); // Model
+//            stmt.registerOutParameter(5, Types.INTEGER); // Year
+//            stmt.registerOutParameter(6, Types.VARCHAR); // ServiceHistory
+//
+//            // Execute the procedure
+//            stmt.execute();
+//
+//            // Retrieve output values
+//            int customerId = stmt.getInt(2);
+//            String make = stmt.getString(3);
+//            String model = stmt.getString(4);
+//            int year = stmt.getInt(5);
+//            String serviceHistory = stmt.getString(6);
+//
+//            // Check if a record was found
+//            if (customerId != 0) {
+//                return new Vehicle(customerId, make, model, year, vin, serviceHistory);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return null; // Return null if vehicle is not found
+//    }
+
+    public static List<String> getVehiclesByEmail(String email) {
+        String sql = "{CALL GetVehiclesByEmail(?, ?)}";
+        List<String> vehicleList = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            // Set input parameter (VIN)
-            stmt.setString(1, vin);
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.REF_CURSOR);
 
-            // Register output parameters
-            stmt.registerOutParameter(2, Types.INTEGER); // CustomerID
-            stmt.registerOutParameter(3, Types.VARCHAR); // Make
-            stmt.registerOutParameter(4, Types.VARCHAR); // Model
-            stmt.registerOutParameter(5, Types.INTEGER); // Year
-            stmt.registerOutParameter(6, Types.VARCHAR); // ServiceHistory
-
-            // Execute the procedure
             stmt.execute();
 
-            // Retrieve output values
+            try (ResultSet rs = (ResultSet) stmt.getObject(2)) {
+                while (rs.next()) {
+                    int vehicleId = rs.getInt("VehicleID");
+                    String make = rs.getString("Make");
+                    String model = rs.getString("Model");
+                    int year = rs.getInt("Year");
+                    vehicleList.add(vehicleId + " - " + make + " - " + model + " - " + year);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehicleList;
+    }
+
+    public static Vehicle getVehicleByID(int vehicleId) {
+        String sql = "{CALL GetVehicleByID(?, ?, ?, ?, ?, ?, ?)}";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setInt(1, vehicleId);
+            stmt.registerOutParameter(2, Types.INTEGER);
+            stmt.registerOutParameter(3, Types.VARCHAR);
+            stmt.registerOutParameter(4, Types.VARCHAR);
+            stmt.registerOutParameter(5, Types.INTEGER);
+            stmt.registerOutParameter(6, Types.VARCHAR);
+            stmt.registerOutParameter(7, Types.VARCHAR);
+
+            stmt.execute();
+
             int customerId = stmt.getInt(2);
             String make = stmt.getString(3);
             String model = stmt.getString(4);
             int year = stmt.getInt(5);
-            String serviceHistory = stmt.getString(6);
+            String vin = stmt.getString(6);
+            String serviceHistory = stmt.getString(7);
 
-            // Check if a record was found
-            if (customerId != 0) {
-                return new Vehicle(customerId, make, model, year, vin, serviceHistory);
-            }
-
+            return new Vehicle(customerId, make, model, year, vin, serviceHistory);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Return null if vehicle is not found
+        return null;
     }
 
     public static boolean deleteVehicleByVIN(String vin) {
@@ -125,6 +184,43 @@ public class VehicleDAO {
         }
 
         return -1;  // If something goes wrong, return -1
+    }
+
+    public static List<Vehicle> searchVehiclesByEmail(String email) {
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "{CALL GetVehiclesByEmail(?, ?)}"; // Calling the stored procedure
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            // Set input parameter (email)
+            stmt.setString(1, email);
+            // Register output parameter (cursor)
+            stmt.registerOutParameter(2, Types.REF_CURSOR);
+
+            // Execute the stored procedure
+            stmt.execute();
+
+            // Retrieve the result set
+            try (ResultSet rs = (ResultSet) stmt.getObject(2)) {
+                while (rs.next()) {
+                    Vehicle vehicle = new Vehicle(
+                            rs.getInt("CustomerId"),
+                            rs.getString("Make"),
+                            rs.getString("Model"),
+                            rs.getInt("Year"),
+                            rs.getString("VIN"),
+                            rs.getString("ServiceHistory")
+                    );
+                    vehicles.add(vehicle);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
 
 
