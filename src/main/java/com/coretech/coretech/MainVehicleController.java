@@ -423,6 +423,6 @@ public class MainVehicleController extends BaseController{
         removeServiceHistoryField.clear();
     }
 
-
-
+    public void handleViewVehicle(ActionEvent actionEvent) {
+    }
 }

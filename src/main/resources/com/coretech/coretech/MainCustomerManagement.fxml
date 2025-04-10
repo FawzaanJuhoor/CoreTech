@@ -364,11 +364,16 @@
 
             <!-- Navigation Buttons at the Bottom -->
             <bottom>
-                <!-- Navigation Buttons at the Bottom -->
+                <!-- Bottom Buttons -->
                 <HBox alignment="CENTER" spacing="20" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #2293C3;">
-                    <Button fx:id="addCustomerButton" onAction="#showAddCustomerForm" prefHeight="40" prefWidth="150" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;" text="Add a Customer" />
-                    <Button fx:id="updateCustomerButton" onAction="#showUpdateCustomerForm" prefHeight="40" prefWidth="200" style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Update Customer Details" />
-                    <Button fx:id="deleteCustomerButton" onAction="#showDeleteCustomerForm" prefHeight="40" prefWidth="180" style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Remove a Customer" />
+                    <Button fx:id="addCustomerButton" onAction="#showAddCustomerForm" prefHeight="40" prefWidth="150"
+                            style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Add a Customer" />
+                    <Button fx:id="updateCustomerButton" onAction="#showUpdateCustomerForm" prefHeight="40" prefWidth="200"
+                            style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Update Customer Details" />
+                    <Button fx:id="viewCustomerButton" onAction="#showViewCustomerForm" prefHeight="40" prefWidth="180"
+                            style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="View Customer" />
+                    <Button fx:id="deleteCustomerButton" onAction="#showDeleteCustomerForm" prefHeight="40" prefWidth="180"
+                            style="-fx-background-color: #FFFFFF; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-border-width: 2px; -fx-font-weight: bold;" text="Remove a Customer" />
                 </HBox>
             </bottom>
         </BorderPane>
