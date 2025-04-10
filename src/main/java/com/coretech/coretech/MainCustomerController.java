@@ -531,7 +531,7 @@ public class MainCustomerController extends BaseController{
         viewForm.setVisible(true);
         viewForm.setManaged(true);
         setActiveButton(viewCustomerButton); // if you have a button highlighter
-        
+
         loadCustomers(); // Optional: Load table data
     }
     private void loadCustomers() {
