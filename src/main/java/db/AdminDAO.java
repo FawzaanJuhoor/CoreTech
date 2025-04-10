@@ -9,6 +9,36 @@ import java.util.List;
 
 public class AdminDAO {
 
+//    Dashboard table
+public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
+    ObservableList<ServiceAppointment> appointmentList = FXCollections.observableArrayList();
+
+    String query = "SELECT * FROM ServiceAppointment";
+
+    try (Connection conn = DBConnection.getConnection(); // or your own connection method
+         PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            ServiceAppointment appointment = new ServiceAppointment(
+                    rs.getInt("AppointmentID"),
+                    rs.getInt("VehicleID"),
+                    rs.getInt("MechanicID"),
+                    rs.getInt("UserID"),
+                    rs.getString("ServiceType"),
+                    rs.getDate("ServiceDate").toLocalDate(),
+                    rs.getString("ServiceStatus")
+            );
+            appointmentList.add(appointment);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return appointmentList;
+}
+
     public static boolean insertAdmin(Admin admin) {
         String sql = "{ call ADD_SYSTEM_USER(?, ?, ?, ?, ?) }";
 

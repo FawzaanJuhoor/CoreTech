@@ -147,22 +147,22 @@
    <right>
       <VBox alignment="CENTER" prefHeight="364.0" prefWidth="169.0" style="-fx-background-color: white; -fx-border-color: #2293c2;">
          <children>
-            <Button fx:id="btnAddSalesRep" mnemonicParsing="false" onAction="#handleAddSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c2; -fx-background-color: white; -fx-font-family: inder;" text="Add Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnAddSalesRep" mnemonicParsing="false" onAction="#handleAddSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c2; -fx-background-color: white; -fx-font-family: inder;" text="Add Employee" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="btnRemoveSalesRep" mnemonicParsing="false" onAction="#handleRemoveSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: white; -fx-background-color: #2293c2; -fx-font-family: inder;" text="Remove Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnRemoveSalesRep" mnemonicParsing="false" onAction="#handleRemoveSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: white; -fx-background-color: #2293c2; -fx-font-family: inder;" text="Remove Employee" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="btnUpdateSalesRep" mnemonicParsing="false" onAction="#handleUpdateSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Update Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnUpdateSalesRep" mnemonicParsing="false" onAction="#handleUpdateSales" prefWidth="139.0" style="-fx-border-color: #2293C3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Update Employee" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="btnViewAllSalesRep" mnemonicParsing="false" onAction="#handleViewAllSales" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="View All Sales Rep" VBox.vgrow="ALWAYS">
+            <Button fx:id="btnViewAllSalesRep" mnemonicParsing="false" onAction="#handleViewAllSales" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="View Employee" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
@@ -177,11 +177,11 @@
                   <Insets left="10.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="btnRevenueTracking" mnemonicParsing="false" onAction="#handleRevenueTracking" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Revenue Tracking" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets bottom="20.0" left="10.0" top="20.0" />
-               </VBox.margin>
-            </Button>
+<!--            <Button fx:id="btnRevenueTracking" mnemonicParsing="false" onAction="#handleRevenueTracking" prefWidth="139.0" style="-fx-border-color: #2293c3; -fx-text-fill: #2293c3; -fx-background-color: white; -fx-font-family: inder;" text="Revenue Tracking" VBox.vgrow="ALWAYS">-->
+<!--               <VBox.margin>-->
+<!--                  <Insets bottom="20.0" left="10.0" top="20.0" />-->
+<!--               </VBox.margin>-->
+<!--            </Button>-->
          </children>
       </VBox>
    </right>
@@ -198,40 +198,50 @@
 
 
    <center>
-      <VBox fx:id="centerContainer" prefHeight="840.0" prefWidth="460.0" BorderPane.alignment="CENTER">
-
+      <VBox fx:id="centerContainer" prefHeight="840.0" prefWidth="460.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
          <children>
             <!-- Initial Admin Dashboard -->
-            <VBox fx:id="ancpDashboard" spacing="15" style="-fx-padding: 15; -fx-background-color: EFEFEF;">
+            <VBox fx:id="ancpDashboard" spacing="15" style="-fx-padding: 20; -fx-background-color: #EFEFEF;">
                <HBox prefHeight="169.0" prefWidth="467.0" spacing="15" VBox.vgrow="ALWAYS">
                   <children>
-                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
-                     <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
+                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);" HBox.hgrow="ALWAYS" />
+                     <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);" HBox.hgrow="ALWAYS" />
                   </children>
                </HBox>
-               <HBox VBox.vgrow="ALWAYS">
+
+               <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
                   <VBox.margin>
                      <Insets top="30.0" />
                   </VBox.margin>
                   <children>
-                     <BarChart layoutX="6.0" layoutY="11.0" prefHeight="308.0" prefWidth="457.0">
-                        <xAxis>
-                           <CategoryAxis side="BOTTOM" />
-                        </xAxis>
-                        <yAxis>
-                           <NumberAxis side="LEFT" />
-                        </yAxis>
-                     </BarChart>
+                     <VBox VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+                        <TableView fx:id="mainDashBoardTable" VBox.vgrow="ALWAYS"
+                                   style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+                           <columns>
+                              <TableColumn fx:id="APPOINTMENTID" text="APPOINTMENT ID" />
+                              <TableColumn fx:id="VEHICLEID" text="VEHICLE ID" />
+                              <TableColumn fx:id="MECHANICID" text="MECHANIC ID" />
+                              <TableColumn fx:id="USERID" text="USERID" />
+                              <TableColumn fx:id="SERVICETYPE" text="SERVICE TYPE" />
+                              <TableColumn fx:id="SERVICEDATE" text="SERVICE DATE" />
+                              <TableColumn fx:id="SERVICESTATUS" text="SERVICE STATUS" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </VBox>
                   </children>
                </HBox>
             </VBox>
 
 
 
-            <!-- Add Sales Rep -->
+
+      <!-- Add Sales Rep -->
             <VBox fx:id="ancpAddSales" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="true" VBox.vgrow="ALWAYS">
                      <!-- Form Title -->
-                     <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Add Sales Representative" textAlignment="CENTER" />
+                     <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Add Employee" textAlignment="CENTER" />
 
                      <!-- Form Fields -->
                      <VBox alignment="CENTER" spacing="25" style="-fx-padding: 30; ">
@@ -319,7 +329,7 @@
                   <VBox fx:id="ancpRemoveSales" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="false" VBox.vgrow="ALWAYS">
                      <children>
                         <!-- Form Title -->
-                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Remove Sales Representative" textAlignment="CENTER" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Remove Employee" textAlignment="CENTER" />
                         <!-- Form Fields -->
                         <VBox alignment="CENTER" prefHeight="457.0" prefWidth="460.0" spacing="25" style="-fx-padding: 30;">
 
@@ -409,7 +419,7 @@
             <VBox fx:id="ancpUpdateSalesRep" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="false" VBox.vgrow="ALWAYS">
                <children>
                   <!-- Form Title -->
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Update Sales Representative" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Update Employee" textAlignment="CENTER" />
                   <!-- Form Fields -->
                   <VBox alignment="CENTER" prefHeight="457.0" prefWidth="460.0" spacing="25" style="-fx-padding: 30;">
 
@@ -500,7 +510,7 @@
             <VBox fx:id="ancpViewAllSalesRep" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="false" VBox.vgrow="ALWAYS">
                <children>
                   <!-- Form Title -->
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="All Sales Representative" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="View All Employees" textAlignment="CENTER" />
                   <!-- Form Fields -->
                   <VBox alignment="CENTER" prefHeight="457.0" prefWidth="460.0" spacing="25" style="-fx-padding: 30;">
 
@@ -679,26 +689,26 @@
 
 
             <!-- View Revenue Tracking -->
-            <VBox fx:id="ancpRevenueTracking" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="false" VBox.vgrow="ALWAYS">
-               <children>
-                  <!-- Form Title -->
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Revenue Tracking" textAlignment="CENTER" />
-                  <!-- Form Fields -->
-                  <VBox alignment="CENTER" prefHeight="457.0" prefWidth="460.0" spacing="25" style="-fx-padding: 30;">
+<!--            <VBox fx:id="ancpRevenueTracking" alignment="CENTER" prefHeight="470.0" prefWidth="475.0" visible="false" VBox.vgrow="ALWAYS">-->
+<!--               <children>-->
+<!--                  &lt;!&ndash; Form Title &ndash;&gt;-->
+<!--                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Revenue Tracking" textAlignment="CENTER" />-->
+<!--                  &lt;!&ndash; Form Fields &ndash;&gt;-->
+<!--                  <VBox alignment="CENTER" prefHeight="457.0" prefWidth="460.0" spacing="25" style="-fx-padding: 30;">-->
 
 
-                     <!-- Table for Inventory Mang -->
-                     <TableView fx:id="RevenueTrackingTableView" VBox.vgrow="ALWAYS">
-                        <columns>
-                           <TableColumn fx:id="revennueTrackingColumn" prefWidth="89.99996948242188" style="-fx-background-color: #2293c2;" text="" />
-                        </columns>
-                        <columnResizePolicy>
-                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                        </columnResizePolicy>
-                     </TableView>
-                  </VBox>
-               </children>
-            </VBox>
+<!--                     &lt;!&ndash; Table for Inventory Mang &ndash;&gt;-->
+<!--                     <TableView fx:id="RevenueTrackingTableView" VBox.vgrow="ALWAYS">-->
+<!--                        <columns>-->
+<!--                           <TableColumn fx:id="revennueTrackingColumn" prefWidth="89.99996948242188" style="-fx-background-color: #2293c2;" text="" />-->
+<!--                        </columns>-->
+<!--                        <columnResizePolicy>-->
+<!--                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />-->
+<!--                        </columnResizePolicy>-->
+<!--                     </TableView>-->
+<!--                  </VBox>-->
+<!--               </children>-->
+<!--            </VBox>-->
 
 
 
