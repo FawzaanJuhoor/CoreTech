@@ -131,32 +131,33 @@ public class AdminDAO {
     public static ObservableList<MonthlyServiceReport> getMonthlyServiceReport() {
         ObservableList<MonthlyServiceReport> reportList = FXCollections.observableArrayList();
 
-        String query = """
-        SELECT c.CustomerName,
-               v.Make || ' ' || v.Model AS VehicleName,
-               s.ServiceType
-        FROM ServiceAppointment s
-        JOIN Vehicle v ON s.VehicleID = v.VehicleID
-        JOIN Customer c ON v.CustomerID = c.CustomerID
-        ORDER BY s.ServiceDate
-    """;
+        String procedureCall = "{call Get_Monthly_Service_Report(?)}";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+             CallableStatement cstmt = conn.prepareCall(procedureCall)) {
 
-            while (rs.next()) {
-                String customerName = rs.getString("CustomerName");
-                String vehicleName = rs.getString("VehicleName");
-                String serviceType = rs.getString("ServiceType");
+            // Register the OUT parameter (SYS_REFCURSOR)
+            cstmt.registerOutParameter(1, java.sql.Types.REF_CURSOR);
 
-                // Set cost to 0 for now (can be updated later if needed)
-                MonthlyServiceReport report = new MonthlyServiceReport(customerName, vehicleName, serviceType, 0.0);
-                reportList.add(report);
+            // Execute the procedure
+            cstmt.execute();
+
+            // Retrieve the cursor
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) {
+                while (rs.next()) {
+                    String customerName = rs.getString("CustomerName");
+                    String vehicleName = rs.getString("VehicleName");
+                    String serviceType = rs.getString("ServiceType");
+
+                    // Set cost to 0 for now (can be updated later if needed)
+                    MonthlyServiceReport report = new MonthlyServiceReport(customerName, vehicleName, serviceType, 0.0);
+                    reportList.add(report);
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("SQL Error: " + e.getMessage());
         }
 
         return reportList;
@@ -165,21 +166,29 @@ public class AdminDAO {
     public static ObservableList<MonthlyInventoryReport> getMonthlyInventoryReport() {
         ObservableList<MonthlyInventoryReport> reportList = FXCollections.observableArrayList();
 
-        String query = "SELECT ItemName, Quantity, MinStockLevel FROM Inventory";
+        String procedureCall = "{call Get_Inventory_Summary(?)}";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+             CallableStatement cstmt = conn.prepareCall(procedureCall)) {
 
-            while (rs.next()) {
-                String itemName = rs.getString("ItemName");
-                int quantityUsed = rs.getInt("Quantity");
-                int remainingStock = rs.getInt("MinStockLevel");
+            // Register the OUT parameter (SYS_REFCURSOR)
+            cstmt.registerOutParameter(1, java.sql.Types.REF_CURSOR);
 
-                reportList.add(new MonthlyInventoryReport(itemName, quantityUsed, remainingStock));
+            // Execute the procedure
+            cstmt.execute();
 
-                // Temporary Debugging Line (to verify data)
-                System.out.println(itemName + " | " + quantityUsed + " | " + remainingStock);
+            // Retrieve the cursor
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) {
+                while (rs.next()) {
+                    String itemName = rs.getString("ItemName");
+                    int quantityUsed = rs.getInt("Quantity");
+                    int remainingStock = rs.getInt("MinStockLevel");
+
+                    reportList.add(new MonthlyInventoryReport(itemName, quantityUsed, remainingStock));
+
+                    // Temporary Debugging Line (to verify data)
+                    System.out.println(itemName + " | " + quantityUsed + " | " + remainingStock);
+                }
             }
 
         } catch (SQLException e) {

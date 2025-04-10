@@ -637,3 +637,72 @@ CREATE TABLE ServiceInventory (
 );
 
 
+-- Procedure for monthly report of inventory
+CREATE OR REPLACE PROCEDURE Get_Inventory_Summary (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT ItemName, Quantity, MinStockLevel
+        FROM Inventory;
+END;
+/
+
+-- Test for Get_Inventory_Summary
+SET SERVEROUTPUT ON;
+DECLARE
+    inv_cursor SYS_REFCURSOR;
+    v_itemname Inventory.ItemName%TYPE;
+    v_quantity Inventory.Quantity%TYPE;
+    v_minstock Inventory.MinStockLevel%TYPE;
+BEGIN
+    Get_Inventory_Summary(inv_cursor);
+
+    LOOP
+        FETCH inv_cursor INTO v_itemname, v_quantity, v_minstock;
+        EXIT WHEN inv_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Item: ' || v_itemname || ', Qty: ' || v_quantity || ', MinStock: ' || v_minstock);
+    END LOOP;
+
+    CLOSE inv_cursor;
+END;
+/
+
+
+-- Procedure to servicing monthly report
+CREATE OR REPLACE PROCEDURE Get_Monthly_Service_Report (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT c.CustomerName,
+               v.Make || ' ' || v.Model AS VehicleName,
+               s.ServiceType
+        FROM ServiceAppointment s
+        JOIN Vehicle v ON s.VehicleID = v.VehicleID
+        JOIN Customer c ON v.CustomerID = c.CustomerID
+        ORDER BY s.ServiceDate;
+END;
+/
+
+-- Test the procedure
+SET SERVEROUTPUT ON;
+DECLARE
+    service_cursor SYS_REFCURSOR;
+    v_customer_name Customer.CustomerName%TYPE;
+    v_vehicle_name VARCHAR2(200);
+    v_service_type ServiceAppointment.ServiceType%TYPE;
+BEGIN
+    Get_Monthly_Service_Report(service_cursor);
+
+    LOOP
+        FETCH service_cursor INTO v_customer_name, v_vehicle_name, v_service_type;
+        EXIT WHEN service_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Customer: ' || v_customer_name || ', Vehicle: ' || v_vehicle_name || ', Service: ' || v_service_type);
+    END LOOP;
+
+    CLOSE service_cursor;
+END;
+/
