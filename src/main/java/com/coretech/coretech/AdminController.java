@@ -110,7 +110,10 @@ public class AdminController extends BaseController {
 
     //    Monthly Report Revenue Summary
     @FXML private VBox ancpMonthlyReportRevenueSummary;
-    @FXML private TableView<?> RevenueMntlyRprttableView;
+    @FXML private TableView<RevenueSummary> RevenueMntlyRprttableView;
+    @FXML private TableColumn<RevenueSummary, Number> ttlRevenue;
+    @FXML private TableColumn<RevenueSummary, Number> ttlInventoryCost;
+    @FXML private TableColumn<RevenueSummary, Number> netProfit;
 
     @FXML private VBox ancpAddSales;
     @FXML private VBox ancpRemoveSales;
@@ -233,6 +236,15 @@ public class AdminController extends BaseController {
         leftStock.setCellValueFactory(new PropertyValueFactory<>("leftStock"));
         ObservableList<MonthlyInventoryReport> inventoryReport = AdminDAO.getMonthlyInventoryReport();
         ServicingMntlyRprttableView.setItems(inventoryReport);
+
+//        For monthly report of revenue summary
+        ttlRevenue.setCellValueFactory(data -> data.getValue().totalRevenueProperty());
+        ttlInventoryCost.setCellValueFactory(data -> data.getValue().totalInventoryCostProperty());
+        netProfit.setCellValueFactory(data -> data.getValue().netProfitProperty());
+        ObservableList<RevenueSummary> revenueReport = AdminDAO.getRevenueSummaryReport();
+        RevenueMntlyRprttableView.setItems(revenueReport);
+
+
     }
 
     /**
@@ -814,7 +826,6 @@ public class AdminController extends BaseController {
     }
 
 
-    //    Monthly report of Revenue Summary
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
@@ -839,30 +850,45 @@ public class AdminController extends BaseController {
             contentStream.beginText();
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
             contentStream.newLineAtOffset(margin, y);
-            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
+            contentStream.showText(String.format("%-20s %-25s %-20s", "Total Revenue", "Inventory Cost", "Net Profit"));
             contentStream.endText();
             y -= leading;
 
-            // Sample Hardcoded Rows
-            String[][] rows = {
-                    {"Alice Johnson", "Honda Civic", "Oil Change", "$80"},
-                    {"Bob Singh", "Toyota Corolla", "Brake Repair", "$150"},
-                    {"Ravi Kumar", "Hyundai Elantra", "Tire Rotation", "$50"},
-                    {"Jessica Brown", "Ford Escape", "Engine Diagnostics", "$120"}
-            };
+            // Get revenue data from DAO
+            ObservableList<RevenueSummary> revenueData = AdminDAO.getRevenueSummaryReport();
 
+            // Content rows
             contentStream.setFont(PDType1Font.HELVETICA, 12);
-            for (String[] row : rows) {
+            for (RevenueSummary summary : revenueData) {
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, y);
-                contentStream.showText(String.format("%-20s %-20s %-20s %-10s", row[0], row[1], row[2], row[3]));
+                contentStream.showText(String.format("%-20.2f %-25.2f %-20.2f",
+                        summary.getTotalRevenue(),
+                        summary.getTotalInventoryCost(),
+                        summary.getNetProfit()));
                 contentStream.endText();
                 y -= leading;
+
+                // Add new page if necessary
+                if (y < 100) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = yStart;
+                }
             }
+
+            // Footer with date
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
+            contentStream.newLineAtOffset(margin, 50);
+            contentStream.showText("Generated on: " + java.time.LocalDate.now());
+            contentStream.endText();
 
             contentStream.close();
 
-            // Save Dialog
+            // Save dialog
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save PDF");
             fileChooser.setInitialFileName("MonthlyRevenueSummary.pdf");
@@ -879,6 +905,7 @@ public class AdminController extends BaseController {
             showAlert("Error", "Could not generate PDF: " + e.getMessage());
         }
     }
+
 
 
     public ComboBox<String> getComboRemoveSalesRole() {

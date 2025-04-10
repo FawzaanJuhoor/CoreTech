@@ -1,8 +1,5 @@
 package db;
-import Models.Admin;
-import Models.MonthlyInventoryReport;
-import Models.MonthlyServiceReport;
-import Models.NewAdmin;
+import Models.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -202,6 +199,41 @@ public class AdminDAO {
         return reportList;
     }
 
+    public static ObservableList<RevenueSummary> getRevenueSummaryReport() {
+        ObservableList<RevenueSummary> reportList = FXCollections.observableArrayList();
+
+        String procedureCall = "{call Get_Revenue_Summary(?)}";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement cstmt = conn.prepareCall(procedureCall)) {
+
+            // Register the OUT parameter as SYS_REFCURSOR
+            cstmt.registerOutParameter(1, java.sql.Types.REF_CURSOR);
+
+            // Execute the stored procedure
+            cstmt.execute();
+
+            // Process the returned cursor
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) {
+                while (rs.next()) {
+                    double totalRevenue = rs.getDouble("TotalRevenue");
+                    double totalInventoryCost = rs.getDouble("TotalInventoryCost");
+                    double netProfit = rs.getDouble("NetProfit");
+
+                    reportList.add(new RevenueSummary(totalRevenue, totalInventoryCost, netProfit));
+
+                    // Debugging
+                    System.out.println(totalRevenue + " | " + totalInventoryCost + " | " + netProfit);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error fetching revenue summary: " + e.getMessage());
+        }
+
+        return reportList;
+    }
 
 
 
