@@ -1,4 +1,3 @@
-
 package Models;
 
 /**
@@ -35,14 +34,6 @@ public class Customer {
         this.emailID = emailID;
         this.address = address;
     }
-    public Customer(int customerID,String customerName, String phoneNo, String emailID, String address) {
-        this.customerID = customerID;
-        this.customerName = customerName;
-        this.phoneNo = phoneNo;
-        this.emailID = emailID;
-        this.address = address;
-    }
-
 
     /**
      * Returns the customer ID.

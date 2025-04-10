@@ -3,8 +3,6 @@ package db;
 import Models.Customer;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomerDAO {
 
@@ -147,34 +145,26 @@ public class CustomerDAO {
         return null;
     }
 
-    public List<Customer> getAllCustomers() {
-        List<Customer> customers = new ArrayList<>();
-        String procedureCall = "{ call GetAllCustomers(?) }";
 
-        try (Connection conn = DBConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall(procedureCall)) {
 
-            // Register the OUT parameter for the cursor
-            stmt.registerOutParameter(1, Types.REF_CURSOR);
-            stmt.execute();
-
-            // Retrieve the cursor
-            ResultSet rs = (ResultSet) stmt.getObject(1);
-
-            while (rs.next()) {
-                customers.add(new Customer(
-                        rs.getInt("CustomerID"),
-                        rs.getString("CustomerName"),
-                        rs.getString("PhoneNo"),
-                        rs.getString("EmailID"),
-                        rs.getString("Address")
-                ));
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return customers;
-    }
+//    // View Customers
+//    public List<Customer> getAllCustomers() {
+//        List<Customer> customers = new ArrayList<>();
+//        String sql = "SELECT * FROM Customer";
+//        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+//            while (rs.next()) {
+//                Customer customer = new Customer();
+//                customer.setCustomerID(rs.getInt("CustomerID"));
+//                customer.setCustomerName(rs.getString("CustomerName"));
+//                customer.setPhoneNo(rs.getString("PhoneNo"));
+//                customer.setEmailID(rs.getString("EmailID"));
+//                customer.setAddress(rs.getString("Address"));
+//                customers.add(customer);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return customers;
+//    }
 
 }

@@ -6,14 +6,31 @@ import db.VehicleDAO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-import java.util.Optional;
+public class MainVehicleController extends BaseController{
 
-public class MainVehicleController {
+    @FXML
+    private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
 
+    @FXML
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
+
+    @FXML
+    public void initialize() {
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
+
+        // Event handlers
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
+
+    }
     public TextField addEmailField;
     public VBox centerPane;
     public TextField addMake;
@@ -47,10 +64,6 @@ public class MainVehicleController {
     public TableColumn dateColumn;
     public TableColumn descriptionColumn;
     public VBox spacer;
-    public TextField updateEmailSearchField;
-    public Button viewVehicleButton;
-    public TextField removeSearchEmailField;
-    public Button removeSearchByEmailButton;
     // References to forms in the center pane
     @FXML
     private VBox addForm;
@@ -74,7 +87,6 @@ public class MainVehicleController {
     // Reference to the VIN search field in the Servicing Details form
     @FXML
     private TextField vinTextField;
-
     // Handle Add Vehicle Button Action
     @FXML
     private void handleAddVehicle() {
@@ -142,7 +154,6 @@ public class MainVehicleController {
         // Highlight the "Servicing Details" button
         highlightButton(servicingDetailsButton);
     }
-
     // Handle Search Button Action (for Servicing Details)
     @FXML
     private void handleSearch() {
@@ -174,35 +185,42 @@ public class MainVehicleController {
         servicingDetailsButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;");
     }
 
-    // Other button handlers (same as before)
     @FXML
-    private void handleHome() {
-        System.out.println("Navigating to Home.");
+    private void handleHome(ActionEvent event) {
+        System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleCustomerManagement() {
-        System.out.println("Navigating to Customer Management.");
+    private void handleCustomerManagement(ActionEvent event) {
+        System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleVehicleManagement() {
-        System.out.println("Navigating to Vehicle Management.");
+    private void handleVehicleManagement(ActionEvent event) {
+        System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleAppointments() {
-        System.out.println("Navigating to Appointments.");
+    private void handleAppointments(ActionEvent event) {
+        System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleServicing() {
-        System.out.println("Navigating to Servicing.");
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("Logging out...");
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -211,26 +229,6 @@ public class MainVehicleController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    @FXML
-    private void setFieldsDisabled(boolean disabled) {
-        removeEmailField.setDisable(disabled);
-        removeMakeField.setDisable(disabled);
-        removeModelField.setDisable(disabled);
-        removeYearField.setDisable(disabled);
-        removeVinField.setDisable(disabled);
-        removeServiceHistoryField.setDisable(disabled);
-    }
-
-    @FXML
-    private void clearFields() {
-        removeEmailField.clear();
-        removeMakeField.clear();
-        removeModelField.clear();
-        removeYearField.clear();
-        removeVinField.clear();
-        removeServiceHistoryField.clear();
     }
 
     @FXML
@@ -287,7 +285,7 @@ public class MainVehicleController {
 
     @FXML
     private void clearUpdateVehicleForm() {
-        updateEmailSearchField.clear();
+        updateVinSearchField.clear();
         updateEmailField.clear();
         updateMakeField.clear();
         updateModelField.clear();
@@ -297,51 +295,31 @@ public class MainVehicleController {
     }
 
     @FXML
-    private void searchVehiclesByEmail() {
-        String email = updateEmailSearchField.getText().trim();
+    private void SearchVehicle() {
+        String vin = updateVinSearchField.getText().trim();
 
-        if (email.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+        if (vin.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter a VIN to search.");
             return;
         }
 
-        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
-        if (vehicles.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
-            return;
-        }
-
-        // Show choices to the user (e.g., in a ComboBox or ListView)
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
-        dialog.setTitle("Select Vehicle");
-        dialog.setHeaderText("Multiple vehicles found for this customer.");
-        dialog.setContentText("Choose a vehicle:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(selectedVehicle -> {
-            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
-            loadVehicleDetails(vehicleId);
-        });
-    }
-
-    private void loadVehicleDetails(int vehicleId) {
-        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
+        Vehicle vehicle = VehicleDAO.searchVehicleByVIN(vin);
         if (vehicle != null) {
-            updateEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+            updateEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId())); // If available
             updateMakeField.setText(vehicle.getMake());
             updateModelField.setText(vehicle.getModel());
             updateYearField.setText(String.valueOf(vehicle.getYear()));
             updateVinField.setText(vehicle.getVIN());
             updateServiceHistoryField.setText(vehicle.getServiceHistory());
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle found and loaded.");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicle found with VIN: " + vin);
         }
     }
 
     @FXML
-    private void updateVehicle() {
+    private void UpdateVehicle() {
         String email = updateEmailField.getText().trim();
         String make = updateMakeField.getText().trim();
         String model = updateModelField.getText().trim();
@@ -379,39 +357,19 @@ public class MainVehicleController {
         }
     }
 
-    @FXML
-    private void searchVehicleForRemovalByEmail() {
-        String email = removeSearchEmailField.getText().trim();
+    public void searchVehicleForRemoval() {
+        String vin = removeVinSearchField.getText().trim();
 
-        if (email.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+        if (vin.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a VIN.");
             return;
         }
 
-        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
-        if (vehicles.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
-            return;
-        }
+        // Call DAO method to search for the vehicle
+        Vehicle vehicle = VehicleDAO.searchVehicleByVIN(vin);
 
-        // Show choices to the user (e.g., in a ComboBox or ListView)
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
-        dialog.setTitle("Select Vehicle");
-        dialog.setHeaderText("Multiple vehicles found for this customer.");
-        dialog.setContentText("Choose a vehicle:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(selectedVehicle -> {
-            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
-            loadVehicleDetailsForRemoval(vehicleId);
-        });
-    }
-
-    private void loadVehicleDetailsForRemoval(int vehicleId) {
-        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
-        // Disable fields to prevent accidental edits
-        setFieldsDisabled(true);
         if (vehicle != null) {
+            // Populate fields
             removeEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
             removeMakeField.setText(vehicle.getMake());
             removeModelField.setText(vehicle.getModel());
@@ -419,34 +377,52 @@ public class MainVehicleController {
             removeVinField.setText(vehicle.getVIN());
             removeServiceHistoryField.setText(vehicle.getServiceHistory());
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+            // Disable all fields
+            setFieldsDisabled(true);
         } else {
-            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
-        }
-
-    }
-        public void removeVehicle() {
-            String vin = removeVinField.getText().trim();
-            System.out.println("Vin: " + vin);
-            if (vin.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "VIN is required to remove a vehicle.");
-                return;
-            }
-
-            boolean success = VehicleDAO.deleteVehicleByVIN(vin);
-
-            if (success) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle removed successfully!");
-                clearFields();
-                setFieldsDisabled(false); // Enable fields for next search
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Failed to remove vehicle. VIN not found.");
-            }
-        }
-
-
-        @FXML
-        private void handleViewVehicle() {
-            System.out.println("View Vehicle");
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicle found with the given VIN.");
         }
     }
+
+    public void removeVehicle() {
+        String vin = removeVinField.getText().trim();
+
+        if (vin.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "VIN is required to remove a vehicle.");
+            return;
+        }
+
+        boolean success = VehicleDAO.deleteVehicleByVIN(vin);
+
+        if (success) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle removed successfully!");
+            clearFields();
+            setFieldsDisabled(false); // Enable fields for next search
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to remove vehicle. VIN not found.");
+        }
+    }
+
+    @FXML
+    private void setFieldsDisabled(boolean disabled) {
+        removeEmailField.setDisable(disabled);
+        removeMakeField.setDisable(disabled);
+        removeModelField.setDisable(disabled);
+        removeYearField.setDisable(disabled);
+        removeVinField.setDisable(disabled);
+        removeServiceHistoryField.setDisable(disabled);
+    }
+
+    @FXML
+    private void clearFields() {
+        removeEmailField.clear();
+        removeMakeField.clear();
+        removeModelField.clear();
+        removeYearField.clear();
+        removeVinField.clear();
+        removeServiceHistoryField.clear();
+    }
+
+    public void handleViewVehicle(ActionEvent actionEvent) {
+    }
+}

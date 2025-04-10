@@ -1,6 +1,5 @@
 package com.coretech.coretech;
 
-import db.CustomerDAO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -14,17 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-import java.util.List;
-
 public class CustomerController {
-    public TableView viewCustomerTable;
 
-    public TableColumn viewIdColumn;
-    public TableColumn viewNameColumn;
-    public TableColumn viewPhoneColumn;
-    public TableColumn viewEmailColumn;
-    public TableColumn viewAddressColumn;
-    public TableColumn viewActionColumn;
     @FXML
     private ScrollPane scrollPane; // This will now match the type from javafx.scene.control.ScrollPane
 
@@ -69,44 +59,34 @@ public class CustomerController {
 
     private ObservableList<Customer> customerData = FXCollections.observableArrayList();
 
-    private CustomerDAO customerDAO = new CustomerDAO();
-
     @FXML
     private void initialize() {
-        // Bind columns to model properties
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("customerID"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNo"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("emailID"));
-        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-//        loadCustomerData();
+        // Set up column value factories using lambdas
+        idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
+        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        phoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
+        emailColumn.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
+        addressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
 
-//        // Set up column value factories using lambdas
-//        idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-//        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-//        phoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
-//        emailColumn.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
-//        addressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
-//
-//        // Configure table properties for responsiveness
+        // Configure table properties for responsiveness
         configureTableResponsiveness();
-//
-//        // Add test data
-//        customerData.addAll(
-//                new Customer("1", "John Smith", "555-1234", "john@example.com", "123 Main St"),
-//                new Customer("2", "Sarah Johnson", "555-5678", "sarah@example.com", "456 Oak Ave"),
-//                new Customer("3", "Michael Brown", "555-9012", "michael@example.com", "789 Pine Rd")
-//        );
-//
-//        // Load data
-//        customerTable.setItems(customerData);
-//        System.out.println("Data loaded: " + customerData.size() + " items");
-//        customerData.forEach(c -> System.out.println(
-//                "ID: " + c.getId() +
-//                        ", Name: " + c.getName() +
-//                        ", Phone: " + c.getPhone()
-//        ));
+
+        // Add test data
+        customerData.addAll(
+                new Customer("1", "John Smith", "555-1234", "john@example.com", "123 Main St"),
+                new Customer("2", "Sarah Johnson", "555-5678", "sarah@example.com", "456 Oak Ave"),
+                new Customer("3", "Michael Brown", "555-9012", "michael@example.com", "789 Pine Rd")
+        );
+
+        // Load data
+        customerTable.setItems(customerData);
+        System.out.println("Data loaded: " + customerData.size() + " items");
+        customerData.forEach(c -> System.out.println(
+                "ID: " + c.getId() +
+                        ", Name: " + c.getName() +
+                        ", Phone: " + c.getPhone()
+        ));
 
         // Set up action column
         actionColumn.setCellFactory(getActionButtonCellFactory());
@@ -114,12 +94,6 @@ public class CustomerController {
         // Optional: Add context menu for column visibility control
         addColumnVisibilityContextMenu();
     }
-
-//    private void loadCustomerData() {
-//        List<Customer> customerList = customerDAO.getAllCustomers();
-//        ObservableList<Customer> observableList = FXCollections.observableArrayList(customerList);
-//        customerTable.setItems(observableList);
-//    }
 
     private void configureTableResponsiveness() {
         // Make columns resizable
@@ -237,21 +211,21 @@ public class CustomerController {
         };
     }
 
-//    @FXML
-//    private void handleSearch() {
-//        String searchId = searchField.getText().trim();
-//        if (!searchId.isEmpty()) {
-//            customerData.clear();
-//            // Replace with your actual database/service call
-//            customerData.add(new Customer(
-//                    searchId,
-//                    "John Doe",
-//                    "123-456-7890",
-//                    "john@example.com",
-//                    "123 Main St"
-//            ));
-//        }
-//    }
+    @FXML
+    private void handleSearch() {
+        String searchId = searchField.getText().trim();
+        if (!searchId.isEmpty()) {
+            customerData.clear();
+            // Replace with your actual database/service call
+            customerData.add(new Customer(
+                    searchId,
+                    "John Doe",
+                    "123-456-7890",
+                    "john@example.com",
+                    "123 Main St"
+            ));
+        }
+    }
 
     private void handleUpdate(Customer customer) {
         System.out.println("Update customer: " + customer.getId());

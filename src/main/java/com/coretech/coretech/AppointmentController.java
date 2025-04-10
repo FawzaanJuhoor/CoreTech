@@ -2,7 +2,6 @@ package com.coretech.coretech;
 
 import Models.Appointment;
 import Models.Mechanic;
-import Models.UserSession;
 import Models.Vehicle;
 import db.AppointmentDAO;
 import db.MechanicDAO;
@@ -366,15 +365,8 @@ public class AppointmentController {
         Mechanic mechanic = (Mechanic) mechanicComboBox.getValue();
         LocalDate serviceDate = serviceDatePicker.getValue();
         String status = (String) statusComboBox.getValue();
-//        int userId = UserSession.getInstance().getUserId(); // however you manage logged-in user
-        UserSession session = UserSession.getInstance();
-        int userId = 0;
-        if (session != null) {
-            userId = session.getUserId();
-            System.out.println("Logged-in User ID: " + userId);
-        } else {
-            System.out.println("No user is logged in.");
-        }
+        int userId = 22; //LoggedInUser.getUserId(); // however you manage logged-in user
+
         if (vin.isEmpty() || serviceType == null || mechanic == null || serviceDate == null || status == null) {
             showAlert(Alert.AlertType.WARNING, "Missing Fields", "Please fill in all required fields.");
             return;
@@ -390,10 +382,8 @@ public class AppointmentController {
 
         if (result) {
             showAlert(Alert.AlertType.INFORMATION, "Success", "Appointment booked successfully.");
-            clearAddForm();
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to book appointment.");
-            clearAddForm();
         }
     }
 

@@ -46,12 +46,10 @@ CREATE TABLE SystemUser (
     UserID INT DEFAULT seq_user.NEXTVAL PRIMARY KEY,
     UserName VARCHAR2(50) NOT NULL,
     PhoneNo NUMBER(10,0),
-    EmailID VARCHAR2(100) UNIQUE,
+    EmailID VARCHAR2(100),
     password VARCHAR2(255) NOT NULL,
     Role VARCHAR2(20) CHECK (Role IN ('Admin', 'Sales Representative')) NOT NULL
 );
-ALTER TABLE SystemUser ADD session_status VARCHAR2(10) DEFAULT 'OFFLINE';
-
 
 INSERT INTO SystemUser (UserID, UserName, PhoneNo, EmailID, Password, Role) 
 VALUES (seq_user.NEXTVAL, 'trusha', 9876543210, 'trusha@example.com', 
@@ -90,56 +88,7 @@ EXCEPTION
         p_role := NULL;
 END;
 /
-CREATE OR REPLACE PROCEDURE GET_USER_PASSWORD_ROLE(
-    p_username IN VARCHAR2,
-    p_password OUT VARCHAR2,
-    p_role OUT VARCHAR2,
-    p_user_id OUT NUMBER,
-    p_session_status OUT VARCHAR2
-) AS
-BEGIN
-    SELECT password, role, UserID, session_status
-    INTO p_password, p_role, p_user_id, p_session_status
-    FROM SystemUser WHERE username = p_username;
 
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        p_password := NULL;
-        p_role := NULL;
-        p_user_id := NULL;
-        p_session_status := 'OFFLINE';
-END;
-/
-
-DECLARE
-    v_password VARCHAR2(255);
-    v_role VARCHAR2(50);
-    v_user_id NUMBER;
-    v_session_status VARCHAR2(10);
-BEGIN
-    GET_USER_PASSWORD_ROLE('abc', v_password, v_role, v_user_id, v_session_status);
-    
-    -- Print values to check the output
-    DBMS_OUTPUT.PUT_LINE('Password: ' || v_password);
-    DBMS_OUTPUT.PUT_LINE('Role: ' || v_role);
-    DBMS_OUTPUT.PUT_LINE('User ID: ' || v_user_id);
-    DBMS_OUTPUT.PUT_LINE('Session Status: ' || v_session_status);
-END;
-/
-
-
-CREATE OR REPLACE PROCEDURE UPDATE_SESSION_STATUS(
-    p_user_id IN NUMBER,
-    p_status IN VARCHAR2
-) AS
-BEGIN
-    UPDATE SystemUser 
-    SET session_status = p_status 
-    WHERE UserID = p_user_id;
-    
-    COMMIT;
-END;
-/
 
 DROP PROCEDURE GET_USER_PASSWORD;
 
@@ -235,15 +184,6 @@ EXCEPTION
 END SearchCustomer;
 /
 
-CREATE OR REPLACE PROCEDURE GetAllCustomers (
-    p_cursor OUT SYS_REFCURSOR
-) AS
-BEGIN
-    OPEN p_cursor FOR 
-    SELECT CustomerID, CustomerName, PhoneNo, EmailID, Address FROM Customer;
-END;
-/
-
 
 CREATE TABLE Vehicle (
     VehicleID INT DEFAULT seq_vehicle.NEXTVAL PRIMARY KEY,
@@ -255,43 +195,6 @@ CREATE TABLE Vehicle (
     ServiceHistory VARCHAR(255),
     CONSTRAINT fk_vehicle_customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
-
-CREATE OR REPLACE PROCEDURE GetVehiclesByEmail(
-    p_email IN VARCHAR2,
-    p_cursor OUT SYS_REFCURSOR
-)
-AS
-    v_customer_id INT;
-BEGIN
-    -- Get Customer ID
-    SELECT CustomerID INTO v_customer_id FROM Customer WHERE EmailID = p_email;
-    
-    -- Fetch associated vehicles
-    OPEN p_cursor FOR
-    SELECT VehicleID, Make, Model, Year
-    FROM Vehicle
-    WHERE CustomerID = v_customer_id;
-END;
-/
-
-CREATE OR REPLACE PROCEDURE GetVehicleByID(
-    p_vehicle_id IN INT,
-    p_customer_id OUT INT,
-    p_make OUT VARCHAR2,
-    p_model OUT VARCHAR2,
-    p_year OUT INT,
-    p_vin OUT CHAR,
-    p_service_history OUT VARCHAR2
-)
-AS
-BEGIN
-    SELECT CustomerID, Make, Model, Year, VIN, ServiceHistory
-    INTO p_customer_id, p_make, p_model, p_year, p_vin, p_service_history
-    FROM Vehicle
-    WHERE VehicleID = p_vehicle_id;
-END;
-/
-
 
 CREATE OR REPLACE FUNCTION GetCustomerIdByEmail(p_email VARCHAR2)
 RETURN NUMBER
@@ -416,43 +319,6 @@ BEGIN
     COMMIT;
 END;
 /
-
-CREATE OR REPLACE PROCEDURE GetVehiclesByEmail(
-    p_email IN VARCHAR2,
-    p_cursor OUT SYS_REFCURSOR
-)
-AS
-    v_customer_id INT;
-BEGIN
-    -- Get Customer ID
-    SELECT CustomerID INTO v_customer_id FROM Customer WHERE EmailID = p_email;
-    
-    -- Fetch associated vehicles
-    OPEN p_cursor FOR
-    SELECT VehicleID, Make, Model, Year
-    FROM Vehicle
-    WHERE CustomerID = v_customer_id;
-END;
-/
-
-CREATE OR REPLACE PROCEDURE GetVehicleByID(
-    p_vehicle_id IN INT,
-    p_customer_id OUT INT,
-    p_make OUT VARCHAR2,
-    p_model OUT VARCHAR2,
-    p_year OUT INT,
-    p_vin OUT CHAR,
-    p_service_history OUT VARCHAR2
-)
-AS
-BEGIN
-    SELECT CustomerID, Make, Model, Year, VIN, ServiceHistory
-    INTO p_customer_id, p_make, p_model, p_year, p_vin, p_service_history
-    FROM Vehicle
-    WHERE VehicleID = p_vehicle_id;
-END;
-/
-
 
 --Add Sales or Admin User
 CREATE OR REPLACE PROCEDURE ADD_SYSTEM_USER (
@@ -782,7 +648,7 @@ CREATE TABLE Payment (
 );
 
 CREATE TABLE AuditLog (
-    UserID INT DEFAULT seq_log.NEXTVAL PRIMARY KEY,
+    LogID INT PRIMARY KEY,
     UserID INT,
     Action VARCHAR(50),
     TimeStamp TIMESTAMP,
