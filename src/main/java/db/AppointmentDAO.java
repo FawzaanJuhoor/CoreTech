@@ -5,8 +5,23 @@ import Models.Appointment;
 import java.sql.*;
 import java.time.LocalDate;
 
+/**
+ * Data Access Object (DAO) for managing appointment-related operations in the database.
+ * Provides methods to insert, retrieve, update, and delete appointment records using stored procedures.
+ */
 public class AppointmentDAO {
 
+    /**
+     * Inserts a new appointment into the database using a stored procedure.
+     *
+     * @param vehicleId the ID of the vehicle associated with the appointment
+     * @param mechanicId the ID of the mechanic assigned to the appointment
+     * @param userId the ID of the user who created the appointment
+     * @param serviceType the type of service scheduled (e.g., oil change, tire rotation)
+     * @param serviceDate the date of the scheduled service
+     * @param status the current status of the appointment (e.g., pending, completed)
+     * @return true if the insertion is successful, false otherwise
+     */
     public static boolean insertAppointment(int vehicleId, int mechanicId, int userId, String serviceType, LocalDate serviceDate, String status) {
         String sql = "{CALL InsertAppointment(?, ?, ?, ?, ?, ?)}";  // Calling the stored procedure
 
@@ -29,7 +44,12 @@ public class AppointmentDAO {
         return false;
     }
 
-    // Get appointment by ID
+    /**
+     * Retrieves an appointment from the database by its ID using a stored procedure.
+     *
+     * @param appointmentId the ID of the appointment to retrieve
+     * @return an Appointment object if found, null otherwise
+     */
     public static Appointment getAppointmentById(int appointmentId) {
         String procedureCall = "{ CALL get_appointment_by_id(?, ?, ?, ?, ?, ?) }";
         Appointment appointment = null;
@@ -66,7 +86,16 @@ public class AppointmentDAO {
         return appointment;
     }
 
-    // Update appointment by ID
+    /**
+     * Updates an existing appointment in the database by its ID using a stored procedure.
+     *
+     * @param appointmentId the ID of the appointment to update
+     * @param serviceType the updated type of service
+     * @param mechanicId the updated ID of the assigned mechanic
+     * @param serviceDate the updated date of the service
+     * @param status the updated status of the appointment
+     * @return true if the update is successful, false otherwise
+     */
     public static boolean updateAppointmentById(int appointmentId, String serviceType, int mechanicId, LocalDate serviceDate, String status) {
         String callProcedure = "{ call update_appointment_by_id(?, ?, ?, ?, ?) }";
 
@@ -88,6 +117,12 @@ public class AppointmentDAO {
         }
     }
 
+    /**
+     * Deletes an appointment from the database by its ID using a stored procedure.
+     *
+     * @param appointmentId the ID of the appointment to delete
+     * @return true if the deletion is successful, false otherwise
+     */
     public static boolean deleteAppointment(int appointmentId) {
         String sql = "{ call delete_appointment_by_id(?) }";
 
