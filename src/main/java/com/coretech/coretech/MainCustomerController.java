@@ -4,6 +4,7 @@ import Models.Admin;
 import Models.Customer;
 import db.AdminDAO;
 import db.CustomerDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -17,6 +18,7 @@ import javafx.scene.layout.VBox;
  * Handles adding, updating, and deleting customer records through a JavaFX user interface.
  */
 public class MainCustomerController {
+    public Button viewCustomerButton;
 
     // FXML elements for buttons
     /** Button to trigger the add customer form display. */
@@ -503,5 +505,8 @@ public class MainCustomerController {
     private void handleLogout() {
         System.out.println("Logging out...");
         // Add logout logic here
+    }
+
+    public void showViewCustomerForm(ActionEvent actionEvent) {
     }
 }

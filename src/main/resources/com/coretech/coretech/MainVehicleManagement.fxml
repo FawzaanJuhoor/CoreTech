@@ -381,10 +381,26 @@
     <!-- Right Panel -->
     <right>
         <AnchorPane minWidth="200.0" maxWidth="350.0" style="-fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
-            <Button fx:id="addVehicleButton" onAction="#handleAddVehicle" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Add Vehicle" AnchorPane.topAnchor="170.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
-            <Button fx:id="removeVehicleButton" onAction="#handleRemoveVehicle" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Remove Vehicle" AnchorPane.topAnchor="233.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
-            <Button fx:id="updateVehicleButton" onAction="#handleUpdateVehicle" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Update Vehicle Info" AnchorPane.topAnchor="297.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
-            <Button fx:id="servicingDetailsButton" onAction="#handleServicingDetails" style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;" text="Servicing Details" AnchorPane.topAnchor="363.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="addVehicleButton" onAction="#handleAddVehicle"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
+                    text="Add Vehicle"
+                    AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="updateVehicleButton" onAction="#handleUpdateVehicle"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
+                    text="Update Vehicle Info"
+                    AnchorPane.topAnchor="170.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="removeVehicleButton" onAction="#handleRemoveVehicle"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
+                    text="Remove Vehicle"
+                    AnchorPane.topAnchor="240.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="servicingDetailsButton" onAction="#handleServicingDetails"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
+                    text="Servicing Details"
+                    AnchorPane.topAnchor="310.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="viewVehicleButton" onAction="#handleViewVehicle"
+                    style="-fx-background-color: #2293C3; -fx-text-fill: #000000; -fx-border-color: #2293C3;"
+                    text="View Vehicle"
+                    AnchorPane.topAnchor="380.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
         </AnchorPane>
     </right>
 </BorderPane>
