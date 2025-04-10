@@ -6,8 +6,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) for managing vehicle-related operations in the database.
+ * Provides methods to insert, update, delete, and retrieve vehicle records using stored procedures.
+ */
 public class VehicleDAO {
 
+    /**
+     * Inserts a new vehicle into the database using a stored procedure.
+     *
+     * @param vehicle the Vehicle object containing the details to insert
+     * @return true if the insertion is successful, false otherwise
+     */
     public static boolean insertVehicle(Vehicle vehicle) {
         String sql = "{call InsertVehicle(?, ?, ?, ?, ?, ?)}";
 
@@ -30,6 +40,12 @@ public class VehicleDAO {
         return false;
     }
 
+    /**
+     * Updates an existing vehicle in the database using a stored procedure.
+     *
+     * @param vehicle the Vehicle object containing the updated details
+     * @return true if the update is successful, false otherwise
+     */
     public static boolean updateVehicle(Vehicle vehicle) {
         String sql = "{call UpdateVehicle(?, ?, ?, ?, ?, ?)}";
 
@@ -90,6 +106,13 @@ public class VehicleDAO {
 //        return null; // Return null if vehicle is not found
 //    }
 
+    /**
+     * Retrieves a list of vehicle descriptions associated with a customer's email using a stored procedure.
+     * Each description is formatted as "VehicleID - Make - Model - Year".
+     *
+     * @param email the email address of the customer
+     * @return a List of Strings representing vehicle descriptions
+     */
     public static List<String> getVehiclesByEmail(String email) {
         String sql = "{CALL GetVehiclesByEmail(?, ?)}";
         List<String> vehicleList = new ArrayList<>();
@@ -117,6 +140,12 @@ public class VehicleDAO {
         return vehicleList;
     }
 
+    /**
+     * Retrieves a vehicle from the database by its ID using a stored procedure.
+     *
+     * @param vehicleId the ID of the vehicle to retrieve
+     * @return a Vehicle object if found, null otherwise
+     */
     public static Vehicle getVehicleByID(int vehicleId) {
         String sql = "{CALL GetVehicleByID(?, ?, ?, ?, ?, ?, ?)}";
 
@@ -147,6 +176,12 @@ public class VehicleDAO {
         return null;
     }
 
+    /**
+     * Deletes a vehicle from the database by its VIN using a stored procedure.
+     *
+     * @param vin the Vehicle Identification Number (VIN) of the vehicle to delete
+     * @return true if the deletion is successful, false otherwise
+     */
     public static boolean deleteVehicleByVIN(String vin) {
         String sql = "{CALL DeleteVehicleByVIN(?)}"; // Calling the stored procedure
 
@@ -166,6 +201,12 @@ public class VehicleDAO {
         return false; // Return false if deletion fails
     }
 
+    /**
+     * Retrieves the vehicle ID associated with a given VIN using a stored procedure.
+     *
+     * @param vin the Vehicle Identification Number (VIN) of the vehicle
+     * @return the vehicle ID if found, -1 if not found or on error
+     */
     public static int getVehicleIdByVIN(String vin) {
         String sql = "{CALL GetVehicleIdByVIN(?, ?)}"; // Calling the stored procedure
 
@@ -186,6 +227,12 @@ public class VehicleDAO {
         return -1;  // If something goes wrong, return -1
     }
 
+    /**
+     * Retrieves a list of vehicles associated with a customer's email using a stored procedure.
+     *
+     * @param email the email address of the customer
+     * @return a List of Vehicle objects containing all vehicles linked to the email
+     */
     public static List<Vehicle> searchVehiclesByEmail(String email) {
         List<Vehicle> vehicles = new ArrayList<>();
         String sql = "{CALL GetVehiclesByEmail(?, ?)}"; // Calling the stored procedure

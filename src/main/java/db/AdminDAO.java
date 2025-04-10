@@ -7,9 +7,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) for managing admin-related operations and reports in the database.
+ * Provides methods to insert, update, delete, and retrieve admin data, as well as fetch various reports.
+ */
 public class AdminDAO {
 
-//    Dashboard table
+    /**
+     * Retrieves all service appointments from the database for display on the dashboard.
+     *
+     * @return an ObservableList of ServiceAppointment objects containing all service appointments
+     */
 public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
     ObservableList<ServiceAppointment> appointmentList = FXCollections.observableArrayList();
 
@@ -39,6 +47,12 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
     return appointmentList;
 }
 
+    /**
+     * Inserts a new admin into the SystemUser table using a stored procedure.
+     *
+     * @param admin the Admin object containing the details to insert
+     * @return true if the insertion is successful, false otherwise
+     */
     public static boolean insertAdmin(Admin admin) {
         String sql = "{ call ADD_SYSTEM_USER(?, ?, ?, ?, ?) }";
 
@@ -64,7 +78,11 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
     }
 
 
-    //    Display All admins in table
+    /**
+     * Retrieves all admins from the SystemUser table for display purposes.
+     *
+     * @return a List of NewAdmin objects containing all admin details
+     */
     public static List<NewAdmin> getAllAdminsForDisplay() {
         List<NewAdmin> admins = new ArrayList<>();
         String sql = "{call GET_ALL_SYSTEM_USERS(?)}";
@@ -93,6 +111,12 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         return admins;
     }
 
+    /**
+     * Updates an existing admin in the SystemUser table by username using a stored procedure.
+     *
+     * @param admin the Admin object containing the updated details
+     * @return true if the update is successful, false otherwise
+     */
     public static boolean updateAdminByUsername(Admin admin) {
         String sql = "{call UPDATE_USER_BY_USERNAME(?, ?, ?, ?, ?)}";
 
@@ -114,6 +138,12 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         }
     }
 
+    /**
+     * Retrieves an admin from the SystemUser table by their username.
+     *
+     * @param username the username of the admin to retrieve (case-insensitive)
+     * @return an Admin object if found, null otherwise
+     */
     public static Admin getAdminByUsername(String username) {
         String sql = "SELECT UserName, PhoneNo, EmailID, Password, Role FROM SystemUser WHERE LOWER(UserName) = LOWER(?)";
 
@@ -138,6 +168,12 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         return null;
     }
 
+    /**
+     * Deletes an admin from the SystemUser table by their username.
+     *
+     * @param username the username of the admin to delete
+     * @return true if the deletion is successful, false otherwise
+     */
     public static boolean deleteAdminByUsername(String username) {
         String query = "DELETE FROM SystemUser WHERE username = ?";
 
@@ -154,7 +190,11 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         }
     }
 
-    //Monthly report data
+    /**
+     * Retrieves a monthly service report from the database using a stored procedure.
+     *
+     * @return an ObservableList of MonthlyServiceReport objects containing the report data
+     */
     public static ObservableList<MonthlyServiceReport> getMonthlyServiceReport() {
         ObservableList<MonthlyServiceReport> reportList = FXCollections.observableArrayList();
 
@@ -190,6 +230,11 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         return reportList;
     }
 
+    /**
+     * Retrieves a monthly inventory report from the database using a stored procedure.
+     *
+     * @return an ObservableList of MonthlyInventoryReport objects containing the report data
+     */
     public static ObservableList<MonthlyInventoryReport> getMonthlyInventoryReport() {
         ObservableList<MonthlyInventoryReport> reportList = FXCollections.observableArrayList();
 
@@ -229,6 +274,11 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
         return reportList;
     }
 
+    /**
+     * Retrieves a revenue summary report from the database using a stored procedure.
+     *
+     * @return an ObservableList of RevenueSummary objects containing the report data
+     */
     public static ObservableList<RevenueSummary> getRevenueSummaryReport() {
         ObservableList<RevenueSummary> reportList = FXCollections.observableArrayList();
 
