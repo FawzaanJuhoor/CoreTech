@@ -1,6 +1,9 @@
 package db;
 import Models.Admin;
+import Models.MonthlyServiceReport;
 import Models.NewAdmin;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -122,7 +125,48 @@ public class AdminDAO {
             return false;
         }
     }
+
+    //Monthly report data
+    public static ObservableList<MonthlyServiceReport> getMonthlyServiceReport() {
+        ObservableList<MonthlyServiceReport> reportList = FXCollections.observableArrayList();
+
+        String query = """
+        SELECT c.CustomerName,
+               v.Make || ' ' || v.Model AS VehicleName,
+               s.ServiceType
+        FROM ServiceAppointment s
+        JOIN Vehicle v ON s.VehicleID = v.VehicleID
+        JOIN Customer c ON v.CustomerID = c.CustomerID
+        ORDER BY s.ServiceDate
+    """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String customerName = rs.getString("CustomerName");
+                String vehicleName = rs.getString("VehicleName");
+                String serviceType = rs.getString("ServiceType");
+
+                // Set cost to 0 for now (can be updated later if needed)
+                MonthlyServiceReport report = new MonthlyServiceReport(customerName, vehicleName, serviceType, 0.0);
+                reportList.add(report);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reportList;
+    }
+
 }
+
+
+
+
+
 
 
 
