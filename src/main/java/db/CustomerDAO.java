@@ -6,18 +6,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Data Access Object (DAO) for managing customer-related operations in the database.
- * Provides methods to insert, update, delete, retrieve, and search customer records using stored procedures and functions.
- */
 public class CustomerDAO {
 
-    /**
-     * Retrieves the customer ID associated with a given email using a database function.
-     *
-     * @param email the email address of the customer
-     * @return the customer ID if found, -1 if not found or on error
-     */
     public static int getCustomerIdByEmail(String email) {
         String sql = "{ ? = call GetCustomerIdByEmail(?) }";
 
@@ -39,12 +29,6 @@ public class CustomerDAO {
         return -1;
     }
 
-    /**
-     * Retrieves the email address associated with a given customer ID using a database function.
-     *
-     * @param customerId the ID of the customer
-     * @return the email address if found, an empty string if not found or on error
-     */
     public static String getEmailByCustomerId(int customerId) {
         String sql = "{? = CALL GetEmailByCustomerId(?)}"; // Calling the function
 
@@ -70,12 +54,6 @@ public class CustomerDAO {
     }
 
 
-    /**
-     * Inserts a new customer into the database using a stored procedure.
-     *
-     * @param customer the Customer object containing the details to insert
-     * @return true if the insertion is successful, false otherwise
-     */
     public static boolean insertCustomer(Customer customer) {
         String sql = "{CALL InsertCustomer(?, ?, ?, ?)}"; // Calling the stored procedure
 
@@ -98,12 +76,7 @@ public class CustomerDAO {
         return false;
     }
 
-    /**
-     * Updates an existing customer in the database using a stored procedure.
-     *
-     * @param customer the Customer object containing the updated details
-     * @return true if the update is successful, false otherwise
-     */
+    // Update Customer
     public static boolean updateCustomer(Customer customer) {
         String sql = "{CALL UpdateCustomer(?, ?, ?, ?)}";
 
@@ -127,12 +100,7 @@ public class CustomerDAO {
 
 
 
-    /**
-     * Deletes a customer from the database by their email address using a stored procedure.
-     *
-     * @param emailID the email address of the customer to delete
-     * @return true if the deletion is successful, false otherwise
-     */
+    // Delete Customer
     public static boolean deleteCustomer(String emailID) {
         String sql = "{CALL DeleteCustomer(?)}";
 
@@ -151,12 +119,7 @@ public class CustomerDAO {
         return false;
     }
 
-    /**
-     * Searches for a customer in the database by their email address using a stored procedure.
-     *
-     * @param emailID the email address of the customer to search for
-     * @return a Customer object if found, null otherwise
-     */
+    //search Customer
     public static Customer searchCustomer(String emailID) {
         String sql = "{CALL SearchCustomer(?, ?, ?, ?)}";
 
@@ -184,11 +147,6 @@ public class CustomerDAO {
         return null;
     }
 
-    /**
-     * Retrieves all customers from the database using a stored procedure.
-     *
-     * @return a List of Customer objects containing all customer records
-     */
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String procedureCall = "{ call GetAllCustomers(?) }";
