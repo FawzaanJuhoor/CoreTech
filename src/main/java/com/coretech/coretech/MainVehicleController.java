@@ -10,8 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
+import java.util.Optional;
+
 public class MainVehicleController extends BaseController{
 
+    public TextField updateSearchEmailField;
+    public TextField removeSearchEmailField;
     @FXML
     private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
 
@@ -285,7 +290,7 @@ public class MainVehicleController extends BaseController{
 
     @FXML
     private void clearUpdateVehicleForm() {
-        updateVinSearchField.clear();
+        updateSearchEmailField.clear();
         updateEmailField.clear();
         updateMakeField.clear();
         updateModelField.clear();
@@ -357,32 +362,32 @@ public class MainVehicleController extends BaseController{
         }
     }
 
-    public void searchVehicleForRemoval() {
-        String vin = removeVinSearchField.getText().trim();
-
-        if (vin.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a VIN.");
-            return;
-        }
-
-        // Call DAO method to search for the vehicle
-        Vehicle vehicle = VehicleDAO.searchVehicleByVIN(vin);
-
-        if (vehicle != null) {
-            // Populate fields
-            removeEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
-            removeMakeField.setText(vehicle.getMake());
-            removeModelField.setText(vehicle.getModel());
-            removeYearField.setText(String.valueOf(vehicle.getYear()));
-            removeVinField.setText(vehicle.getVIN());
-            removeServiceHistoryField.setText(vehicle.getServiceHistory());
-
-            // Disable all fields
-            setFieldsDisabled(true);
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicle found with the given VIN.");
-        }
-    }
+//    public void searchVehicleForRemoval() {
+//        String vin = removeVinSearchField.getText().trim();
+//
+//        if (vin.isEmpty()) {
+//            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a VIN.");
+//            return;
+//        }
+//
+//        // Call DAO method to search for the vehicle
+//        Vehicle vehicle = VehicleDAO.searchVehicleByVIN(vin);
+//
+//        if (vehicle != null) {
+//            // Populate fields
+//            removeEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+//            removeMakeField.setText(vehicle.getMake());
+//            removeModelField.setText(vehicle.getModel());
+//            removeYearField.setText(String.valueOf(vehicle.getYear()));
+//            removeVinField.setText(vehicle.getVIN());
+//            removeServiceHistoryField.setText(vehicle.getServiceHistory());
+//
+//            // Disable all fields
+//            setFieldsDisabled(true);
+//        } else {
+//            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicle found with the given VIN.");
+//        }
+//    }
 
     public void removeVehicle() {
         String vin = removeVinField.getText().trim();
@@ -415,12 +420,141 @@ public class MainVehicleController extends BaseController{
 
     @FXML
     private void clearFields() {
+        removeSearchEmailField.clear();
         removeEmailField.clear();
         removeMakeField.clear();
         removeModelField.clear();
         removeYearField.clear();
         removeVinField.clear();
         removeServiceHistoryField.clear();
+    }
+
+    @FXML
+    private void searchVehicleForRemovalByEmail() {
+        String email = removeSearchEmailField.getText().trim();
+        // Disable all fields
+        setFieldsDisabled(true);
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+            return;
+        }
+
+        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
+        if (vehicles.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
+            return;
+        }
+
+        // Show choices to the user (e.g., in a ComboBox or ListView)
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
+        dialog.setTitle("Select Vehicle");
+        dialog.setHeaderText("Multiple vehicles found for this customer.");
+        dialog.setContentText("Choose a vehicle:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedVehicle -> {
+            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
+            removeLoadVehicleDetails(vehicleId);
+        });
+    }
+
+    private void removeLoadVehicleDetails(int vehicleId) {
+        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
+        if (vehicle != null) {
+            removeEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+            removeMakeField.setText(vehicle.getMake());
+            removeModelField.setText(vehicle.getModel());
+            removeYearField.setText(String.valueOf(vehicle.getYear()));
+            removeVinField.setText(vehicle.getVIN());
+            removeServiceHistoryField.setText(vehicle.getServiceHistory());
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
+        }
+    }
+    @FXML
+    private void searchVehiclesByEmail() {
+        String email = updateSearchEmailField.getText().trim();
+
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+            return;
+        }
+
+        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
+        if (vehicles.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
+            return;
+        }
+
+        // Show choices to the user (e.g., in a ComboBox or ListView)
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
+        dialog.setTitle("Select Vehicle");
+        dialog.setHeaderText("Multiple vehicles found for this customer.");
+        dialog.setContentText("Choose a vehicle:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedVehicle -> {
+            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
+            loadVehicleDetails(vehicleId);
+        });
+    }
+
+
+    private void loadVehicleDetails(int vehicleId) {
+        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
+        if (vehicle != null) {
+            updateEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+            updateMakeField.setText(vehicle.getMake());
+            updateModelField.setText(vehicle.getModel());
+            updateYearField.setText(String.valueOf(vehicle.getYear()));
+            updateVinField.setText(vehicle.getVIN());
+            updateServiceHistoryField.setText(vehicle.getServiceHistory());
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
+        }
+    }
+
+    @FXML
+    private void updateVehicle() {
+        String email = updateEmailField.getText().trim();
+        String make = updateMakeField.getText().trim();
+        String model = updateModelField.getText().trim();
+        String yearStr = updateYearField.getText().trim();
+        String vin = updateVinField.getText().trim();
+        String serviceHistory = updateServiceHistoryField.getText().trim();
+
+        if (email.isEmpty() || make.isEmpty() || model.isEmpty() || yearStr.isEmpty() || vin.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please fill all required fields.");
+            return;
+        }
+
+        int year;
+        try {
+            year = Integer.parseInt(yearStr);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Year must be a number.");
+            return;
+        }
+
+        int customerId = CustomerDAO.getCustomerIdByEmail(email);
+        if (customerId == -1) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Email", "No customer found with email: " + email);
+            return;
+        }
+
+        Vehicle updatedVehicle = new Vehicle(customerId, make, model, year, vin, serviceHistory);
+
+        boolean success = VehicleDAO.updateVehicle(updatedVehicle);
+        if (success) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle updated successfully!");
+            clearUpdateVehicleForm();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Failure", "Failed to update vehicle. Please try again.");
+        }
     }
 
     public void handleViewVehicle(ActionEvent actionEvent) {

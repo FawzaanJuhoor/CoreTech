@@ -3,6 +3,8 @@ package db;
 import Models.Vehicle;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VehicleDAO {
 
@@ -125,6 +127,63 @@ public class VehicleDAO {
         }
 
         return -1;  // If something goes wrong, return -1
+    }
+
+    public static List<String> getVehiclesByEmail(String email) {
+        String sql = "{CALL GetVehiclesByEmail(?, ?)}";
+        List<String> vehicleList = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.REF_CURSOR);
+
+            stmt.execute();
+
+            try (ResultSet rs = (ResultSet) stmt.getObject(2)) {
+                while (rs.next()) {
+                    int vehicleId = rs.getInt("VehicleID");
+                    String make = rs.getString("Make");
+                    String model = rs.getString("Model");
+                    int year = rs.getInt("Year");
+                    vehicleList.add(vehicleId + " - " + make + " - " + model + " - " + year);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehicleList;
+    }
+
+    public static Vehicle getVehicleByID(int vehicleId) {
+        String sql = "{CALL GetVehicleByID(?, ?, ?, ?, ?, ?, ?)}";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setInt(1, vehicleId);
+            stmt.registerOutParameter(2, Types.INTEGER);
+            stmt.registerOutParameter(3, Types.VARCHAR);
+            stmt.registerOutParameter(4, Types.VARCHAR);
+            stmt.registerOutParameter(5, Types.INTEGER);
+            stmt.registerOutParameter(6, Types.VARCHAR);
+            stmt.registerOutParameter(7, Types.VARCHAR);
+
+            stmt.execute();
+
+            int customerId = stmt.getInt(2);
+            String make = stmt.getString(3);
+            String model = stmt.getString(4);
+            int year = stmt.getInt(5);
+            String vin = stmt.getString(6);
+            String serviceHistory = stmt.getString(7);
+
+            return new Vehicle(customerId, make, model, year, vin, serviceHistory);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
