@@ -19,6 +19,7 @@ import Models.MonthlyServiceReport;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import javafx.scene.control.Alert;
@@ -35,7 +36,25 @@ import java.io.File;
 
 public class AdminController extends BaseController {
 
-        @FXML public VBox ancpRevenueTracking;
+//    Dashboard table
+@FXML
+private TableView<ServiceAppointment> mainDashBoardTable;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> APPOINTMENTID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> VEHICLEID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> MECHANICID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> USERID;
+    @FXML
+    private TableColumn<ServiceAppointment, String> SERVICETYPE;
+    @FXML
+    private TableColumn<ServiceAppointment, LocalDate> SERVICEDATE;
+    @FXML
+    private TableColumn<ServiceAppointment, String> SERVICESTATUS;
+
+//        @FXML public VBox ancpRevenueTracking;
     @FXML public TextField txtUsername;
     @FXML public TextField txtPhone;
     @FXML public TextField txtEmail;
@@ -81,7 +100,7 @@ public class AdminController extends BaseController {
     @FXML private TableColumn<NewAdmin, String> role;
 
 
-    @FXML private Button btnRevenueTracking;
+//    @FXML private Button btnRevenueTracking;
     @FXML private Button btnInventoryMang;
 
     @FXML private VBox ancpViewAllSalesRep;
@@ -152,6 +171,19 @@ public class AdminController extends BaseController {
 
     @FXML
     public void initialize() {
+
+//        Dashoard table
+        APPOINTMENTID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+        VEHICLEID.setCellValueFactory(new PropertyValueFactory<>("vehicleID"));
+        MECHANICID.setCellValueFactory(new PropertyValueFactory<>("mechanicID"));
+        USERID.setCellValueFactory(new PropertyValueFactory<>("userID"));
+        SERVICETYPE.setCellValueFactory(new PropertyValueFactory<>("serviceType"));
+        SERVICEDATE.setCellValueFactory(new PropertyValueFactory<>("serviceDate"));
+        SERVICESTATUS.setCellValueFactory(new PropertyValueFactory<>("serviceStatus"));
+
+        mainDashBoardTable.setItems(AdminDAO.getAllServiceAppointments());
+
+
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
         // Show dashboard initially
@@ -176,7 +208,7 @@ public class AdminController extends BaseController {
         btnInventoryRevenue.setOnAction(event -> showPanel(ancpMonthlyReportInventory));
         btnRevenueRevenue.setOnAction(event -> showPanel(ancpMonthlyReportRevenueSummary));
 
-        btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
+//        btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
         logoutButton.setOnAction(e -> handleLogout());
 
 
@@ -253,7 +285,7 @@ public class AdminController extends BaseController {
     private void showPanel(VBox panelToShow) {
         VBox[] allPanels = {
                 ancpDashboard, ancpAddSales, ancpRemoveSales, ancpUpdateSalesRep, ancpViewAllSalesRep,
-                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, ancpRevenueTracking,
+                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, //ancpRevenueTracking,
         };
 
         for (VBox panel : allPanels) {
@@ -285,8 +317,8 @@ public class AdminController extends BaseController {
         } else if (activePanel == ancpInventoryMng) {
             btnInventoryMang.setStyle(HIGHLIGHT_STYLE);
         }
-        else if (activePanel == ancpRevenueTracking) {
-            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);}
+//        else if (activePanel == ancpRevenueTracking) {
+//            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);}
         else if (activePanel == ancpMonthlyReportServicing ||
                 activePanel == ancpMonthlyReportInventory ||
                 activePanel == ancpMonthlyReportRevenueSummary) {
@@ -302,7 +334,7 @@ public class AdminController extends BaseController {
         btnViewAllSalesRep.setStyle(defaultStyle);
         btnInventoryMang.setStyle(defaultStyle);
         btnMonthlyReport.setStyle(defaultStyle);
-        btnRevenueTracking.setStyle(defaultStyle);
+//        btnRevenueTracking.setStyle(defaultStyle);
     }
 
     // Highlighted button style
@@ -365,10 +397,10 @@ public class AdminController extends BaseController {
         showPanel(ancpMonthlyReportRevenueSummary);
     }
 
-    @FXML
-    public void handleRevenueTracking(ActionEvent actionEvent) {
-        showPanel(ancpRevenueTracking);
-    }
+//    @FXML
+//    public void handleRevenueTracking(ActionEvent actionEvent) {
+//        showPanel(ancpRevenueTracking);
+//    }
 
     // Left-side section handler stubs (implement as needed)
     @FXML
@@ -380,7 +412,16 @@ public class AdminController extends BaseController {
     void handleServicing(ActionEvent event) { }
 
     @FXML
-    void handleAppointments(ActionEvent event) { }
+    void handleAppointments(ActionEvent event) { try {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainAppointmentManagement.fxml"));
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Appointment Management");
+        stage.setScene(new Scene(root));
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }}
 
     @FXML
     void handleVehicleManagement(ActionEvent event) {

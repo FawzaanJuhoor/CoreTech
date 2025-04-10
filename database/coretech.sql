@@ -465,6 +465,49 @@ CREATE TABLE ServiceAppointment (
     CONSTRAINT fk_appointment_user FOREIGN KEY (UserID) REFERENCES SystemUser(UserID)
 );
 
+-- procedure for admin dashboard table
+CREATE OR REPLACE PROCEDURE Get_All_ServiceAppointments (
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM ServiceAppointment;
+END;
+/
+
+--test for the procedure
+SET SERVEROUTPUT ON;
+
+DECLARE
+    service_cursor SYS_REFCURSOR;
+    v_appointment_id ServiceAppointment.AppointmentID%TYPE;
+    v_vehicle_id ServiceAppointment.VehicleID%TYPE;
+    v_mechanic_id ServiceAppointment.MechanicID%TYPE;
+    v_user_id ServiceAppointment.UserID%TYPE;
+    v_service_type ServiceAppointment.ServiceType%TYPE;
+    v_service_date ServiceAppointment.ServiceDate%TYPE;
+    v_service_status ServiceAppointment.ServiceStatus%TYPE;
+BEGIN
+    -- Call the procedure
+    Get_All_ServiceAppointments(service_cursor);
+
+    -- Fetch and display the results
+    LOOP
+        FETCH service_cursor INTO v_appointment_id, v_vehicle_id, v_mechanic_id, v_user_id, v_service_type, v_service_date, v_service_status;
+        EXIT WHEN service_cursor%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('AppointmentID: ' || v_appointment_id || ', VehicleID: ' || v_vehicle_id || 
+                             ', MechanicID: ' || v_mechanic_id || ', UserID: ' || v_user_id || 
+                             ', ServiceType: ' || v_service_type || ', ServiceDate: ' || v_service_date || 
+                             ', ServiceStatus: ' || v_service_status);
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE service_cursor;
+END;
+/
+
 CREATE OR REPLACE PROCEDURE GetVehicleIdByVIN (
     p_VIN IN VARCHAR2,           -- Input parameter for VIN
     p_VehicleID OUT INT          -- Output parameter for VehicleID
@@ -706,3 +749,75 @@ BEGIN
     CLOSE service_cursor;
 END;
 /
+
+-- Procedure for monthly report of revenue summary
+CREATE OR REPLACE PROCEDURE Get_Revenue_Summary(p_result OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN p_result FOR
+        SELECT
+            NVL(SUM(inv.Amount), 0) AS TotalRevenue,
+            NVL(SUM(i.Price * si.Quantity), 0) AS TotalInventoryCost,
+            NVL(SUM(inv.Amount), 0) - NVL(SUM(i.Price * si.Quantity), 0) AS NetProfit
+        FROM Invoice inv
+        JOIN ServiceAppointment sa ON inv.AppointmentID = sa.AppointmentID
+        LEFT JOIN ServiceInventory si ON sa.AppointmentID = si.AppointmentID
+        LEFT JOIN Inventory i ON si.ItemID = i.ItemID;
+END;
+/
+
+
+-- Test for Get_Revenue_Summary
+SET SERVEROUTPUT ON;
+
+DECLARE
+    p_result SYS_REFCURSOR;
+    v_total_revenue NUMBER;
+    v_total_inventory_cost NUMBER;
+    v_net_profit NUMBER;
+BEGIN
+    Get_Revenue_Summary(p_result);
+
+    LOOP
+        FETCH p_result INTO v_total_revenue, v_total_inventory_cost, v_net_profit;
+        EXIT WHEN p_result%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('Total Revenue: ' || v_total_revenue);
+        DBMS_OUTPUT.PUT_LINE('Total Inventory Cost: ' || v_total_inventory_cost);
+        DBMS_OUTPUT.PUT_LINE('Net Profit: ' || v_net_profit);
+    END LOOP;
+
+    CLOSE p_result;
+END;
+/
+
+
+-- Insert data into ServiceAppointment (required for Invoice)
+INSERT INTO ServiceAppointment (AppointmentID, VehicleID, MechanicID, UserID, ServiceType, ServiceDate, ServiceStatus)
+VALUES (1, 1, 1, 1, 'Oil Change', SYSDATE, 'Completed');
+
+-- Insert data into Invoice
+INSERT INTO Invoice (InvoiceID, AppointmentID, Amount, PaymentStatus, GeneratedDate)
+VALUES (1, 1, 500, 'Paid', SYSDATE);
+
+-- Insert data into Payment
+INSERT INTO Payment (PaymentID, InvoiceID, PaymentMethod, AmountPaid, PaymentDate)
+VALUES (1, 1, 'Credit Card', 500, SYSDATE);
+
+-- Commit the changes
+COMMIT;
+
+-- Insert data into ServiceInventory
+INSERT INTO ServiceInventory (AppointmentID, ItemID)
+VALUES (1, 1); -- Links AppointmentID 1 with ItemID 1 ('Oil Filter')
+
+INSERT INTO ServiceInventory (AppointmentID, ItemID)
+VALUES (1, 2); -- Links AppointmentID 1 with ItemID 2 ('Brake Pads')
+
+-- Commit the changes
+COMMIT;
+
+ALTER TABLE ServiceInventory ADD Quantity INT DEFAULT 1;
+UPDATE ServiceInventory SET Quantity = 2 WHERE AppointmentID = 1 AND ItemID = 1; -- Oil Filter
+UPDATE ServiceInventory SET Quantity = 1 WHERE AppointmentID = 1 AND ItemID = 2; -- Brake Pads
+
+COMMIT;
