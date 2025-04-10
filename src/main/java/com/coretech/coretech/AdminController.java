@@ -35,7 +35,7 @@ import java.io.File;
 
 public class AdminController extends BaseController {
 
-        @FXML public VBox ancpRevenueTracking;
+    @FXML public VBox ancpRevenueTracking;
     @FXML public TextField txtUsername;
     @FXML public TextField txtPhone;
     @FXML public TextField txtEmail;
@@ -97,7 +97,8 @@ public class AdminController extends BaseController {
     @FXML private TableColumn<MonthlyServiceReport, String> serviceType;
     @FXML private TableColumn<MonthlyServiceReport, Double> cost;
     @FXML private VBox ancpMonthlyReportServicing;
-    @FXML private TableView<MonthlyServiceReport> InventoryMntlyRprttableView;    @FXML public Button btnGeneratePdfMonthlyReportServicing;
+    @FXML private TableView<MonthlyServiceReport> InventoryMntlyRprttableView;
+    @FXML public Button btnGeneratePdfMonthlyReportServicing;
 
     //    Monthly Report Inventory
     @FXML private VBox ancpMonthlyReportInventory;

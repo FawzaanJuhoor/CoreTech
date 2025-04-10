@@ -1,7 +1,6 @@
 package db;
 
 import Models.Mechanic;
-//import oracle.jdbc.OracleTypes;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,48 +8,25 @@ import java.util.List;
 
 public class MechanicDAO {
 
-//    public static List<Mechanic> getAllMechanics() {
-//        List<Mechanic> mechanics = new ArrayList<>();
-//        String sql = "{ call get_all_mechanics(?) }";
-//
-//        try (Connection conn = DBConnection.getConnection();
-//             CallableStatement stmt = conn.prepareCall(sql)) {
-//
-//            stmt.registerOutParameter(1, OracleTypes.CURSOR);
-////            stmt.registerOutParameter(1, java.sql.Types.OTHER);
-//            stmt.execute();
-//
-//            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
-//                while (rs.next()) {
-//                    int id = rs.getInt("MechanicID");
-//                    String name = rs.getString("MechanicName");
-//                    String expertise = rs.getString("Expertise");
-//
-//                    mechanics.add(new Mechanic(id, name, expertise));
-//                }
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return mechanics;
-//    }
-
     public static List<Mechanic> getAllMechanics() {
         List<Mechanic> mechanics = new ArrayList<>();
-        String sql = "SELECT MechanicID, MechanicName, Expertise FROM Mechanic";
+        String sql = "{ call get_all_mechanics(?) }";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             CallableStatement stmt = conn.prepareCall(sql)) {
 
-            while (rs.next()) {
-                int id = rs.getInt("MechanicID");
-                String name = rs.getString("MechanicName");
-                String expertise = rs.getString("Expertise");
+            stmt.registerOutParameter(1, Types.REF_CURSOR);
+//            stmt.registerOutParameter(1, java.sql.Types.OTHER);
+            stmt.execute();
 
-                mechanics.add(new Mechanic(id, name, expertise));
+            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
+                while (rs.next()) {
+                    int id = rs.getInt("MechanicID");
+                    String name = rs.getString("MechanicName");
+                    String expertise = rs.getString("Expertise");
+
+                    mechanics.add(new Mechanic(id, name, expertise));
+                }
             }
 
         } catch (SQLException e) {
