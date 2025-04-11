@@ -50,15 +50,30 @@ public class BaseController {
 
     protected void switchScene(String fxmlFile, String title, Node sourceNode) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlFile)));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            Parent root = loader.load();
+
             Stage stage = (Stage) sourceNode.getScene().getWindow();
-            stage.setScene(new Scene(root));
+
+            // Optional: If you want a consistent starting size every time (e.g., 1200x800)
+            Scene newScene = new Scene(root, 1200, 800);
+
+            stage.setScene(newScene);
             stage.setTitle(title);
+
+            // Only force maximized if that was the original preference
+            stage.setMaximized(true);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+
+
+
 
     protected void logout(Node sourceNode) {
         UserSession session = UserSession.getInstance();

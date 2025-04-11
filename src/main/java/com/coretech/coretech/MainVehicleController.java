@@ -48,7 +48,8 @@ public class MainVehicleController extends BaseController{
         serviceButton.setOnAction(this::handleServicing);
         logoutButton.setOnAction(e -> handleLogout());
 
-        setupVehicleTable(); // ✅ Add this
+        setupVehicleTable();
+        handleAddVehicle();
     }
 
 

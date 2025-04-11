@@ -151,11 +151,11 @@
 
 <!-- Main Content -->
 <center>
-    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: EFEFEF;">
-        <HBox spacing="15" VBox.vgrow="ALWAYS">
+    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: EFEFEF;" VBox.vgrow="ALWAYS">
+        <HBox spacing="15">
             <!-- First Card -->
             <AnchorPane prefHeight="171.0" prefWidth="179.0" style="-fx-background-color: white; -fx-padding: 10;" HBox.hgrow="ALWAYS">
-                <children>
+
                     <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                         <Label text="Number of Customers for the Day" textAlignment="CENTER" />
                         <HBox alignment="CENTER" spacing="10">
@@ -176,51 +176,35 @@
                             </ImageView>
                         </HBox>
                     </VBox>
-                </children>
+
             </AnchorPane>
 
             <!-- Second Card -->
             <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white; -fx-padding: 10;" HBox.hgrow="ALWAYS">
-                <children>
-                    <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                        <Label text="Upcoming Customer" textAlignment="CENTER" />
-                        <HBox alignment="CENTER" spacing="10">
-                            <Label text="Customer Name" textFill="#2293c3">
-                                <font>
-                                    <Font size="20.0" />
-                                </font>
-                            </Label>
-                            <Label text="8:00am" textFill="#2293c3">
-                                <font>
-                                    <Font size="20.0" />
-                                </font>
-                            </Label>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                            <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
-                                <image>
-                                    <Image url="@../../../Images/icons/single_person.png" />
-                                </image>
-                                <HBox.margin>
-                                    <Insets right="20.0" />
-                                </HBox.margin>
-                            </ImageView>
-                        </HBox>
-                    </VBox>
-<!--                    <ImageView fitHeight="24" fitWidth="24" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0"-->
-<!--                               image="@path/to/user_icon.png"/>-->
-                </children>
+                <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                    <Label text="Upcoming Customer" textAlignment="CENTER" />
+                    <HBox alignment="CENTER" spacing="10">
+                        <Label text="Customer Name" textFill="#2293c3">
+                            <font><Font size="20.0" /></font>
+                        </Label>
+                        <Label text="8:00am" textFill="#2293c3">
+                            <font><Font size="20.0" /></font>
+                        </Label>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                        <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
+                            <image><Image url="@../../../Images/icons/single_person.png" /></image>
+                            <HBox.margin><Insets right="20.0" /></HBox.margin>
+                        </ImageView>
+                    </HBox>
+                </VBox>
             </AnchorPane>
         </HBox>
 
-        <HBox VBox.vgrow="ALWAYS">
-            <VBox.margin>
-                <Insets top="30.0" />
-            </VBox.margin>
-            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED">
+            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                 <content>
-                    <HBox>
-                        <TableView fx:id="appointmentSummaryTable" minWidth="1350.0">
+                    <HBox HBox.hgrow="ALWAYS">
+                        <TableView fx:id="appointmentSummaryTable" minWidth="1350.0" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="appointmentIdColumn" text="Appointment ID" prefWidth="100" />
                                 <TableColumn fx:id="emailColumn" text="Email" prefWidth="180" />
@@ -238,7 +222,7 @@
                     </HBox>
                 </content>
             </ScrollPane>
-        </HBox>
+
     </VBox>
 </center>
 </BorderPane>
