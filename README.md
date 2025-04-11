@@ -51,9 +51,6 @@ CoreTech AutoCare aims to provide an efficient system for managing:
 
 ---
 
-## 📁 Project Structure
-
-The project uses a **Maven** structure to manage code and resources.
 
 ## 📁 Project Structure
 
