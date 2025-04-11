@@ -4,10 +4,13 @@ import Models.Admin;
 import Models.Customer;
 import db.AdminDAO;
 import db.CustomerDAO;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -141,7 +144,8 @@ public class MainCustomerController extends BaseController{
 
     @FXML
     public void initialize() {
-
+        setupCustomerTable();
+        loadCustomers();
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
         // Event handlers
@@ -534,12 +538,86 @@ public class MainCustomerController extends BaseController{
 
         loadCustomers(); // Optional: Load table data
     }
-    private void loadCustomers() {
-        customerTable.getItems().clear();
-//        List<Customer> customers = CustomerDAO.getAllCustomers(); // if you have DAO
-//        customerTable.getItems().addAll(customers);
+
+
+    private void setupCustomerTable() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("emailID"));
+        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNo"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+        actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button updateButton = new Button("Update");
+            private final Button deleteButton = new Button("Delete");
+            private final HBox buttons = new HBox(5, updateButton, deleteButton);
+
+            {
+                updateButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+                deleteButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+
+                updateButton.setOnAction(e -> {
+                    Customer customer = getTableView().getItems().get(getIndex());
+                    showUpdateCustomerForm();
+                    preloadUpdateForm(customer); // fill update fields
+                });
+
+                deleteButton.setOnAction(e -> {
+                    Customer customer = getTableView().getItems().get(getIndex());
+                    showDeleteCustomerForm();
+                    preloadDeleteForm(customer); // fill delete fields
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : buttons);
+            }
+        });
     }
 
-    public void handleViewCustomerSearch(ActionEvent actionEvent) {
+    private void preloadUpdateForm(Customer customer) {
+        updateSearchField.setText(customer.getEmailID()); // optional
+        updateCustomerNameField.setText(customer.getCustomerName());
+        updatePhoneNoField.setText(customer.getPhoneNo());
+        updateEmailField.setText(customer.getEmailID());
+        updateAddressField.setText(customer.getAddress());
+
+        disableEmailField(); // disable email editing
     }
+
+    private void preloadDeleteForm(Customer customer) {
+        deleteSearchField.setText(customer.getEmailID()); // optional
+        deleteCustomerNameField.setText(customer.getCustomerName());
+        deletePhoneNoField.setText(customer.getPhoneNo());
+        deleteEmailField.setText(customer.getEmailID());
+        deleteAddressField.setText(customer.getAddress());
+
+        disableDeleteFields(); // make everything read-only
+    }
+
+    private void loadCustomers() {
+        customerTable.getItems().clear();
+        customerTable.getItems().addAll(CustomerDAO.getAllCustomers());
+    }
+
+    @FXML
+    private void handleViewCustomerSearch() {
+        String email = viewCustomerSearchField.getText().trim();
+        customerTable.getItems().clear();
+
+        if (!email.isEmpty()) {
+            Customer result = CustomerDAO.searchCustomerView(email);
+            if (result != null) {
+                customerTable.getItems().add(result);
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with email: " + email);
+                loadCustomers();
+            }
+        } else {
+            loadCustomers();
+        }
+    }
+
 }

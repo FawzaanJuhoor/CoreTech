@@ -18,34 +18,34 @@ public class AdminDAO {
      *
      * @return an ObservableList of ServiceAppointment objects containing all service appointments
      */
-//public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
-//    ObservableList<ServiceAppointment> appointmentList = FXCollections.observableArrayList();
-//
-//    String query = "SELECT * FROM ServiceAppointment";
-//
-//    try (Connection conn = DBConnection.getConnection(); // or your own connection method
-//         PreparedStatement stmt = conn.prepareStatement(query);
-//         ResultSet rs = stmt.executeQuery()) {
-//
-//        while (rs.next()) {
-//            ServiceAppointment appointment = new ServiceAppointment(
-//                    rs.getInt("AppointmentID"),
-//                    rs.getInt("VehicleID"),
-//                    rs.getInt("MechanicID"),
-//                    rs.getInt("UserID"),
-//                    rs.getString("ServiceType"),
-//                    rs.getDate("ServiceDate").toLocalDate(),
-//                    rs.getString("ServiceStatus")
-//            );
-//            appointmentList.add(appointment);
-//        }
-//
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//    }
-//
-//    return appointmentList;
-//}
+public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
+    ObservableList<ServiceAppointment> appointmentList = FXCollections.observableArrayList();
+
+    String query = "SELECT * FROM ServiceAppointment";
+
+    try (Connection conn = DBConnection.getConnection(); // or your own connection method
+         PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            ServiceAppointment appointment = new ServiceAppointment(
+                    rs.getInt("AppointmentID"),
+                    rs.getInt("VehicleID"),
+                    rs.getInt("MechanicID"),
+                    rs.getInt("UserID"),
+                    rs.getString("ServiceType"),
+                    rs.getDate("ServiceDate").toLocalDate(),
+                    rs.getString("ServiceStatus")
+            );
+            appointmentList.add(appointment);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return appointmentList;
+}
 
     /**
      * Inserts a new admin into the SystemUser table using a stored procedure.
@@ -313,6 +313,81 @@ public class AdminDAO {
         }
 
         return reportList;
+    }
+
+
+//    Inventory Managment
+public static ObservableList<Inventory> getAllInventoryItems() {
+    ObservableList<Inventory> inventoryList = FXCollections.observableArrayList();
+
+    String sql = "SELECT * FROM Inventory";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Inventory item = new Inventory(
+                    rs.getInt("ItemID"),
+                    rs.getString("ItemName"),
+                    rs.getInt("Quantity"),
+                    rs.getDouble("Price"),
+                    rs.getInt("MinStockLevel"),
+                    rs.getTimestamp("UpdatedDate").toLocalDateTime()
+            );
+            inventoryList.add(item);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return inventoryList;
+}
+
+    public static void addInventoryItem(Inventory item) {
+    String sql = "INSERT INTO Inventory (ItemID, ItemName, Quantity, Price, MinStockLevel, UpdatedDate) VALUES (?, ?, ?, ?, ?, ?)";
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, item.getItemId());
+        ps.setString(2, item.getItemName());
+        ps.setInt(3, item.getQuantity());
+        ps.setDouble(4, item.getPrice());
+        ps.setInt(5, item.getStockLvl());
+        ps.setTimestamp(6, Timestamp.valueOf(item.getLstUpdateDate()));
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+
+    public static void updateInventoryItem(Inventory item) {
+        String sql = "UPDATE Inventory SET ItemName = ?, Quantity = ?, Price = ?, MinStockLevel = ?, UpdatedDate = ? WHERE ItemID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, item.getItemName());
+            ps.setInt(2, item.getQuantity());
+            ps.setDouble(3, item.getPrice());
+            ps.setInt(4, item.getStockLvl());
+            ps.setTimestamp(5, Timestamp.valueOf(item.getLstUpdateDate()));
+            ps.setInt(6, item.getItemId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void deleteInventoryItem(int itemId) {
+        String sql = "DELETE FROM Inventory WHERE ItemID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, itemId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

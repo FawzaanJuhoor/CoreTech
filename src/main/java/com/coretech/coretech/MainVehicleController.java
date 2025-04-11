@@ -4,6 +4,7 @@ import Models.Vehicle;
 import db.CustomerDAO;
 import db.VehicleDAO;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,10 +14,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
+import java.util.Optional;
+
 public class MainVehicleController extends BaseController{
 
     public Button viewVehicleButton;
     public VBox viewForm;
+    public TextField removeSearchEmailField;
+    public TextField updateSearchEmailField;
 
 
     @FXML
@@ -44,49 +50,7 @@ public class MainVehicleController extends BaseController{
 
         setupVehicleTable(); // ✅ Add this
     }
-    private void setupVehicleTable() {
-        if (vehicleTable == null) return; // In case viewForm not yet loaded
 
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        vinColumn.setCellValueFactory(new PropertyValueFactory<>("vin"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        makeColumn.setCellValueFactory(new PropertyValueFactory<>("make"));
-        modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
-        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
-        servicingHistoryColumn.setCellValueFactory(new PropertyValueFactory<>("servicingHistory"));
-
-        actionColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button updateButton = new Button("Update");
-            private final Button deleteButton = new Button("Delete");
-            private final HBox buttonBox = new HBox(5, updateButton, deleteButton);
-
-            {
-                updateButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
-                deleteButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
-
-                updateButton.setOnAction(event -> {
-                    Vehicle vehicle = getTableView().getItems().get(getIndex());
-                    // TODO: load vehicle info into updateForm
-                    handleUpdateVehicle(); // Optional: open the update form
-                    // preloadUpdateForm(vehicle); // <- create this if needed
-                });
-
-                deleteButton.setOnAction(event -> {
-                    Vehicle vehicle = getTableView().getItems().get(getIndex());
-                    vehicleTable.getItems().remove(vehicle);
-                    VehicleDAO.deleteVehicleByVIN(vehicle.getVIN());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : buttonBox);
-            }
-        });
-
-        loadVehicles(); // finally load data
-    }
 
     public TextField addEmailField;
     public VBox centerPane;
@@ -146,13 +110,7 @@ public class MainVehicleController extends BaseController{
     @FXML private TableColumn<Vehicle, String> yearColumn;
     @FXML private TableColumn<Vehicle, String> servicingHistoryColumn;
     @FXML private TableColumn<Vehicle, Void> actionColumn;
-    private void loadVehicles() {
-        vehicleTable.getItems().clear();
 
-        // TODO: Replace this with real data from DB
-        // Example dummy data:
-        // vehicleTable.getItems().add(new Vehicle("VIN123", 1, "Toyota", "Camry", 2020, "Oil change"));
-    }
 
     // Reference to the VIN search field in the Servicing Details form
     @FXML
@@ -251,6 +209,11 @@ public class MainVehicleController extends BaseController{
         viewForm.setManaged(true);
 
         highlightButton(viewVehicleButton);
+
+        // Refresh the vehicle table
+        loadVehiclesForViewALl();
+        viewSearchField.clear();
+
     }
 
     private void highlightActiveButton(Button selectedButton) {
@@ -407,7 +370,7 @@ public class MainVehicleController extends BaseController{
 
     @FXML
     private void clearUpdateVehicleForm() {
-        updateVinSearchField.clear();
+        updateSearchEmailField.clear();
         updateEmailField.clear();
         updateMakeField.clear();
         updateModelField.clear();
@@ -535,8 +498,104 @@ public class MainVehicleController extends BaseController{
         removeServiceHistoryField.setDisable(disabled);
     }
 
+//    @FXML
+//    private void clearFields() {
+//        removeEmailField.clear();
+//        removeMakeField.clear();
+//        removeModelField.clear();
+//        removeYearField.clear();
+//        removeVinField.clear();
+//        removeServiceHistoryField.clear();
+//    }
+
+    @FXML
+    private void searchVehiclesByEmail() {
+        String email = updateSearchEmailField.getText().trim();
+
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+            return;
+        }
+
+        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
+        if (vehicles.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
+            return;
+        }
+
+        // Show choices to the user (e.g., in a ComboBox or ListView)
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
+        dialog.setTitle("Select Vehicle");
+        dialog.setHeaderText("Multiple vehicles found for this customer.");
+        dialog.setContentText("Choose a vehicle:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedVehicle -> {
+            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
+            loadVehicleDetails(vehicleId);
+        });
+    }
+
+
+    private void loadVehicleDetails(int vehicleId) {
+        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
+        if (vehicle != null) {
+            updateEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+            updateMakeField.setText(vehicle.getMake());
+            updateModelField.setText(vehicle.getModel());
+            updateYearField.setText(String.valueOf(vehicle.getYear()));
+            updateVinField.setText(vehicle.getVIN());
+            updateServiceHistoryField.setText(vehicle.getServiceHistory());
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
+        }
+    }
+
+
+    @FXML
+    private void updateVehicle() {
+        String email = updateEmailField.getText().trim();
+        String make = updateMakeField.getText().trim();
+        String model = updateModelField.getText().trim();
+        String yearStr = updateYearField.getText().trim();
+        String vin = updateVinField.getText().trim();
+        String serviceHistory = updateServiceHistoryField.getText().trim();
+
+        if (email.isEmpty() || make.isEmpty() || model.isEmpty() || yearStr.isEmpty() || vin.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please fill all required fields.");
+            return;
+        }
+
+        int year;
+        try {
+            year = Integer.parseInt(yearStr);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Year must be a number.");
+            return;
+        }
+
+        int customerId = CustomerDAO.getCustomerIdByEmail(email);
+        if (customerId == -1) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Email", "No customer found with email: " + email);
+            return;
+        }
+
+        Vehicle updatedVehicle = new Vehicle(customerId, make, model, year, vin, serviceHistory);
+
+        boolean success = VehicleDAO.updateVehicle(updatedVehicle);
+        if (success) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle updated successfully!");
+            clearUpdateVehicleForm();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Failure", "Failed to update vehicle. Please try again.");
+        }
+    }
+
     @FXML
     private void clearFields() {
+        removeSearchEmailField.clear();
         removeEmailField.clear();
         removeMakeField.clear();
         removeModelField.clear();
@@ -546,19 +605,178 @@ public class MainVehicleController extends BaseController{
     }
 
     @FXML
-    private void handleViewSearch() {
-        String searchText = viewSearchField.getText().trim();
+    private void searchVehicleForRemovalByEmail() {
+        String email = removeSearchEmailField.getText().trim();
+        // Disable all fields
+        setFieldsDisabled(true);
+        if (email.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Error", "Please enter an Email to search.");
+            return;
+        }
 
-        if (!searchText.isEmpty()) {
-            vehicleTable.getItems().clear();
-            Vehicle result = VehicleDAO.searchVehicleByVIN(searchText);
-            if (result != null) {
-                vehicleTable.getItems().add(result);
-            } else {
-                showAlert(Alert.AlertType.INFORMATION, "No Results", "No vehicle found with VIN: " + searchText);
+        List<String> vehicles = VehicleDAO.getVehiclesByEmail(email);
+        if (vehicles.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No vehicles found for email: " + email);
+            return;
+        }
+
+        // Show choices to the user (e.g., in a ComboBox or ListView)
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(vehicles.getFirst(), vehicles);
+        dialog.setTitle("Select Vehicle");
+        dialog.setHeaderText("Multiple vehicles found for this customer.");
+        dialog.setContentText("Choose a vehicle:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedVehicle -> {
+            int vehicleId = Integer.parseInt(selectedVehicle.split(" - ")[0]);
+            removeLoadVehicleDetails(vehicleId);
+        });
+    }
+
+    private void removeLoadVehicleDetails(int vehicleId) {
+        Vehicle vehicle = VehicleDAO.getVehicleByID(vehicleId);
+        if (vehicle != null) {
+            removeEmailField.setText(CustomerDAO.getEmailByCustomerId(vehicle.getCustomerId()));
+            removeMakeField.setText(vehicle.getMake());
+            removeModelField.setText(vehicle.getModel());
+            removeYearField.setText(String.valueOf(vehicle.getYear()));
+            removeVinField.setText(vehicle.getVIN());
+            removeServiceHistoryField.setText(vehicle.getServiceHistory());
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Vehicle details loaded.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Not Found", "No details found for the selected vehicle.");
+        }
+    }
+//    @FXML
+//    private void handleViewSearch() {
+//        String searchText = viewSearchField.getText().trim();
+//
+//        if (!searchText.isEmpty()) {
+//            vehicleTable.getItems().clear();
+//            Vehicle result = VehicleDAO.searchVehicleByVIN(searchText);
+//            if (result != null) {
+//                vehicleTable.getItems().add(result);
+//            } else {
+//                showAlert(Alert.AlertType.INFORMATION, "No Results", "No vehicle found with VIN: " + searchText);
+//            }
+//        } else {
+//            loadVehiclesForViewALl();
+//        }
+//    }
+
+    private void loadVehiclesForViewALl() {
+        vehicleTable.getItems().clear();
+        List<Vehicle> vehicles = VehicleDAO.getAllVehiclesWithEmail();
+
+        System.out.println("Loaded vehicles: " + vehicles.size()); // Check this in console
+
+        vehicleTable.getItems().addAll(vehicles);
+    }
+
+
+    private void setupVehicleTable() {
+        if (vehicleTable == null) return;
+
+        // ADD THIS: column mappings
+        vinColumn.setCellValueFactory(new PropertyValueFactory<>("VIN"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        makeColumn.setCellValueFactory(new PropertyValueFactory<>("make"));
+        modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
+        yearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getYear())));
+        servicingHistoryColumn.setCellValueFactory(new PropertyValueFactory<>("serviceHistory"));
+
+        // Optional: get VehicleID using VIN
+        idColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(VehicleDAO.getVehicleIdByVIN(cellData.getValue().getVIN()))));
+
+        // Already in your code: Actions column
+        actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button updateButton = new Button("Update");
+            private final Button deleteButton = new Button("Delete");
+            private final HBox buttonBox = new HBox(5, updateButton, deleteButton);
+
+            {
+                updateButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+                deleteButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+
+                updateButton.setOnAction(event -> {
+                    Vehicle vehicle = getTableView().getItems().get(getIndex());
+                    handleUpdateVehicle(); // Show update form
+                    preloadUpdateForm(vehicle); // NEW: fill in update form
+                });
+
+                deleteButton.setOnAction(event -> {
+                    Vehicle vehicle = getTableView().getItems().get(getIndex());
+                    handleRemoveVehicle(); // Show delete form
+                    preloadDeleteForm(vehicle); // NEW: fill in delete form
+                });
+
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : buttonBox);
+            }
+        });
+
+        // Load data
+        loadVehiclesForViewALl();
+    }
+
+    private void preloadUpdateForm(Vehicle vehicle) {
+        updateEmailField.setText(vehicle.getEmail());
+        updateMakeField.setText(vehicle.getMake());
+        updateModelField.setText(vehicle.getModel());
+        updateYearField.setText(String.valueOf(vehicle.getYear()));
+        updateVinField.setText(vehicle.getVIN());
+        updateServiceHistoryField.setText(vehicle.getServiceHistory());
+
+        updateSearchEmailField.setText(vehicle.getEmail()); // Optional: preload the search field
+    }
+
+    private void preloadDeleteForm(Vehicle vehicle) {
+        removeEmailField.setText(vehicle.getEmail());
+        removeMakeField.setText(vehicle.getMake());
+        removeModelField.setText(vehicle.getModel());
+        removeYearField.setText(String.valueOf(vehicle.getYear()));
+        removeVinField.setText(vehicle.getVIN());
+        removeServiceHistoryField.setText(vehicle.getServiceHistory());
+        removeSearchEmailField.setText(vehicle.getEmail()); // Optional: preload the search field
+        setFieldsDisabled(true); // Disable all fields for safety
+    }
+
+
+    @FXML
+    private void handleViewAllSearch() {
+        String email = viewSearchField.getText().trim();
+
+        vehicleTable.getItems().clear();
+
+        if (!email.isEmpty()) {
+            List<String> vehicleData = VehicleDAO.getVehiclesByEmail(email);
+            for (String entry : vehicleData) {
+                System.out.println(entry); // Debug info
+                // Optional: parse this if you want a full object view
+            }
+
+            List<Vehicle> allVehicles = VehicleDAO.getAllVehiclesWithEmail();
+            for (Vehicle v : allVehicles) {
+                if (v.getEmail().equalsIgnoreCase(email)) {
+                    vehicleTable.getItems().add(v);
+                }
+            }
+
+            if (vehicleTable.getItems().isEmpty()) {
+                showAlert(Alert.AlertType.INFORMATION, "No Results", "No vehicles found for email: " + email);
+                viewSearchField.clear();
+                loadVehiclesForViewALl(); // Show all
+
+
             }
         } else {
-            loadVehicles();
+            loadVehiclesForViewALl(); // Show all
         }
     }
 

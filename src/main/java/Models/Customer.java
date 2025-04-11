@@ -35,6 +35,14 @@ public class Customer {
         this.address = address;
     }
 
+    public Customer(int CustomerID,String customerName, String phoneNo, String emailID, String address) {
+        this.customerID = CustomerID;
+        this.customerName = customerName;
+        this.phoneNo = phoneNo;
+        this.emailID = emailID;
+        this.address = address;
+    }
+
     /**
      * Returns the customer ID.
      *
