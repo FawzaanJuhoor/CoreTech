@@ -19,7 +19,9 @@ import Models.MonthlyServiceReport;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
@@ -34,6 +36,30 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import java.io.File;
 
 public class AdminController extends BaseController {
+
+    @FXML private TextField txtItemId;
+    @FXML private TextField txtItemName;
+    @FXML private TextField txtQuantity;
+    @FXML private TextField txtPrice;
+    @FXML private TextField txtMinStock;
+    //    Dashboard table
+    @FXML
+    private TableView<ServiceAppointment> mainDashBoardTable;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> APPOINTMENTID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> VEHICLEID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> MECHANICID;
+    @FXML
+    private TableColumn<ServiceAppointment, Integer> USERID;
+    @FXML
+    private TableColumn<ServiceAppointment, String> SERVICETYPE;
+    @FXML
+    private TableColumn<ServiceAppointment, LocalDate> SERVICEDATE;
+    @FXML
+    private TableColumn<ServiceAppointment, String> SERVICESTATUS;
+
 
     @FXML public VBox ancpRevenueTracking;
     @FXML public TextField txtUsername;
@@ -81,7 +107,7 @@ public class AdminController extends BaseController {
     @FXML private TableColumn<NewAdmin, String> role;
 
 
-    @FXML private Button btnRevenueTracking;
+//    @FXML private Button btnRevenueTracking;
     @FXML private Button btnInventoryMang;
 
     @FXML private VBox ancpViewAllSalesRep;
@@ -153,10 +179,23 @@ public class AdminController extends BaseController {
 
     @FXML
     public void initialize() {
+
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
         // Show dashboard initially
         showPanel(ancpDashboard);
+
+        //        Dashoard table
+        APPOINTMENTID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+        VEHICLEID.setCellValueFactory(new PropertyValueFactory<>("vehicleID"));
+        MECHANICID.setCellValueFactory(new PropertyValueFactory<>("mechanicID"));
+        USERID.setCellValueFactory(new PropertyValueFactory<>("userID"));
+        SERVICETYPE.setCellValueFactory(new PropertyValueFactory<>("serviceType"));
+        SERVICEDATE.setCellValueFactory(new PropertyValueFactory<>("serviceDate"));
+        SERVICESTATUS.setCellValueFactory(new PropertyValueFactory<>("serviceStatus"));
+
+        mainDashBoardTable.setItems(AdminDAO.getAllServiceAppointments());
+
 
         // Assign actions to buttons
         btnAddSalesRep.setOnAction(event -> showPanel(ancpAddSales));
@@ -177,7 +216,7 @@ public class AdminController extends BaseController {
         btnInventoryRevenue.setOnAction(event -> showPanel(ancpMonthlyReportInventory));
         btnRevenueRevenue.setOnAction(event -> showPanel(ancpMonthlyReportRevenueSummary));
 
-        btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
+//        btnRevenueTracking.setOnAction(event -> showPanel(ancpRevenueTracking));
         logoutButton.setOnAction(e -> handleLogout());
 
 
@@ -193,32 +232,8 @@ public class AdminController extends BaseController {
 //        Add item into inventory
         // Inventory TableView setup
         InventorytableView.setEditable(true);
-        InventorytableView.setItems(inventoryList);
+        InventorytableView.setItems(AdminDAO.getAllInventoryItems());
 
-// Column bindings
-        itemId.setCellValueFactory(cellData -> cellData.getValue().itemIdProperty());
-        itemId.setCellFactory(TextFieldTableCell.forTableColumn());
-        itemId.setOnEditCommit(event -> event.getRowValue().setItemId(event.getNewValue()));
-
-        itemName.setCellValueFactory(cellData -> cellData.getValue().itemNameProperty());
-        itemName.setCellFactory(TextFieldTableCell.forTableColumn());
-        itemName.setOnEditCommit(event -> event.getRowValue().setItemName(event.getNewValue()));
-
-        quantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
-        quantity.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        quantity.setOnEditCommit(event -> event.getRowValue().setQuantity(event.getNewValue()));
-
-        price.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
-        price.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        price.setOnEditCommit(event -> event.getRowValue().setPrice(event.getNewValue()));
-
-        stockLvl.setCellValueFactory(cellData -> cellData.getValue().stockLvlProperty());
-        stockLvl.setCellFactory(TextFieldTableCell.forTableColumn());
-        stockLvl.setOnEditCommit(event -> event.getRowValue().setStockLvl(event.getNewValue()));
-
-        lstUpdateDate.setCellValueFactory(cellData -> cellData.getValue().lstUpdateDateProperty());
-        lstUpdateDate.setCellFactory(TextFieldTableCell.forTableColumn());
-        lstUpdateDate.setOnEditCommit(event -> event.getRowValue().setLstUpdateDate(event.getNewValue()));
 
 
 //        For monthly report
@@ -245,6 +260,29 @@ public class AdminController extends BaseController {
         ObservableList<RevenueSummary> revenueReport = AdminDAO.getRevenueSummaryReport();
         RevenueMntlyRprttableView.setItems(revenueReport);
 
+//        Inventory Managment
+        itemId.setCellValueFactory(new PropertyValueFactory<>("itemId"));
+        itemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        price.setCellValueFactory(new PropertyValueFactory<>("price"));
+        stockLvl.setCellValueFactory(new PropertyValueFactory<>("stockLvl")); // or "minStockLevel"
+        lstUpdateDate.setCellValueFactory(new PropertyValueFactory<>("lstUpdateDate")); // or "updatedDate"
+
+
+        // Populate text fields when a row is selected
+        InventorytableView.setOnMouseClicked(event -> {
+            Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                txtItemId.setText(String.valueOf(selected.getItemId()));
+                txtItemName.setText(selected.getItemName());
+                txtQuantity.setText(String.valueOf(selected.getQuantity()));
+                txtPrice.setText(String.valueOf(selected.getPrice()));
+                txtMinStock.setText(String.valueOf(selected.getStockLvl()));
+            }
+        });
+
+
+
 
     }
 
@@ -254,7 +292,7 @@ public class AdminController extends BaseController {
     private void showPanel(VBox panelToShow) {
         VBox[] allPanels = {
                 ancpDashboard, ancpAddSales, ancpRemoveSales, ancpUpdateSalesRep, ancpViewAllSalesRep,
-                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, ancpRevenueTracking,
+                ancpInventoryMng, ancpMonthlyReportServicing, ancpMonthlyReportInventory, ancpMonthlyReportRevenueSummary, //ancpRevenueTracking,
         };
 
         for (VBox panel : allPanels) {
@@ -286,8 +324,8 @@ public class AdminController extends BaseController {
         } else if (activePanel == ancpInventoryMng) {
             btnInventoryMang.setStyle(HIGHLIGHT_STYLE);
         }
-        else if (activePanel == ancpRevenueTracking) {
-            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);}
+//        else if (activePanel == ancpRevenueTracking) {
+//            btnRevenueTracking.setStyle(HIGHLIGHT_STYLE);}
         else if (activePanel == ancpMonthlyReportServicing ||
                 activePanel == ancpMonthlyReportInventory ||
                 activePanel == ancpMonthlyReportRevenueSummary) {
@@ -303,7 +341,7 @@ public class AdminController extends BaseController {
         btnViewAllSalesRep.setStyle(defaultStyle);
         btnInventoryMang.setStyle(defaultStyle);
         btnMonthlyReport.setStyle(defaultStyle);
-        btnRevenueTracking.setStyle(defaultStyle);
+//        btnRevenueTracking.setStyle(defaultStyle);
     }
 
     // Highlighted button style
@@ -366,10 +404,10 @@ public class AdminController extends BaseController {
         showPanel(ancpMonthlyReportRevenueSummary);
     }
 
-    @FXML
-    public void handleRevenueTracking(ActionEvent actionEvent) {
-        showPanel(ancpRevenueTracking);
-    }
+//    @FXML
+//    public void handleRevenueTracking(ActionEvent actionEvent) {
+//        showPanel(ancpRevenueTracking);
+//    }
 
     // Left-side section handler stubs (implement as needed)
     @FXML
@@ -381,7 +419,17 @@ public class AdminController extends BaseController {
     void handleServicing(ActionEvent event) { }
 
     @FXML
-    void handleAppointments(ActionEvent event) { }
+    void handleAppointments(ActionEvent event) { try {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainAppointmentManagement.fxml"));
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Appointment Management");
+        stage.setScene(new Scene(root));
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }}
+
 
     @FXML
     void handleVehicleManagement(ActionEvent event) {
@@ -626,16 +674,49 @@ public class AdminController extends BaseController {
 
     //Add item to inventory
     public void handleAddItemtoInventory(ActionEvent actionEvent) {
-        Inventory newItem = new Inventory("", "", 0, 0.0, "", "");
-        inventoryList.add(newItem);
-        InventorytableView.scrollTo(newItem);
+        Inventory newItem = new Inventory(
+                Integer.parseInt(txtItemId.getText()), // Add this TextField in FXML
+                txtItemName.getText(),
+                Integer.parseInt(txtQuantity.getText()),
+                Double.parseDouble(txtPrice.getText()),
+                Integer.parseInt(txtMinStock.getText()),
+                LocalDateTime.now()
+        );
+
+        AdminDAO.addInventoryItem(newItem);
+        InventorytableView.getItems().add(newItem);
+
+        showAlert("Success", "Item added to inventory successfully.");
     }
 
 
     public void handleDeleteItemFromInventory(ActionEvent actionEvent) {
+        Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            AdminDAO.deleteInventoryItem(selected.getItemId());
+            InventorytableView.getItems().remove(selected);
+            showAlert("Success", "Item deleted from inventory.");
+        } else {
+            showAlert("Error", "Please select an item to delete.");
+        }
     }
 
     public void handleUpdateItemToInventory(ActionEvent actionEvent) {
+        Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            selected.setItemName(txtItemName.getText());
+            selected.setQuantity(Integer.parseInt(txtQuantity.getText()));
+            selected.setPrice(Double.parseDouble(txtPrice.getText()));
+            selected.setStockLvl(Integer.parseInt(txtMinStock.getText()));
+            selected.setLstUpdateDate(LocalDateTime.now());
+
+            AdminDAO.updateInventoryItem(selected);
+            InventorytableView.refresh();
+
+            showAlert("Success", "Inventory item updated.");
+        } else {
+            showAlert("Error", "Please select an item to update.");
+        }
     }
 
 
@@ -916,6 +997,10 @@ public class AdminController extends BaseController {
     public void setComboRemoveSalesRole(ComboBox<String> comboRemoveSalesRole) {
         this.comboRemoveSalesRole = comboRemoveSalesRole;
     }
+
+
+
+
 
 
 
