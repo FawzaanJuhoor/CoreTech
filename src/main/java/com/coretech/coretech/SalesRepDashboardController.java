@@ -50,15 +50,15 @@ public class SalesRepDashboardController extends BaseController {
     }
     private void loadAppointments() {
         // Clear any existing data
-//        appointmentSummaryTable.getItems().clear();
-//
-//        // Example: Dummy data (replace with AppointmentDAO.getDashboardAppointments() when ready)
-//        List<Appointment> dummyAppointments = List.of(
-//                new Appointment(1, "john@example.com", "Toyota", "Corolla", 2020, 101, "Oil Change", LocalDate.now(), "Completed", 89.99),
-//                new Appointment(2, "jane@example.com", "Honda", "Civic", 2019, 102, "Brake Inspection", LocalDate.now().plusDays(1), "Requested", 120.50)
-//        );
-//
-//        appointmentSummaryTable.getItems().addAll(dummyAppointments);
+        appointmentSummaryTable.getItems().clear();
+
+        // Example: Dummy data (replace with AppointmentDAO.getDashboardAppointments() when ready)
+        List<Appointment> dummyAppointments = List.of(
+                new Appointment(1, "john@example.com", "Toyota", "Corolla", 2020, 101, "Oil Change", LocalDate.now(), "Completed", 89.99),
+                new Appointment(2, "jane@example.com", "Honda", "Civic", 2019, 102, "Brake Inspection", LocalDate.now().plusDays(1), "Requested", 120.50)
+        );
+
+        appointmentSummaryTable.getItems().addAll(dummyAppointments);
     }
 
 
@@ -130,6 +130,8 @@ public class SalesRepDashboardController extends BaseController {
     @FXML
     private void handleServicing(ActionEvent event) {
         System.out.println("Servicing Clicked");
+        switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
+
     }
 
 

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.ServicingController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.ServicingFormController">
 
     <!-- Top Bar -->
     <top>
@@ -87,38 +87,23 @@
             <VBox alignment="CENTER" prefHeight="494.0" prefWidth="435.0" spacing="25" style="-fx-padding: 30; -fx-background-color: #EFEFEF;">
                 <!-- VIN -->
                 <HBox alignment="CENTER_LEFT" spacing="20">
-                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="VIN:" />
-                    <TextField fx:id="vinTextField" prefHeight="30.0" prefWidth="234.0" promptText="Enter VIN" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Appointment ID:" />
+                    <TextField fx:id="AppointmentID" prefHeight="30.0" prefWidth="234.0" promptText="Enter VIN" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                 </HBox>
 
                 <!-- Customer Email -->
                 <HBox alignment="CENTER_LEFT" spacing="20">
-                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Customer Email:" />
-                    <TextField fx:id="customerEmailTextField" prefHeight="30.0" prefWidth="234.0" promptText="Enter Customer Email" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Item ID:" />
+                    <TextField fx:id="ItemID" prefHeight="30.0" prefWidth="234.0" promptText="Enter Customer Email" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                 </HBox>
 
-                <!-- Service Type -->
-                <HBox alignment="CENTER_LEFT" spacing="20">
-                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Service Type:" />
-                    <TextField fx:id="serviceTypeTextField" promptText="Enter Service" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                </HBox>
 
-                <!-- Service Date -->
-                <HBox alignment="CENTER_LEFT" spacing="20">
-                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Service Date:" />
-                    <DatePicker fx:id="serviceDatePicker" prefHeight="25.0" prefWidth="293.0" promptText="Enter Date" />
-                </HBox>
 
-                <!-- Description -->
-                <HBox alignment="CENTER_LEFT" spacing="20">
-                    <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Description:" />
-                    <TextField fx:id="descriptionTextField" promptText="Enter Description" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                </HBox>
+
 
                 <!-- Buttons -->
                 <HBox alignment="CENTER" prefHeight="86.0" prefWidth="374.0" spacing="40" style="-fx-padding: 10;">
                     <Button fx:id="addServiceButton" style="-fx-background-color: #198B2C; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="ADD" />
-                    <Button fx:id="cancelButton" style="-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-pref-width: 120; -fx-pref-height: 40;" text="CANCEL" />
                 </HBox>
             </VBox>
         </VBox>

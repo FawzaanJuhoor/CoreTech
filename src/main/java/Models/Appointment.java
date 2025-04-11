@@ -58,6 +58,21 @@ public class Appointment {
         this.mechanicId = mechanicId;
     }
 
+    public Appointment(int appointmentId, String email, String make, String model, int year,
+                       int userId, String serviceType, LocalDate serviceDate, String status, double totalCost) {
+        this.appointmentId = appointmentId;
+        this.email = email;
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.userId = userId;
+        this.serviceType = serviceType;
+        this.serviceDate = serviceDate;
+        this.status = status;
+        this.totalCost = totalCost;
+    }
+
+
     public String getEmail() {
         return email;
     }
@@ -213,6 +228,10 @@ public class Appointment {
     public void setMechanicId(int mechanicId) {
         this.mechanicId = mechanicId;
     }
+
+    private String mechanicName;
+    public String getMechanicName() { return mechanicName; }
+    public void setMechanicName(String mechanicName) { this.mechanicName = mechanicName; }
 
     /**
      * Returns a string representation of the Appointment object.

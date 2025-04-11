@@ -7,11 +7,13 @@ import db.AppointmentDAO;
 import db.MechanicDAO;
 import db.VehicleDAO;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 
 import java.time.LocalDate;
@@ -39,6 +41,9 @@ public class AppointmentController extends BaseController{
     public DatePicker cancelServiceDatePicker;
     public ComboBox CancelMechanicComboBox;
     public ComboBox CancelServiceTypeComboBox;
+    public TextField viewAppointmentSearchField;
+    public Button viewAppointmentSearchButton;
+    public TableColumn actionColumn;
     @FXML
     private ComboBox<Mechanic> updateMechanicComboBox;
     // Main containers
@@ -122,7 +127,8 @@ public class AppointmentController extends BaseController{
     @FXML
     public void initialize() {
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
-
+        setupAppointmentTable();
+        loadAppointments();
         // Event handlers
         homeButton.setOnAction(this::handleHome);
         customerButton.setOnAction(this::handleCustomerManagement);
@@ -156,9 +162,6 @@ public class AppointmentController extends BaseController{
                     "Requested", "Started", "In Progress", "Completed"
             ));
 
-            // Load Mechanics from DB
-//            List<Mechanic> mechanics = MechanicDAO.getAllMechanics();
-//            mechanicComboBox.setItems(FXCollections.observableArrayList(mechanics));
 
             mechanicComboBox.setItems(FXCollections.observableArrayList(MechanicDAO.getAllMechanics()));
 
@@ -604,18 +607,13 @@ public class AppointmentController extends BaseController{
         hideAllForms(); // Create this to hide other forms
         viewForm.setVisible(true);
         viewForm.setManaged(true);
-        highlightActiveButton(viewAppointmentButton); // ✅ Correct method name
+        highlightActiveButton(viewAppointmentButton); // Correct method name
         // Optional: if using active button highlighting
         loadAppointments(); // Optional: Load table data
     }
-    private void loadAppointments() {
-//        appointmentTable.getItems().clear();
-//        List<Appointment> appointments = AppointmentDAO.getAllAppointments(); // your DAO method
-//        appointmentTable.getItems().addAll(appointments);
-    }
 
-    public void handleViewAppointmentSearch(ActionEvent actionEvent) {
-    }
+
+
     private void hideAllForms() {
         addForm.setVisible(false);
         addForm.setManaged(false);
@@ -632,5 +630,132 @@ public class AppointmentController extends BaseController{
         viewForm.setVisible(false);
         viewForm.setManaged(false);
     }
+
+    @FXML
+    private void setupAppointmentTable() {
+        appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
+        vinColumn.setCellValueFactory(new PropertyValueFactory<>("vin"));
+        mechanicColumn.setCellValueFactory(new PropertyValueFactory<>("mechanicName")); // This assumes your model has getMechanicName()
+        servicingDateColumn.setCellValueFactory(new PropertyValueFactory<>("serviceDate"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+//        // Action column: add Update/Delete buttons
+//        actionColumn.setCellFactory(col -> new TableCell<Appointment, Void>() {
+//            private final Button updateButton = new Button("Update");
+//            private final Button deleteButton = new Button("Delete");
+//            private final HBox buttonBox = new HBox(5, updateButton, deleteButton);
+//
+//            {
+//                updateButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+//                deleteButton.setStyle("-fx-font-size: 11px; -fx-padding: 2 5;");
+//
+//                updateButton.setOnAction(e -> {
+//                    Appointment appointment = getTableView().getItems().get(getIndex());
+//                    populateUpdateForm(appointment);
+//                    showUpdateForm();
+//                });
+//
+//                deleteButton.setOnAction(e -> {
+//                    Appointment appointment = getTableView().getItems().get(getIndex());
+//                    populateCancelForm(appointment);
+//                    showCancelForm();
+//                });
+//            }
+//
+//            @Override
+//            protected void updateItem(Void item, boolean empty) {
+//                super.updateItem(item, empty);
+//                setGraphic(empty ? null : buttonBox);
+//            }
+//        });
+    }
+
+    private void populateUpdateForm(Appointment a) {
+        updateSearchAppointmentIdTextField.setText(String.valueOf(a.getAppointmentId()));
+        updateVinTextField.setText(a.getVin());
+        updateServiceTypeComboBox.setValue(a.getServiceType());
+        updateServiceDatePicker.setValue(a.getServiceDate());
+        updateStatusComboBox.setValue(a.getStatus());
+
+        // Load mechanics from DB if not already loaded
+        List<Mechanic> mechanics = MechanicDAO.getAllMechanics();
+        CancelMechanicComboBox.setItems(FXCollections.observableArrayList(mechanics));
+
+        // Set selected mechanic
+        for (Mechanic m : mechanics) {
+            if (m.getMechanicId() == a.getMechanicId()) {
+                CancelMechanicComboBox.setValue(m);
+                break;
+            }
+        }
+
+        updateVinTextField.setDisable(true); // Optional: lock VIN after loading
+    }
+
+    private void populateCancelForm(Appointment a) {
+        cancelSearchAppointmentIdTextField.setText(String.valueOf(a.getAppointmentId()));
+        cancelVinTextField.setText(a.getVin());
+        CancelServiceTypeComboBox.setValue(a.getServiceType());
+        cancelServiceDatePicker.setValue(a.getServiceDate());
+        CancelStatusComboBox.setValue(a.getStatus());
+
+        // Load mechanics into cancel combo box
+        List<Mechanic> mechanics = MechanicDAO.getAllMechanics();
+        CancelMechanicComboBox.setItems(FXCollections.observableArrayList(mechanics));
+
+        // Select mechanic in combo box
+        for (Mechanic m : mechanics) {
+            if (m.getMechanicId() == a.getMechanicId()) {
+                CancelMechanicComboBox.setValue(m);
+                break;
+            }
+        }
+
+        // Disable all fields for read-only delete view
+        cancelVinTextField.setEditable(false);
+        CancelServiceTypeComboBox.setDisable(true);
+        CancelMechanicComboBox.setDisable(true);
+        cancelServiceDatePicker.setDisable(true);
+        CancelStatusComboBox.setDisable(true);
+    }
+
+    private void redirectToUpdateOrCancel(Appointment appointment) {
+        if (appointment.getStatus().equalsIgnoreCase("Completed")) {
+            showAlert(Alert.AlertType.INFORMATION, "View Only", "Completed appointments cannot be modified.");
+        } else {
+            updateSearchAppointmentIdTextField.setText(String.valueOf(appointment.getAppointmentId()));
+            handleSearchAppointmentById();
+            showUpdateForm();
+        }
+    }
+
+
+    @FXML
+    private void loadAppointments() {
+        appointmentTable.getItems().clear();
+        List<Appointment> list = AppointmentDAO.getAllAppointments();
+        System.out.println("Loaded: " + list.size() + " appointments");
+
+        appointmentTable.getItems().addAll(list);
+    }
+
+    @FXML
+    private void handleViewAppointmentSearch(ActionEvent actionEvent) {
+        String query = viewAppointmentSearchField.getText().trim().toLowerCase();
+        appointmentTable.getItems().clear();
+
+        if (!query.isEmpty()) {
+            List<Appointment> all = AppointmentDAO.getAllAppointments();
+            for (Appointment a : all) {
+                if (a.getVin().toLowerCase().contains(query) ||
+                        a.getMechanicName().toLowerCase().contains(query)) {
+                    appointmentTable.getItems().add(a);
+                }
+            }
+        } else {
+            loadAppointments();
+        }
+    }
+
 
 }

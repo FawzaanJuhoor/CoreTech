@@ -4,6 +4,8 @@ import Models.Appointment;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Data Access Object (DAO) for managing appointment-related operations in the database.
@@ -140,7 +142,35 @@ public class AppointmentDAO {
         }
     }
 
+    public static List<Appointment> getAllAppointments() {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "{ call GetAllAppointments(?) }";
 
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.registerOutParameter(1, Types.REF_CURSOR);
+            stmt.execute();
+
+            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
+                while (rs.next()) {
+                    Appointment a = new Appointment();
+                    a.setAppointmentId(rs.getInt("AppointmentID"));
+                    a.setVin(rs.getString("VIN"));
+                    a.setServiceType(rs.getString("ServiceType"));
+                    a.setServiceDate(rs.getDate("ServiceDate").toLocalDate());
+                    a.setStatus(rs.getString("ServiceStatus"));
+                    a.setMechanicName(rs.getString("MechanicName")); // new field in model
+                    appointments.add(a);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
 
 
 }
