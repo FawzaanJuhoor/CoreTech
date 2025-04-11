@@ -13,6 +13,9 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coretech.coretech.SalesRepDashboardController">
 
 <!-- Left Sidebar -->
@@ -193,6 +196,16 @@
                                 </font>
                             </Label>
                         </HBox>
+                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                            <ImageView fitHeight="32.0" fitWidth="32.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@../../../Images/icons/single_person.png" />
+                                </image>
+                                <HBox.margin>
+                                    <Insets right="20.0" />
+                                </HBox.margin>
+                            </ImageView>
+                        </HBox>
                     </VBox>
 <!--                    <ImageView fitHeight="24" fitWidth="24" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0"-->
 <!--                               image="@path/to/user_icon.png"/>-->
@@ -204,16 +217,28 @@
             <VBox.margin>
                 <Insets top="30.0" />
             </VBox.margin>
-            <children>
-                <AnchorPane prefHeight="302.0" prefWidth="502.0" style="-fx-background-color: white; -fx-pref-width: 400; -fx-pref-height: 300;" HBox.hgrow="ALWAYS">
-                    <padding>
-                        <Insets top="50.0" />
-                    </padding>
-                </AnchorPane>
-            </children>
+            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED">
+                <content>
+                    <HBox>
+                        <TableView fx:id="appointmentSummaryTable" minWidth="1350.0">
+                            <columns>
+                                <TableColumn fx:id="appointmentIdColumn" text="Appointment ID" prefWidth="100" />
+                                <TableColumn fx:id="emailColumn" text="Email" prefWidth="180" />
+                                <TableColumn fx:id="makeColumn" text="Make" prefWidth="120" />
+                                <TableColumn fx:id="modelColumn" text="Model" prefWidth="120" />
+                                <TableColumn fx:id="yearColumn" text="Year" prefWidth="80" />
+                                <TableColumn fx:id="userIdColumn" text="User ID" prefWidth="100" />
+                                <TableColumn fx:id="serviceTypeColumn" text="Service Type" prefWidth="150" />
+                                <TableColumn fx:id="serviceDateColumn" text="Service Date" prefWidth="150" />
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="120" />
+                                <TableColumn fx:id="totalCostColumn" text="Total Cost" prefWidth="100" />
+                                <TableColumn fx:id="actionColumn" text="Action" prefWidth="120" />
+                            </columns>
+                        </TableView>
+                    </HBox>
+                </content>
+            </ScrollPane>
         </HBox>
     </VBox>
 </center>
-
-
 </BorderPane>

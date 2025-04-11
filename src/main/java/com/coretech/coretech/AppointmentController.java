@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class AppointmentController {
+public class AppointmentController extends BaseController{
     public Label formTitleLabel;
     public VBox formContainer;
     public HBox vinBox;
@@ -96,6 +97,16 @@ public class AppointmentController {
     @FXML private Button cancelAppointmentButton;
     @FXML private Button searchAppointmentsButton;
 
+    @FXML private Button viewAppointmentButton;
+    @FXML private VBox viewForm;
+    @FXML private TableView<Appointment> appointmentTable;
+    @FXML private TableColumn<Appointment, Integer> appointmentIdColumn;
+    @FXML private TableColumn<Appointment, String> vinColumn;
+    @FXML private TableColumn<Appointment, String> mechanicColumn;
+    @FXML private TableColumn<Appointment, String> servicingDateColumn;
+    @FXML private TableColumn<Appointment, String> statusColumn;
+
+
     private void loadMechanics() {
         try {
             List<Mechanic> mechanics = MechanicDAO.getAllMechanics();
@@ -106,9 +117,19 @@ public class AppointmentController {
         }
     }
 
-
+    @FXML
+    private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
     @FXML
     public void initialize() {
+        setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
+
+        // Event handlers
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
         loadMechanics(); // Always populate mechanic combo box
 
         Platform.runLater(() -> {
@@ -205,18 +226,30 @@ public class AppointmentController {
         cancelForm.setManaged(false);
         searchForm.setVisible(false);
         searchForm.setManaged(false);
+        viewForm.setVisible(false);
+        viewForm.setManaged(false);
     }
 
     private void highlightActiveButton(Button activeButton) {
-        // Reset all buttons to default style
-        bookAppointmentButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;");
-        updateAppointmentButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;");
-        cancelAppointmentButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;");
-        searchAppointmentsButton.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;");
+        Button[] allButtons = {
+                bookAppointmentButton,
+                updateAppointmentButton,
+                cancelAppointmentButton,
+                searchAppointmentsButton,
+                viewAppointmentButton // add this
+        };
 
-        // Highlight the active button
-        activeButton.setStyle("-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;");
+        for (Button btn : allButtons) {
+            if (btn != null) {
+                btn.setStyle("-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;");
+            }
+        }
+
+        if (activeButton != null) {
+            activeButton.setStyle("-fx-background-color: #2293C3; -fx-text-fill: white; -fx-font-weight: bold;");
+        }
     }
+
 
     // Form submission handlers
     @FXML
@@ -247,40 +280,47 @@ public class AppointmentController {
         // Add your business logic here
     }
 
+    @FXML
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
     // Navigation methods
     @FXML
     private void handleHome(ActionEvent event) {
-        System.out.println("Navigating to Home...");
-        // Add navigation logic here
+        System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
     private void handleCustomerManagement(ActionEvent event) {
-        System.out.println("Navigating to Customer Management...");
-        // Add navigation logic here
+        System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Customer", (Node) event.getSource());
+
     }
 
     @FXML
     private void handleVehicleManagement(ActionEvent event) {
-        System.out.println("Navigating to Vehicle Management...");
-        // Add navigation logic here
+        System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Vehicle", (Node) event.getSource());
+
     }
 
     @FXML
     private void handleAppointments(ActionEvent event) {
-        System.out.println("Already in Appointments");
+        System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Appointment", (Node) event.getSource());
+
     }
 
     @FXML
     private void handleServicing(ActionEvent event) {
-        System.out.println("Navigating to Servicing...");
-        // Add navigation logic here
+        System.out.println("Servicing Clicked");
     }
 
+
+
     @FXML
-    private void handleLogout(ActionEvent event) {
-        System.out.println("Logging out...");
-        // Add logout logic here
+    private void handleLogout() {
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
 
     // Form cancel/back buttons
@@ -549,7 +589,6 @@ public class AppointmentController {
         }
     }
 
-
     @FXML
     private void clearCancelForm() {
         cancelSearchAppointmentIdTextField.clear();
@@ -559,4 +598,39 @@ public class AppointmentController {
         cancelServiceDatePicker.setValue(null);
         CancelStatusComboBox.getSelectionModel().clearSelection();
     }
+
+    @FXML
+    private void handleViewAppointment() {
+        hideAllForms(); // Create this to hide other forms
+        viewForm.setVisible(true);
+        viewForm.setManaged(true);
+        highlightActiveButton(viewAppointmentButton); // ✅ Correct method name
+        // Optional: if using active button highlighting
+        loadAppointments(); // Optional: Load table data
+    }
+    private void loadAppointments() {
+//        appointmentTable.getItems().clear();
+//        List<Appointment> appointments = AppointmentDAO.getAllAppointments(); // your DAO method
+//        appointmentTable.getItems().addAll(appointments);
+    }
+
+    public void handleViewAppointmentSearch(ActionEvent actionEvent) {
+    }
+    private void hideAllForms() {
+        addForm.setVisible(false);
+        addForm.setManaged(false);
+
+        updateForm.setVisible(false);
+        updateForm.setManaged(false);
+
+        cancelForm.setVisible(false);
+        cancelForm.setManaged(false);
+
+        searchForm.setVisible(false);
+        searchForm.setManaged(false);
+
+        viewForm.setVisible(false);
+        viewForm.setManaged(false);
+    }
+
 }

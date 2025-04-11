@@ -26,6 +26,14 @@ public class Appointment {
     /** The identifier of the mechanic assigned to the appointment. */
     private int mechanicId;
 
+    private String email;
+    private String make;
+    private String model;
+    private int year;
+    private int userId;
+    private double totalCost;
+
+
     /**
      * Default constructor that creates an empty Appointment object.
      */
@@ -48,6 +56,54 @@ public class Appointment {
         this.serviceDate = serviceDate;
         this.status = status;
         this.mechanicId = mechanicId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
     }
 
     /**
@@ -168,9 +224,15 @@ public class Appointment {
         return "Appointment{" +
                 "appointmentId=" + appointmentId +
                 ", vin='" + vin + '\'' +
+                ", email='" + email + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                ", userId=" + userId +
                 ", serviceType='" + serviceType + '\'' +
                 ", serviceDate=" + serviceDate +
                 ", status='" + status + '\'' +
+                ", totalCost=" + totalCost +
                 ", mechanicId=" + mechanicId +
                 '}';
     }
