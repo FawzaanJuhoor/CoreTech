@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 
 public class ServicingFormController {
 
+    public TextField AppointmentID;
+    public TextField ItemID;
     // Main Content Fields
     @FXML private TextField vinTextField;
     @FXML private TextField customerEmailTextField;
