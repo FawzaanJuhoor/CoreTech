@@ -11,18 +11,18 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("AdminView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("SalesRepDashboard.fxml"));
         Parent root = fxmlLoader.load();
 
         // Get the controller and set the stage reference
         BaseController controller = fxmlLoader.getController();
         controller.setStage(stage); // This will set the close request handler for each controller
 
-        Scene scene = new Scene(root, 900, 700);
+        Scene scene = new Scene(root, 1200, 1200); // Set a base size
         stage.setTitle("Admin Portal");
         stage.setScene(scene);
+        stage.setMaximized(true); // Force maximized once here
         stage.show();
-
     }
 
     public static void main(String[] args) {

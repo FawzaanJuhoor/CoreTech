@@ -159,6 +159,7 @@ public class MainCustomerController extends BaseController{
         hideAllForms();
         // Set the default active button (e.g., none)
         clearActiveButtons();
+        showAddCustomerForm();
     }
 
     /**

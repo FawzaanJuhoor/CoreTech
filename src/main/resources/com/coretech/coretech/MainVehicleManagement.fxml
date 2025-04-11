@@ -150,7 +150,7 @@
 
     <!-- Main Content -->
     <center>
-        <VBox fx:id="centerPane" alignment="CENTER" spacing="30" style="-fx-padding: 30; -fx-background-color: #EFEFEF; -fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
+        <VBox fx:id="centerPane" alignment="CENTER" spacing="30" style="-fx-padding: 30; -fx-background-color: #EFEFEF; -fx-border-color: #2293C3;" >
             <!-- Add Vehicle Form -->
             <VBox fx:id="addForm" alignment="CENTER" spacing="25" style="-fx-padding: 30; -fx-background-color: #EFEFEF;" visible="false" managed="false" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2293C3;" text="Add Vehicle" />
@@ -394,8 +394,8 @@
 
                 <ScrollPane fx:id="viewScrollPane" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-padding: 0;">
                     <content>
-                        <HBox fx:id="tableWrapper">
-                            <TableView fx:id="vehicleTable" minWidth="1000">
+                        <HBox fx:id="tableWrapper" HBox.hgrow="ALWAYS">
+                            <TableView fx:id="vehicleTable" minWidth="1000" VBox.vgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
                                     <TableColumn fx:id="vinColumn" text="VIN" prefWidth="150" />
@@ -417,7 +417,7 @@
 
     <!-- Right Panel -->
     <right>
-        <AnchorPane minWidth="200.0" maxWidth="350.0" style="-fx-border-color: #2293C3;" VBox.vgrow="ALWAYS">
+        <AnchorPane minWidth="200.0" maxWidth="350.0" style="-fx-border-color: #2293C3;" >
             <Button fx:id="addVehicleButton" onAction="#handleAddVehicle"
                     style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
                     text="Add Vehicle"
