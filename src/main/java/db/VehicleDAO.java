@@ -187,4 +187,34 @@ public class VehicleDAO {
     }
 
 
+    public static List<Vehicle> getAllVehiclesWithEmail() {
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "{CALL GetAllVehicles(?)}";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.registerOutParameter(1, Types.REF_CURSOR);
+            stmt.execute();
+
+            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
+                while (rs.next()) {
+                    vehicles.add(new Vehicle(
+                            rs.getString("VIN"),
+                            rs.getInt("CustomerID"),
+                            rs.getString("EmailID"),
+                            rs.getString("Make"),
+                            rs.getString("Model"),
+                            rs.getInt("Year"),
+                            rs.getString("ServiceHistory")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return vehicles;
+    }
+
 }

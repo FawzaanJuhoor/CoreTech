@@ -147,34 +147,66 @@ public class CustomerDAO {
         return null;
     }
 
-//    public List<Customer> getAllCustomers() {
-//        List<Customer> customers = new ArrayList<>();
-//        String procedureCall = "{ call GetAllCustomers(?) }";
-//
-//        try (Connection conn = DBConnection.getConnection();
-//             CallableStatement stmt = conn.prepareCall(procedureCall)) {
-//
-//            // Register the OUT parameter for the cursor
-//            stmt.registerOutParameter(1, Types.REF_CURSOR);
-//            stmt.execute();
-//
-//            // Retrieve the cursor
-//            ResultSet rs = (ResultSet) stmt.getObject(1);
-//
-//            while (rs.next()) {
-//                customers.add(new Customer(
-////                        rs.getInt("CustomerID"),
-//                        rs.getString("CustomerName"),
-//                        rs.getString("PhoneNo"),
-//                        rs.getString("EmailID"),
-//                        rs.getString("Address")
-//                ));
-//            }
-//            rs.close();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return customers;
-//    }
+    public static List<Customer> getAllCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        String procedureCall = "{ call GetAllCustomers(?) }";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(procedureCall)) {
+
+            stmt.registerOutParameter(1, Types.REF_CURSOR);
+            stmt.execute();
+
+            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
+                while (rs.next()) {
+                    customers.add(new Customer(
+                            rs.getInt("CustomerID"),
+                            rs.getString("CustomerName"),
+                            rs.getString("PhoneNo"),
+                            rs.getString("EmailID"),
+                            rs.getString("Address")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
+
+    public static Customer searchCustomerView(String email) {
+        String sql = "{call SearchCustomerByEmail(?, ?, ?, ?, ?)}"; // Assuming this stored procedure
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, email);
+
+            // Register OUT parameters
+            stmt.registerOutParameter(2, Types.INTEGER); // CustomerID
+            stmt.registerOutParameter(3, Types.VARCHAR); // CustomerName
+            stmt.registerOutParameter(4, Types.VARCHAR); // PhoneNo
+            stmt.registerOutParameter(5, Types.VARCHAR); // Address
+
+            stmt.execute();
+
+            int customerID = stmt.getInt(2);
+            String name = stmt.getString(3);
+            String phone = stmt.getString(4);
+            String address = stmt.getString(5);
+
+            if (customerID != 0) {
+                return new Customer(customerID, name, phone, email, address);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
 }

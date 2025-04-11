@@ -41,6 +41,21 @@ public class Vehicle {
         this.serviceHistory = serviceHistory;
     }
 
+    private String email;
+
+    public Vehicle(String vin, int customerId, String email, String make, String model, int year, String serviceHistory) {
+        this.VIN = vin;
+        this.customerId = customerId;
+        this.email = email;
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.serviceHistory = serviceHistory;
+    }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
     /**
      * Constructs a new Vehicle object with the specified details, with customerId as the first parameter.
      *

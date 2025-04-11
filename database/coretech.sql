@@ -196,6 +196,60 @@ CREATE TABLE Vehicle (
     CONSTRAINT fk_vehicle_customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
+CREATE OR REPLACE PROCEDURE GetAllVehicles(p_cursor OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT 
+            v.VehicleID,
+            v.VIN,
+            v.CustomerID,
+            c.EmailID,
+            v.Make,
+            v.Model,
+            v.Year,
+            v.ServiceHistory
+        FROM Vehicle v
+        JOIN Customer c ON v.CustomerID = c.CustomerID;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GetVehiclesByEmail(
+    p_email IN VARCHAR2,
+    p_cursor OUT SYS_REFCURSOR
+)
+AS
+    v_customer_id INT;
+BEGIN
+    -- Get Customer ID
+    SELECT CustomerID INTO v_customer_id FROM Customer WHERE EmailID = p_email;
+    
+    -- Fetch associated vehicles
+    OPEN p_cursor FOR
+    SELECT VehicleID, Make, Model, Year
+    FROM Vehicle
+    WHERE CustomerID = v_customer_id;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GetVehicleByID(
+    p_vehicle_id IN INT,
+    p_customer_id OUT INT,
+    p_make OUT VARCHAR2,
+    p_model OUT VARCHAR2,
+    p_year OUT INT,
+    p_vin OUT CHAR,
+    p_service_history OUT VARCHAR2
+)
+AS
+BEGIN
+    SELECT CustomerID, Make, Model, Year, VIN, ServiceHistory
+    INTO p_customer_id, p_make, p_model, p_year, p_vin, p_service_history
+    FROM Vehicle
+    WHERE VehicleID = p_vehicle_id;
+END;
+/
+
+
 CREATE OR REPLACE FUNCTION GetCustomerIdByEmail(p_email VARCHAR2)
 RETURN NUMBER
 IS
