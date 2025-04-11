@@ -618,7 +618,7 @@ CREATE TABLE Inventory (
     Quantity INT,
     Price NUMBER(8,2),
     MinStockLevel INT,
-    UpdatedDate TIMESTAMP
+    UpdatedDate SYSDATE
 );
 
 INSERT INTO Inventory (ItemID, ItemName, Quantity, Price, MinStockLevel, UpdatedDate) 

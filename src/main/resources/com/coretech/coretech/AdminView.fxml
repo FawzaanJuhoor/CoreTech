@@ -547,6 +547,17 @@
                         <TextField fx:id="searchInventoryidName" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                         <Button fx:id="btnSearchInventoryMng" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                      </HBox>
+                     <HBox spacing="20" alignment="CENTER">
+                        <TextField fx:id="txtItemId" promptText="Item ID"/>
+                        <TextField fx:id="txtItemName" promptText="Item Name"/>
+                        <TextField fx:id="txtQuantity" promptText="Quantity"/>
+                     </HBox>
+
+                     <HBox spacing="20" alignment="CENTER">
+                        <TextField fx:id="txtPrice" promptText="Price"/>
+                        <TextField fx:id="txtMinStock" promptText="Min Stock"/>
+                     </HBox>
+
 
                      <!-- Table for Inventory Mang -->
                      <TableView fx:id="InventorytableView" VBox.vgrow="ALWAYS">

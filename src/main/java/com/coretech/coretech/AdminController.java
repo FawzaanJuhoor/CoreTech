@@ -19,6 +19,7 @@ import Models.MonthlyServiceReport;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.time.LocalDate;
 
@@ -36,6 +37,11 @@ import java.io.File;
 
 public class AdminController extends BaseController {
 
+    @FXML private TextField txtItemId;
+    @FXML private TextField txtItemName;
+    @FXML private TextField txtQuantity;
+    @FXML private TextField txtPrice;
+    @FXML private TextField txtMinStock;
     //    Dashboard table
     @FXML
     private TableView<ServiceAppointment> mainDashBoardTable;
@@ -226,32 +232,8 @@ public class AdminController extends BaseController {
 //        Add item into inventory
         // Inventory TableView setup
         InventorytableView.setEditable(true);
-        InventorytableView.setItems(inventoryList);
+        InventorytableView.setItems(AdminDAO.getAllInventoryItems());
 
-// Column bindings
-        itemId.setCellValueFactory(cellData -> cellData.getValue().itemIdProperty());
-        itemId.setCellFactory(TextFieldTableCell.forTableColumn());
-        itemId.setOnEditCommit(event -> event.getRowValue().setItemId(event.getNewValue()));
-
-        itemName.setCellValueFactory(cellData -> cellData.getValue().itemNameProperty());
-        itemName.setCellFactory(TextFieldTableCell.forTableColumn());
-        itemName.setOnEditCommit(event -> event.getRowValue().setItemName(event.getNewValue()));
-
-        quantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
-        quantity.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        quantity.setOnEditCommit(event -> event.getRowValue().setQuantity(event.getNewValue()));
-
-        price.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
-        price.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        price.setOnEditCommit(event -> event.getRowValue().setPrice(event.getNewValue()));
-
-        stockLvl.setCellValueFactory(cellData -> cellData.getValue().stockLvlProperty());
-        stockLvl.setCellFactory(TextFieldTableCell.forTableColumn());
-        stockLvl.setOnEditCommit(event -> event.getRowValue().setStockLvl(event.getNewValue()));
-
-        lstUpdateDate.setCellValueFactory(cellData -> cellData.getValue().lstUpdateDateProperty());
-        lstUpdateDate.setCellFactory(TextFieldTableCell.forTableColumn());
-        lstUpdateDate.setOnEditCommit(event -> event.getRowValue().setLstUpdateDate(event.getNewValue()));
 
 
 //        For monthly report
@@ -277,6 +259,29 @@ public class AdminController extends BaseController {
         netProfit.setCellValueFactory(data -> data.getValue().netProfitProperty());
         ObservableList<RevenueSummary> revenueReport = AdminDAO.getRevenueSummaryReport();
         RevenueMntlyRprttableView.setItems(revenueReport);
+
+//        Inventory Managment
+        itemId.setCellValueFactory(new PropertyValueFactory<>("itemId"));
+        itemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        price.setCellValueFactory(new PropertyValueFactory<>("price"));
+        stockLvl.setCellValueFactory(new PropertyValueFactory<>("stockLvl")); // or "minStockLevel"
+        lstUpdateDate.setCellValueFactory(new PropertyValueFactory<>("lstUpdateDate")); // or "updatedDate"
+
+
+        // Populate text fields when a row is selected
+        InventorytableView.setOnMouseClicked(event -> {
+            Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                txtItemId.setText(String.valueOf(selected.getItemId()));
+                txtItemName.setText(selected.getItemName());
+                txtQuantity.setText(String.valueOf(selected.getQuantity()));
+                txtPrice.setText(String.valueOf(selected.getPrice()));
+                txtMinStock.setText(String.valueOf(selected.getStockLvl()));
+            }
+        });
+
+
 
 
     }
@@ -669,16 +674,49 @@ public class AdminController extends BaseController {
 
     //Add item to inventory
     public void handleAddItemtoInventory(ActionEvent actionEvent) {
-        Inventory newItem = new Inventory("", "", 0, 0.0, "", "");
-        inventoryList.add(newItem);
-        InventorytableView.scrollTo(newItem);
+        Inventory newItem = new Inventory(
+                Integer.parseInt(txtItemId.getText()), // Add this TextField in FXML
+                txtItemName.getText(),
+                Integer.parseInt(txtQuantity.getText()),
+                Double.parseDouble(txtPrice.getText()),
+                Integer.parseInt(txtMinStock.getText()),
+                LocalDateTime.now()
+        );
+
+        AdminDAO.addInventoryItem(newItem);
+        InventorytableView.getItems().add(newItem);
+
+        showAlert("Success", "Item added to inventory successfully.");
     }
 
 
     public void handleDeleteItemFromInventory(ActionEvent actionEvent) {
+        Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            AdminDAO.deleteInventoryItem(selected.getItemId());
+            InventorytableView.getItems().remove(selected);
+            showAlert("Success", "Item deleted from inventory.");
+        } else {
+            showAlert("Error", "Please select an item to delete.");
+        }
     }
 
     public void handleUpdateItemToInventory(ActionEvent actionEvent) {
+        Inventory selected = InventorytableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            selected.setItemName(txtItemName.getText());
+            selected.setQuantity(Integer.parseInt(txtQuantity.getText()));
+            selected.setPrice(Double.parseDouble(txtPrice.getText()));
+            selected.setStockLvl(Integer.parseInt(txtMinStock.getText()));
+            selected.setLstUpdateDate(LocalDateTime.now());
+
+            AdminDAO.updateInventoryItem(selected);
+            InventorytableView.refresh();
+
+            showAlert("Success", "Inventory item updated.");
+        } else {
+            showAlert("Error", "Please select an item to update.");
+        }
     }
 
 
@@ -959,6 +997,10 @@ public class AdminController extends BaseController {
     public void setComboRemoveSalesRole(ComboBox<String> comboRemoveSalesRole) {
         this.comboRemoveSalesRole = comboRemoveSalesRole;
     }
+
+
+
+
 
 
 
