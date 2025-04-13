@@ -11,6 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
@@ -18,24 +21,35 @@ import javafx.stage.Stage;
 import Models.MonthlyServiceReport;
 
 
+import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 import java.time.LocalDate;
 
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
-import javafx.stage.WindowEvent;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.File;
 
 public class AdminController extends BaseController {
+
+    public Button btnSearchInventoryMng;
+    public TextField searchInventoryidName;
+    public TextField searchViewAllSalesrep;
+    public Button btnSearchViewAllSalesRep;
+
+    @FXML private Label lblTotalEmployees;
+    @FXML private Label lblTodayAppointments;
 
     @FXML private TextField txtItemId;
     @FXML private TextField txtItemName;
@@ -91,7 +105,7 @@ public class AdminController extends BaseController {
     @FXML public Label lblUpdateSalesRepEmail;
     @FXML public TextField txtUpdateSalesRepEmail;
     @FXML public Label lblUpdateSalesPassword;
-    @FXML public TextField txtUpdateSalesPassword;
+    @FXML public PasswordField txtUpdateSalesPassword;
     @FXML public Label lblUpdateSalesRep;
     @FXML private ComboBox<String> comboUpdateSalesRole;
     @FXML public Button updateButton;
@@ -182,8 +196,13 @@ public class AdminController extends BaseController {
 
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
+        lblTotalEmployees.setText(String.valueOf(AdminDAO.getTotalEmployees()));
+        lblTodayAppointments.setText(String.valueOf(AdminDAO.getTodayAppointmentsCount()));
+
         // Show dashboard initially
         showPanel(ancpDashboard);
+
+
 
         //        Dashoard table
         APPOINTMENTID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
@@ -280,6 +299,48 @@ public class AdminController extends BaseController {
                 txtMinStock.setText(String.valueOf(selected.getStockLvl()));
             }
         });
+
+        searchInventoryidName.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.trim().isEmpty()) {
+                // If the search box is cleared, reload all inventory items
+                InventorytableView.setItems(AdminDAO.getAllInventoryItems());
+            } else {
+                // Perform the search
+                ObservableList<Inventory> allItems = AdminDAO.getAllInventoryItems();
+                ObservableList<Inventory> filteredItems = FXCollections.observableArrayList();
+
+                for (Inventory item : allItems) {
+                    String itemIdStr = String.valueOf(item.getItemId());
+                    String itemNameStr = item.getItemName().toLowerCase();
+
+                    if (itemIdStr.contains(newValue) || itemNameStr.contains(newValue.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
+                }
+
+                InventorytableView.setItems(filteredItems);
+            }
+        });
+
+
+        searchViewAllSalesrep.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.trim().isEmpty()) {
+                // Reload all data if search is cleared
+                tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+            } else {
+                ObservableList<NewAdmin> allUsers = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+                ObservableList<NewAdmin> filteredList = FXCollections.observableArrayList();
+
+                for (NewAdmin admin : allUsers) {
+                    if (admin.getUsername().toLowerCase().contains(newValue.toLowerCase())) {
+                        filteredList.add(admin);
+                    }
+                }
+
+                tableView.setItems(filteredList);
+            }
+        });
+
 
 
 
@@ -474,6 +535,13 @@ public class AdminController extends BaseController {
 
 
 
+    private void refreshDashboardCounts() {
+        int totalEmployees = AdminDAO.getTotalEmployees();
+        int todayAppointments = AdminDAO.getTodayAppointmentsCount();
+
+        lblTotalEmployees.setText(String.valueOf(totalEmployees));
+        lblTodayAppointments.setText(String.valueOf(todayAppointments));
+    }
 
 
     //Forms Buttons
@@ -490,6 +558,24 @@ public class AdminController extends BaseController {
             alert.setHeaderText(null);
             alert.setContentText("All fields must be filled.");
             alert.showAndWait();
+            return;
+        }
+
+        // Validate phone number (10 digits)
+        if (!phone.matches("\\d{10}")) {
+            showAlert("Invalid Phone", "Phone number must be exactly 10 digits.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Validate email
+        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            showAlert("Invalid Email", "Please enter a valid email address.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Validate password length (optional)
+        if (password.length() < 6) {
+            showAlert("Weak Password", "Password must be at least 6 characters long.", Alert.AlertType.WARNING);
             return;
         }
 
@@ -513,6 +599,12 @@ public class AdminController extends BaseController {
             // Refresh table data
             ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
             tableView.setItems(updatedAdminData);
+
+            // Refresh table
+            tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+            // 👇 Refresh dashboard summary
+            refreshDashboardCounts();
 
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -584,6 +676,15 @@ public class AdminController extends BaseController {
                 ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
                 tableView.setItems(updatedAdminData);
 
+                // ✅ Optional: Clear form
+                clearUpdateForm();
+
+                // Refresh table
+                tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+                // 👇 Refresh dashboard summary
+                refreshDashboardCounts();
+
             } else {
                 showAlert("Delete Failed", "Could not delete the user. Please try again.", Alert.AlertType.ERROR);
             }
@@ -644,6 +745,19 @@ public class AdminController extends BaseController {
 
         if (updated) {
             showAlert("Success", "Sales representative updated successfully!", Alert.AlertType.INFORMATION);
+            // ✅ Refresh the TableView
+            ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+            tableView.setItems(updatedAdminData);
+
+            // ✅ Optional: Clear form
+            clearUpdateForm();
+
+            // Refresh table
+            tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+            // 👇 Refresh dashboard summary
+            refreshDashboardCounts();
+
         } else {
             showAlert("Update Failed", "Could not update. Check console for error.", Alert.AlertType.ERROR);
         }
@@ -742,61 +856,147 @@ public class AdminController extends BaseController {
     //    Monthly report of Servicing
     public void handleGeneratePdfMonthlyReportServicing(ActionEvent actionEvent) {
         try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(PDRectangle.LETTER);
             document.addPage(page);
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+            PDFont font = PDType1Font.HELVETICA;
+            PDFont fontBold = PDType1Font.HELVETICA_BOLD;
 
-            float yStart = 750;
             float margin = 50;
-            float leading = 20;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float y = yStart;
+            float rowHeight = 20;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
 
-            // Title
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-            contentStream.newLineAtOffset(margin, yStart);
-            contentStream.showText("Monthly Servicing Report");
-            contentStream.endText();
+            // ✅ Dynamic columns
+            String[] headers = {"Customer", "Vehicle", "Service", "Cost"};
+            int columnCount = headers.length;
+            float columnWidth = tableWidth / columnCount;
+            float[] columnWidths = new float[columnCount];
+            Arrays.fill(columnWidths, columnWidth);
 
-            float y = yStart - 30;
-
-            // Table Headers
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            contentStream.newLineAtOffset(margin, y);
-            contentStream.showText(String.format("%-20s %-20s %-20s %-10s", "Customer", "Vehicle", "Service", "Cost"));
-            contentStream.endText();
-            y -= leading;
-
-            // Loop through real TableView data
-            ObservableList<MonthlyServiceReport> reportList = InventoryMntlyRprttableView.getItems();
-
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
-            for (MonthlyServiceReport report : reportList) {
-                String customer = report.getCustomerName();
-                String vehicle = report.getVehicle();
-                String service = report.getServiceType();
-                String costStr = report.getCost() > 0 ? String.format("$%.2f", report.getCost()) : "";
-
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, y);
-                contentStream.showText(String.format("%-20s %-20s %-20s %-10s", customer, vehicle, service, costStr));
-                contentStream.endText();
-                y -= leading;
-
-                // Start new page if needed
-                if (y < 50) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    y = yStart;
+            // ✅ Insert logo top-left
+            try {
+                File logoFile = new File("src/main/resources/Images/BlackVersion.png");
+                if (logoFile.exists()) {
+                    PDImageXObject logo = PDImageXObject.createFromFileByContent(logoFile, document);
+                    contentStream.drawImage(logo, margin, y - 50, 80, 40); // top-left
                 }
+            } catch (IOException ioEx) {
+                System.out.println("Logo not loaded: " + ioEx.getMessage());
             }
 
+            // ✅ Title next to logo
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 18);
+            contentStream.newLineAtOffset(margin + 100, y - 30); // aligned to right of logo
+            contentStream.showText("Monthly Servicing Report");
+            contentStream.endText();
+            y -= 70;
+
+            // ✅ Header Background
+            contentStream.setNonStrokingColor(34, 147, 194);
+            contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+            contentStream.fill();
+
+            // ✅ Header Text (white)
+            float x = margin;
+            for (int i = 0; i < headers.length; i++) {
+                contentStream.beginText();
+                contentStream.setFont(fontBold, 12);
+                contentStream.setNonStrokingColor(Color.WHITE);
+                contentStream.newLineAtOffset(x + 5, y - 15);
+                contentStream.showText(headers[i]);
+                contentStream.endText();
+                x += columnWidths[i];
+            }
+
+            y -= rowHeight;
+            contentStream.setNonStrokingColor(Color.BLACK); // reset
+
+            // ✅ Get data
+            ObservableList<MonthlyServiceReport> reportList = InventoryMntlyRprttableView.getItems();
+
+            for (MonthlyServiceReport report : reportList) {
+                if (y < margin + rowHeight) {
+                    contentStream.close();
+                    page = new PDPage(PDRectangle.LETTER);
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = yStart - 50;
+
+                    // Redraw header
+                    contentStream.setNonStrokingColor(34, 147, 194);
+                    contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+                    contentStream.fill();
+
+                    x = margin;
+                    for (int i = 0; i < headers.length; i++) {
+                        contentStream.beginText();
+                        contentStream.setFont(fontBold, 12);
+                        contentStream.setNonStrokingColor(Color.WHITE);
+                        contentStream.newLineAtOffset(x + 5, y - 15);
+                        contentStream.showText(headers[i]);
+                        contentStream.endText();
+                        x += columnWidths[i];
+                    }
+
+                    y -= rowHeight;
+                    contentStream.setNonStrokingColor(Color.BLACK);
+                }
+
+                // ✅ Data Row
+                String[] row = {
+                        report.getCustomerName(),
+                        report.getVehicle(),
+                        report.getServiceType(),
+                        report.getCost() > 0 ? String.format("$%.2f", report.getCost()) : ""
+                };
+
+                x = margin;
+                for (int i = 0; i < row.length; i++) {
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.newLineAtOffset(x + 5, y - 15);
+                    contentStream.showText(row[i]);
+                    contentStream.endText();
+                    x += columnWidths[i];
+                }
+
+                y -= rowHeight;
+            }
+
+            // ✅ Draw table borders
+            float tableBottomY = y;
+            x = margin;
+
+            for (float colWidth : columnWidths) {
+                contentStream.moveTo(x, yStart - 70);
+                contentStream.lineTo(x, tableBottomY);
+                x += colWidth;
+            }
+            contentStream.moveTo(x, yStart - 70);
+            contentStream.lineTo(x, tableBottomY);
+
+            float currentY = yStart - 70;
+            for (int i = 0; i <= reportList.size() + 1; i++) {
+                contentStream.moveTo(margin, currentY);
+                contentStream.lineTo(margin + tableWidth, currentY);
+                currentY -= rowHeight;
+            }
+
+            // ✅ Footer (date + copyright)
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
+            contentStream.newLineAtOffset(margin, 50);
+            contentStream.showText("Generated on: " + java.time.LocalDate.now() + "  |  © CoreTech AutoCare");
+            contentStream.endText();
+
+            contentStream.stroke();
             contentStream.close();
 
-            // Save Dialog
+            // ✅ Save dialog
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save PDF");
             fileChooser.setInitialFileName("MonthlyServicingReport.pdf");
@@ -813,6 +1013,8 @@ public class AdminController extends BaseController {
             showAlert("Error", "Could not generate PDF: " + e.getMessage());
         }
     }
+
+
 
 
 
@@ -837,59 +1039,145 @@ public class AdminController extends BaseController {
         }
 
         try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(PDRectangle.LETTER);
             document.addPage(page);
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+            PDFont font = PDType1Font.HELVETICA;
+            PDFont fontBold = PDType1Font.HELVETICA_BOLD;
 
-            final float yStart = 750;
-            final float margin = 50;
-            final float leading = 20;
-            float currentY = yStart;
+            float margin = 50;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float y = yStart;
+            float rowHeight = 20;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
 
-            // Title Section
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
-            contentStream.newLineAtOffset(margin, currentY);
-            contentStream.showText("Monthly Inventory Report");
-            contentStream.endText();
+            // ✅ Dynamic column setup
+            String[] headers = {"Item Name", "Quantity Used", "Remaining Stock"};
+            int columnCount = headers.length;
+            float columnWidth = tableWidth / columnCount;
+            float[] columnWidths = new float[columnCount];
+            Arrays.fill(columnWidths, columnWidth);
 
-            currentY -= (leading * 2);
-
-            // Table Headers
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            contentStream.newLineAtOffset(margin, currentY);
-            contentStream.showText(String.format("%-30s%-20s%-20s", "Item Name", "Quantity Used", "Remaining Stock"));
-            contentStream.endText();
-
-            currentY -= leading;
-
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
-
-            // Data Rows
-            for (MonthlyInventoryReport item : reportData) {
-                if (currentY < 60) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    currentY = yStart;
+            // ✅ Logo
+            try {
+                File logoFile = new File("src/main/resources/Images/BlackVersion.png");
+                if (logoFile.exists()) {
+                    PDImageXObject logo = PDImageXObject.createFromFileByContent(logoFile, document);
+                    contentStream.drawImage(logo, margin, y - 50, 80, 40);
                 }
-
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, currentY);
-                contentStream.showText(String.format("%-30s%-20d%-20d",
-                        item.getItemName(),
-                        item.getQuantityUsed(),
-                        item.getLeftStock()));
-                contentStream.endText();
-                currentY -= leading;
+            } catch (IOException ioEx) {
+                System.out.println("Logo not loaded: " + ioEx.getMessage());
             }
 
+            // ✅ Title
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 18);
+            contentStream.newLineAtOffset(margin + 100, y - 30);
+            contentStream.showText("Monthly Inventory Report");
+            contentStream.endText();
+            y -= 70;
+
+            // ✅ Header Row Background
+            contentStream.setNonStrokingColor(34, 147, 194); // #2293c2
+            contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+            contentStream.fill();
+
+            // ✅ Header Text (white)
+            float x = margin;
+            for (int i = 0; i < headers.length; i++) {
+                contentStream.beginText();
+                contentStream.setFont(fontBold, 12);
+                contentStream.setNonStrokingColor(Color.WHITE);
+                contentStream.newLineAtOffset(x + 5, y - 15);
+                contentStream.showText(headers[i]);
+                contentStream.endText();
+                x += columnWidths[i];
+            }
+
+            y -= rowHeight;
+            contentStream.setNonStrokingColor(Color.BLACK); // reset
+
+            // ✅ Data Rows
+            for (MonthlyInventoryReport item : reportData) {
+                if (y < margin + rowHeight) {
+                    contentStream.close();
+                    page = new PDPage(PDRectangle.LETTER);
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = yStart - 50;
+
+                    // Redraw header
+                    contentStream.setNonStrokingColor(34, 147, 194);
+                    contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+                    contentStream.fill();
+
+                    x = margin;
+                    for (int i = 0; i < headers.length; i++) {
+                        contentStream.beginText();
+                        contentStream.setFont(fontBold, 12);
+                        contentStream.setNonStrokingColor(Color.WHITE);
+                        contentStream.newLineAtOffset(x + 5, y - 15);
+                        contentStream.showText(headers[i]);
+                        contentStream.endText();
+                        x += columnWidths[i];
+                    }
+
+                    y -= rowHeight;
+                    contentStream.setNonStrokingColor(Color.BLACK);
+                }
+
+                String[] row = {
+                        item.getItemName(),
+                        String.valueOf(item.getQuantityUsed()),
+                        String.valueOf(item.getLeftStock())
+                };
+
+                x = margin;
+                for (int i = 0; i < row.length; i++) {
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.newLineAtOffset(x + 5, y - 15);
+                    contentStream.showText(row[i]);
+                    contentStream.endText();
+                    x += columnWidths[i];
+                }
+
+                y -= rowHeight;
+            }
+
+            // ✅ Draw Borders
+            float tableBottomY = y;
+            x = margin;
+
+            // Vertical lines
+            for (float colWidth : columnWidths) {
+                contentStream.moveTo(x, yStart - 70);
+                contentStream.lineTo(x, tableBottomY);
+                x += colWidth;
+            }
+            contentStream.moveTo(x, yStart - 70);
+            contentStream.lineTo(x, tableBottomY);
+
+            // Horizontal lines
+            float currentY = yStart - 70;
+            for (int i = 0; i <= reportData.size() + 1; i++) {
+                contentStream.moveTo(margin, currentY);
+                contentStream.lineTo(margin + tableWidth, currentY);
+                currentY -= rowHeight;
+            }
+
+            // ✅ Footer (date + copyright)
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
+            contentStream.newLineAtOffset(margin, 50);
+            contentStream.showText("Generated on: " + java.time.LocalDate.now() + "  |  © CoreTech AutoCare");
+            contentStream.endText();
+
+            contentStream.stroke();
             contentStream.close();
 
-            // File Save Dialog
+            // ✅ Save Dialog
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save PDF");
             fileChooser.setInitialFileName("MonthlyInventoryReport.pdf");
@@ -908,69 +1196,153 @@ public class AdminController extends BaseController {
     }
 
 
+
+
     public void handleGeneratePdfMonthlyReportRevenue(ActionEvent actionEvent) {
         try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(PDRectangle.LETTER);
             document.addPage(page);
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+            PDFont font = PDType1Font.HELVETICA;
+            PDFont fontBold = PDType1Font.HELVETICA_BOLD;
 
-            float yStart = 750;
             float margin = 50;
-            float leading = 20;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float y = yStart;
+            float rowHeight = 20;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
 
-            // Title
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-            contentStream.newLineAtOffset(margin, yStart);
-            contentStream.showText("Monthly Revenue Summary");
-            contentStream.endText();
+            // ✅ Columns setup
+            String[] headers = {"Total Revenue", "Inventory Cost", "Net Profit"};
+            int columnCount = headers.length;
+            float columnWidth = tableWidth / columnCount;
+            float[] columnWidths = new float[columnCount];
+            Arrays.fill(columnWidths, columnWidth);
 
-            float y = yStart - 30;
-
-            // Table Headers
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            contentStream.newLineAtOffset(margin, y);
-            contentStream.showText(String.format("%-20s %-25s %-20s", "Total Revenue", "Inventory Cost", "Net Profit"));
-            contentStream.endText();
-            y -= leading;
-
-            // Get revenue data from DAO
-            ObservableList<RevenueSummary> revenueData = AdminDAO.getRevenueSummaryReport();
-
-            // Content rows
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
-            for (RevenueSummary summary : revenueData) {
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, y);
-                contentStream.showText(String.format("%-20.2f %-25.2f %-20.2f",
-                        summary.getTotalRevenue(),
-                        summary.getTotalInventoryCost(),
-                        summary.getNetProfit()));
-                contentStream.endText();
-                y -= leading;
-
-                // Add new page if necessary
-                if (y < 100) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    y = yStart;
+            // ✅ Logo
+            try {
+                File logoFile = new File("src/main/resources/Images/BlackVersion.png");
+                if (logoFile.exists()) {
+                    PDImageXObject logo = PDImageXObject.createFromFileByContent(logoFile, document);
+                    contentStream.drawImage(logo, margin, y - 50, 80, 40);
                 }
+            } catch (IOException ioEx) {
+                System.out.println("Logo not loaded: " + ioEx.getMessage());
             }
 
-            // Footer with date
+            // ✅ Title
+            contentStream.beginText();
+            contentStream.setFont(fontBold, 18);
+            contentStream.newLineAtOffset(margin + 100, y - 30);
+            contentStream.showText("Monthly Revenue Summary");
+            contentStream.endText();
+            y -= 70;
+
+            // ✅ Header Row Background
+            contentStream.setNonStrokingColor(34, 147, 194); // #2293c2
+            contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+            contentStream.fill();
+
+            // ✅ Header Text
+            float x = margin;
+            for (int i = 0; i < headers.length; i++) {
+                contentStream.beginText();
+                contentStream.setFont(fontBold, 12);
+                contentStream.setNonStrokingColor(Color.WHITE);
+                contentStream.newLineAtOffset(x + 5, y - 15);
+                contentStream.showText(headers[i]);
+                contentStream.endText();
+                x += columnWidths[i];
+            }
+
+            y -= rowHeight;
+            contentStream.setNonStrokingColor(Color.BLACK);
+
+            // ✅ Get data
+            ObservableList<RevenueSummary> revenueData = AdminDAO.getRevenueSummaryReport();
+
+            // ✅ Data Rows
+            for (RevenueSummary summary : revenueData) {
+                if (y < margin + rowHeight) {
+                    contentStream.close();
+                    page = new PDPage(PDRectangle.LETTER);
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = yStart - 50;
+
+                    // Redraw headers
+                    contentStream.setNonStrokingColor(34, 147, 194);
+                    contentStream.addRect(margin, y - rowHeight, tableWidth, rowHeight);
+                    contentStream.fill();
+
+                    x = margin;
+                    for (int i = 0; i < headers.length; i++) {
+                        contentStream.beginText();
+                        contentStream.setFont(fontBold, 12);
+                        contentStream.setNonStrokingColor(Color.WHITE);
+                        contentStream.newLineAtOffset(x + 5, y - 15);
+                        contentStream.showText(headers[i]);
+                        contentStream.endText();
+                        x += columnWidths[i];
+                    }
+
+                    y -= rowHeight;
+                    contentStream.setNonStrokingColor(Color.BLACK);
+                }
+
+                String[] row = {
+                        String.format("$%.2f", summary.getTotalRevenue()),
+                        String.format("$%.2f", summary.getTotalInventoryCost()),
+                        String.format("$%.2f", summary.getNetProfit())
+                };
+
+                x = margin;
+                for (int i = 0; i < row.length; i++) {
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.newLineAtOffset(x + 5, y - 15);
+                    contentStream.showText(row[i]);
+                    contentStream.endText();
+                    x += columnWidths[i];
+                }
+
+                y -= rowHeight;
+            }
+
+            // ✅ Draw Table Grid
+            float tableBottomY = y;
+            x = margin;
+
+            for (float colWidth : columnWidths) {
+                contentStream.moveTo(x, yStart - 70);
+                contentStream.lineTo(x, tableBottomY);
+                x += colWidth;
+            }
+            contentStream.moveTo(x, yStart - 70);
+            contentStream.lineTo(x, tableBottomY);
+
+            float currentY = yStart - 70;
+            for (int i = 0; i <= revenueData.size() + 1; i++) {
+                contentStream.moveTo(margin, currentY);
+                contentStream.lineTo(margin + tableWidth, currentY);
+                currentY -= rowHeight;
+            }
+
+            contentStream.stroke();
+
+            // ✅ Footer (date)
+            // ✅ Footer (date + copyright)
             contentStream.beginText();
             contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
             contentStream.newLineAtOffset(margin, 50);
-            contentStream.showText("Generated on: " + java.time.LocalDate.now());
+            contentStream.showText("Generated on: " + java.time.LocalDate.now() + "  |  © CoreTech AutoCare");
             contentStream.endText();
+
 
             contentStream.close();
 
-            // Save dialog
+            // ✅ Save Dialog
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save PDF");
             fileChooser.setInitialFileName("MonthlyRevenueSummary.pdf");
@@ -990,6 +1362,8 @@ public class AdminController extends BaseController {
 
 
 
+
+
     public ComboBox<String> getComboRemoveSalesRole() {
         return comboRemoveSalesRole;
     }
@@ -999,9 +1373,47 @@ public class AdminController extends BaseController {
     }
 
 
+    public void handleSearchInventoryMng(ActionEvent actionEvent) {
+        String keyword = searchInventoryidName.getText().trim();
 
+        if (keyword.isEmpty()) {
+            InventorytableView.setItems(AdminDAO.getAllInventoryItems()); // reload all if blank
+            return;
+        }
 
+        ObservableList<Inventory> allItems = AdminDAO.getAllInventoryItems();
+        ObservableList<Inventory> filteredItems = FXCollections.observableArrayList();
 
+        for (Inventory item : allItems) {
+            String itemIdStr = String.valueOf(item.getItemId());
+            String itemNameStr = item.getItemName().toLowerCase();
 
+            if (itemIdStr.contains(keyword) || itemNameStr.contains(keyword.toLowerCase())) {
+                filteredItems.add(item);
+            }
+        }
 
+        InventorytableView.setItems(filteredItems);
+    }
+
+    public void handleSearchViewAllSalesRep(ActionEvent actionEvent) {
+        String keyword = searchViewAllSalesrep.getText().trim().toLowerCase();
+
+        if (keyword.isEmpty()) {
+            // Reload all data if search is cleared
+            tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+            return;
+        }
+
+        ObservableList<NewAdmin> allUsers = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
+        ObservableList<NewAdmin> filteredList = FXCollections.observableArrayList();
+
+        for (NewAdmin admin : allUsers) {
+            if (admin.getUsername().toLowerCase().contains(keyword)) {
+                filteredList.add(admin);
+            }
+        }
+
+        tableView.setItems(filteredList);
+    }
 }

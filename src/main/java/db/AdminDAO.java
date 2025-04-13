@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,32 @@ public static ObservableList<ServiceAppointment> getAllServiceAppointments() {
 
     return appointmentList;
 }
+
+    public static int getTotalEmployees() {
+        String query = "SELECT COUNT(*) FROM SystemUser";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static int getTodayAppointmentsCount() {
+        String query = "SELECT COUNT(*) FROM Appointment WHERE serviceDate = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     /**
      * Inserts a new admin into the SystemUser table using a stored procedure.
