@@ -47,6 +47,10 @@ public class AdminController extends BaseController {
     public TextField searchInventoryidName;
     public TextField searchViewAllSalesrep;
     public Button btnSearchViewAllSalesRep;
+
+    @FXML private Label lblTotalEmployees;
+    @FXML private Label lblTodayAppointments;
+
     @FXML private TextField txtItemId;
     @FXML private TextField txtItemName;
     @FXML private TextField txtQuantity;
@@ -192,8 +196,13 @@ public class AdminController extends BaseController {
 
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
 
+        lblTotalEmployees.setText(String.valueOf(AdminDAO.getTotalEmployees()));
+        lblTodayAppointments.setText(String.valueOf(AdminDAO.getTodayAppointmentsCount()));
+
         // Show dashboard initially
         showPanel(ancpDashboard);
+
+
 
         //        Dashoard table
         APPOINTMENTID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
@@ -526,6 +535,13 @@ public class AdminController extends BaseController {
 
 
 
+    private void refreshDashboardCounts() {
+        int totalEmployees = AdminDAO.getTotalEmployees();
+        int todayAppointments = AdminDAO.getTodayAppointmentsCount();
+
+        lblTotalEmployees.setText(String.valueOf(totalEmployees));
+        lblTodayAppointments.setText(String.valueOf(todayAppointments));
+    }
 
 
     //Forms Buttons
@@ -542,6 +558,24 @@ public class AdminController extends BaseController {
             alert.setHeaderText(null);
             alert.setContentText("All fields must be filled.");
             alert.showAndWait();
+            return;
+        }
+
+        // Validate phone number (10 digits)
+        if (!phone.matches("\\d{10}")) {
+            showAlert("Invalid Phone", "Phone number must be exactly 10 digits.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Validate email
+        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            showAlert("Invalid Email", "Please enter a valid email address.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Validate password length (optional)
+        if (password.length() < 6) {
+            showAlert("Weak Password", "Password must be at least 6 characters long.", Alert.AlertType.WARNING);
             return;
         }
 
@@ -565,6 +599,12 @@ public class AdminController extends BaseController {
             // Refresh table data
             ObservableList<NewAdmin> updatedAdminData = FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay());
             tableView.setItems(updatedAdminData);
+
+            // Refresh table
+            tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+            // 👇 Refresh dashboard summary
+            refreshDashboardCounts();
 
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -639,6 +679,12 @@ public class AdminController extends BaseController {
                 // ✅ Optional: Clear form
                 clearUpdateForm();
 
+                // Refresh table
+                tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+                // 👇 Refresh dashboard summary
+                refreshDashboardCounts();
+
             } else {
                 showAlert("Delete Failed", "Could not delete the user. Please try again.", Alert.AlertType.ERROR);
             }
@@ -705,6 +751,13 @@ public class AdminController extends BaseController {
 
             // ✅ Optional: Clear form
             clearUpdateForm();
+
+            // Refresh table
+            tableView.setItems(FXCollections.observableArrayList(AdminDAO.getAllAdminsForDisplay()));
+
+            // 👇 Refresh dashboard summary
+            refreshDashboardCounts();
+
         } else {
             showAlert("Update Failed", "Could not update. Check console for error.", Alert.AlertType.ERROR);
         }

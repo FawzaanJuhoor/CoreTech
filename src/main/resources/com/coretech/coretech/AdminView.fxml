@@ -202,8 +202,40 @@
             <VBox fx:id="ancpDashboard" spacing="15" style="-fx-padding: 20; -fx-background-color: #EFEFEF;">
                <HBox prefHeight="169.0" prefWidth="467.0" spacing="15" VBox.vgrow="ALWAYS">
                   <children>
-                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);" HBox.hgrow="ALWAYS" />
-                     <AnchorPane prefHeight="171.0" prefWidth="197.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);" HBox.hgrow="ALWAYS" />
+                     <AnchorPane prefHeight="200.0" prefWidth="200.0"
+                                 style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);"
+                                 HBox.hgrow="ALWAYS">
+                        <children>
+                           <VBox alignment="CENTER">
+                              <children>
+                                 <Label text="Total Employees" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                                 <Label fx:id="lblTotalEmployees" text="0" style="-fx-font-size: 28px; -fx-text-fill: #2293c2;" />
+                              </children>
+                              <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+                              <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
+                              <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
+                              <AnchorPane.rightAnchor>0.0</AnchorPane.rightAnchor>
+                           </VBox>
+                        </children>
+                     </AnchorPane>
+
+                     <AnchorPane prefHeight="171.0" prefWidth="197.0"
+                                 style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);"
+                                 HBox.hgrow="ALWAYS">
+                        <children>
+                           <VBox alignment="CENTER">
+                              <children>
+                                 <Label text="Today's Appointments" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                                 <Label fx:id="lblTodayAppointments" text="0" style="-fx-font-size: 28px; -fx-text-fill: #2293c2;" />
+                              </children>
+                              <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+                              <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
+                              <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
+                              <AnchorPane.rightAnchor>0.0</AnchorPane.rightAnchor>
+                           </VBox>
+                        </children>
+                     </AnchorPane>
+
                   </children>
                </HBox>
                <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
