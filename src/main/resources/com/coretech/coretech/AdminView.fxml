@@ -356,7 +356,7 @@
                            <!-- Password -->
                            <HBox alignment="CENTER" spacing="20">
                               <Label style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Password:" />
-                              <TextField fx:id="txtRemoveSalePassword" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                              <PasswordField fx:id="txtRemoveSalePassword" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                            </HBox>
 
 
@@ -446,7 +446,7 @@
                      <!-- Password -->
                      <HBox alignment="CENTER" spacing="20">
                         <Label fx:id="lblUpdateSalesPassword" style="-fx-font-size: 16px; -fx-text-fill: black; -fx-min-width: 120;" text="Password:" />
-                        <TextField fx:id="txtUpdateSalesPassword" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <PasswordField fx:id="txtUpdateSalesPassword" promptText="Enter Password" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
                      </HBox>
 
 
@@ -512,8 +512,8 @@
 
                      <!-- User ID & Search Button -->
                      <HBox alignment="CENTER" spacing="20">
-                        <TextField fx:id="searchViewAllSalesrep" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                        <Button fx:id="btnSearchViewAllSalesRep" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
+                        <TextField fx:id="searchViewAllSalesrep" promptText="Enter User Name" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Button fx:id="btnSearchViewAllSalesRep" onAction="#handleSearchViewAllSalesRep" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                      </HBox>
 
                      <!-- Table for all sales rep -->
@@ -544,8 +544,8 @@
 
                      <!-- User ID & Search Button -->
                      <HBox alignment="CENTER" spacing="20">
-                        <TextField fx:id="searchInventoryidName" promptText="Enter User ID" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
-                        <Button fx:id="btnSearchInventoryMng" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
+                        <TextField fx:id="searchInventoryidName" promptText="Enter Item Name" style="-fx-pref-width: 250; -fx-font-size: 14px;" />
+                        <Button fx:id="btnSearchInventoryMng" onAction="#handleSearchInventoryMng" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2293c2; -fx-text-fill: white; -fx-font-weight: bold;" text="Search" />
                      </HBox>
                      <HBox spacing="20" alignment="CENTER">
                         <TextField fx:id="txtItemId" promptText="Item ID"/>

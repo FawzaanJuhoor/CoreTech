@@ -7,6 +7,7 @@ module com.coretech.coretech {
     requires java.sql;
     requires jbcrypt;
     requires org.apache.pdfbox;
+    requires java.desktop;
 
     opens com.coretech.coretech to javafx.fxml;
     opens Models to javafx.base, javafx.fxml;
