@@ -519,6 +519,24 @@ CREATE TABLE ServiceAppointment (
     CONSTRAINT fk_appointment_user FOREIGN KEY (UserID) REFERENCES SystemUser(UserID)
 );
 
+
+CREATE OR REPLACE PROCEDURE GetAllAppointments(p_cursor OUT SYS_REFCURSOR)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT sa.AppointmentID,
+               v.VIN,
+               sa.ServiceType,
+               sa.ServiceDate,
+               sa.ServiceStatus,
+               m.MechanicName AS MechanicName
+        FROM ServiceAppointment sa
+        JOIN Vehicle v ON sa.VehicleID = v.VehicleID
+        JOIN Mechanic m ON sa.MechanicID = m.MechanicID;
+END;
+/
+
+
 CREATE OR REPLACE PROCEDURE GetVehicleIdByVIN (
     p_VIN IN VARCHAR2,           -- Input parameter for VIN
     p_VehicleID OUT INT          -- Output parameter for VehicleID

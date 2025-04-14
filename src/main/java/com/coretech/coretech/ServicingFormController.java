@@ -1,95 +1,129 @@
 package com.coretech.coretech;
 
+import Models.ServiceInventory;
+import db.ServiceInventoryDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 
-public class ServicingFormController {
+public class ServicingFormController extends BaseController {
 
     public TextField AppointmentID;
     public TextField ItemID;
-    // Main Content Fields
-    @FXML private TextField vinTextField;
-    @FXML private TextField customerEmailTextField;
-    @FXML private TextField serviceTypeTextField;
-    @FXML private DatePicker serviceDatePicker;
-    @FXML private TextField descriptionTextField;
+    public TextField addAppointmentIDField;
+    public TextField addItemID;
+    public TextField addQuantity;
+    public Button cancelAddButton;
+    public Button addServiceButton;
+    public Button customerButton;
+    public Button vehicleButton;
+    public Button appointmentButton;
+    public Button serviceButton;
 
-    // Buttons
-    @FXML private Button addServiceButton;
-    @FXML private Button cancelButton;
 
     // Sidebar Buttons
     @FXML private Button homeButton;
-    @FXML private Button customerManagementButton;
-    @FXML private Button vehicleManagementButton;
-    @FXML private Button appointmentsButton;
-    @FXML private Button servicingButton;
     @FXML private Button logoutButton;
 
-    // Event Handlers
     @FXML
-    private void handleAddService() {
-        // Logic to add a new service
-        String vin = vinTextField.getText();
-        String customerEmail = customerEmailTextField.getText();
-        String serviceType = serviceTypeTextField.getText();
-        String serviceDate = serviceDatePicker.getValue().toString();
-        String description = descriptionTextField.getText();
+    protected Label welcomeLabel; // Must be protected or public if accessed by subclass
 
-        System.out.println("Adding new service:");
-        System.out.println("VIN: " + vin);
-        System.out.println("Customer Email: " + customerEmail);
-        System.out.println("Service Type: " + serviceType);
-        System.out.println("Service Date: " + serviceDate);
-        System.out.println("Description: " + description);
+    @FXML
+    private void initialize() {
+        setWelcomeMessage(welcomeLabel);
+
+        homeButton.setOnAction(this::handleHome);
+        customerButton.setOnAction(this::handleCustomerManagement);
+        vehicleButton.setOnAction(this::handleVehicleManagement);
+        appointmentButton.setOnAction(this::handleAppointments);
+        serviceButton.setOnAction(this::handleServicing);
+        logoutButton.setOnAction(e -> handleLogout());
+
+        // Add handlers for add/cancel buttons
+        addServiceButton.setOnAction(this::handleAddService);
+        cancelAddButton.setOnAction(e -> clearForm());
+    }
+
+    private void handleAddService(ActionEvent event) {
+        try {
+            int appointmentId = Integer.parseInt(addAppointmentIDField.getText().trim());
+            int itemId = Integer.parseInt(addItemID.getText().trim());
+            int quantity = addQuantity.getText().isEmpty() ? 1 : Integer.parseInt(addQuantity.getText().trim());
+
+            ServiceInventory serviceInventory = new ServiceInventory(appointmentId, itemId, quantity);
+            boolean success = ServiceInventoryDAO.addServiceInventory(serviceInventory);
+
+            if (success) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Service item added successfully.");
+
+                clearForm();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to add service item.");
+
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Error","Please enter valid numeric values.");
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error",  e.getMessage());
+
+        }
+    }
+
+    private void clearForm() {
+        addAppointmentIDField.clear();
+        addItemID.clear();
+        addQuantity.clear();
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
-    private void handleCancel() {
-        // Logic to clear the form
-        vinTextField.clear();
-        customerEmailTextField.clear();
-        serviceTypeTextField.clear();
-        serviceDatePicker.setValue(null);
-        descriptionTextField.clear();
-        System.out.println("Form cleared.");
+    private void handleHome(ActionEvent event) {
+        System.out.println("Home Clicked");
+        switchScene("SalesRepDashboard.fxml", "Home", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleHome() {
-        // Logic to navigate to the home page
-        System.out.println("Navigating to Home...");
+    private void handleCustomerManagement(ActionEvent event) {
+        System.out.println("Customer Management Clicked");
+        switchScene("MainCustomerManagement.fxml", "Customer", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleCustomerManagement() {
-        // Logic to navigate to customer management
-        System.out.println("Navigating to Customer Management...");
+    private void handleVehicleManagement(ActionEvent event) {
+        System.out.println("Vehicle Management Clicked");
+        switchScene("MainVehicleManagement.fxml", "Vehicle", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleVehicleManagement() {
-        // Logic to navigate to vehicle management
-        System.out.println("Navigating to Vehicle Management...");
+    private void handleAppointments(ActionEvent event) {
+        System.out.println("Appointments Clicked");
+        switchScene("MainAppointmentManagement.fxml", "Appointment", (Node) event.getSource());
+
     }
 
     @FXML
-    private void handleAppointments() {
-        // Logic to navigate to appointments
-        System.out.println("Navigating to Appointments...");
-    }
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
+        switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
 
-    @FXML
-    private void handleServicing() {
-        // Logic to navigate to servicing
-        System.out.println("Navigating to Servicing...");
     }
 
     @FXML
     private void handleLogout() {
-        // Logic to handle logout
-        System.out.println("Logging out...");
+        logout(welcomeLabel); // Use common logout method from BaseController
     }
+
+
 }
