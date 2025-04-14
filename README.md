@@ -50,8 +50,6 @@ CoreTech AutoCare aims to provide an efficient system for managing:
 - Generate detailed invoices via stored functions
 
 ---
-
-
 ## 📁 Project Structure
 
 The project follows a Maven-based structure, organizing source code, resources, and database scripts into logical directories:
