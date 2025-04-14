@@ -2,6 +2,7 @@ package com.coretech.coretech;
 
 import Models.Appointment;
 import Models.Mechanic;
+import Models.UserSession;
 import Models.Vehicle;
 import db.AppointmentDAO;
 import db.MechanicDAO;
@@ -254,35 +255,6 @@ public class AppointmentController extends BaseController{
     }
 
 
-    // Form submission handlers
-    @FXML
-    private void handleBookAppointmentSubmit(ActionEvent event) {
-        // Validate and process the add appointment form
-        System.out.println("Booking appointment...");
-        // Add your business logic here
-    }
-
-    @FXML
-    private void handleUpdateAppointmentSubmit(ActionEvent event) {
-        // Validate and process the update appointment form
-        System.out.println("Updating appointment...");
-        // Add your business logic here
-    }
-
-    @FXML
-    private void handleCancelAppointmentSubmit(ActionEvent event) {
-        // Validate and process the cancel appointment form
-        System.out.println("Cancelling appointment...");
-        // Add your business logic here
-    }
-
-    @FXML
-    private void handleSearchAppointmentsSubmit(ActionEvent event) {
-        // Process the search form
-        System.out.println("Searching appointments...");
-        // Add your business logic here
-    }
-
     @FXML
     protected Label welcomeLabel; // Must be protected or public if accessed by subclass
     // Navigation methods
@@ -317,8 +289,8 @@ public class AppointmentController extends BaseController{
     @FXML
     private void handleServicing(ActionEvent event) {
         System.out.println("Servicing Clicked");
+        switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
     }
-
 
 
     @FXML
@@ -408,7 +380,7 @@ public class AppointmentController extends BaseController{
         Mechanic mechanic = (Mechanic) mechanicComboBox.getValue();
         LocalDate serviceDate = serviceDatePicker.getValue();
         String status = (String) statusComboBox.getValue();
-        int userId = 22; //LoggedInUser.getUserId(); // however you manage logged-in user
+        int userId = UserSession.getInstance().getUserId();
 
         if (vin.isEmpty() || serviceType == null || mechanic == null || serviceDate == null || status == null) {
             showAlert(Alert.AlertType.WARNING, "Missing Fields", "Please fill in all required fields.");

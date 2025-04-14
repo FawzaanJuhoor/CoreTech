@@ -58,6 +58,13 @@ public class Appointment {
         this.mechanicId = mechanicId;
     }
 
+    public Appointment(String vin, String serviceType, LocalDate serviceDate, String status, int mechanicId) {
+        this.vin = vin;
+        this.serviceType = serviceType;
+        this.serviceDate = serviceDate;
+        this.status = status;
+        this.mechanicId = mechanicId;
+    }
     public Appointment(int appointmentId, String email, String make, String model, int year,
                        int userId, String serviceType, LocalDate serviceDate, String status, double totalCost) {
         this.appointmentId = appointmentId;

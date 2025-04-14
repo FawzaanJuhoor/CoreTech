@@ -159,7 +159,7 @@
                     <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                         <Label text="Number of Customers for the Day" textAlignment="CENTER" />
                         <HBox alignment="CENTER" spacing="10">
-                            <Label text="10" textFill="#2293c3">
+                            <Label fx:id="todayCustomerCountLabel" text="0" textFill="#2293c3">
                                 <font>
                                     <Font size="20.0" />
                                 </font>
@@ -184,10 +184,10 @@
                 <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <Label text="Upcoming Customer" textAlignment="CENTER" />
                     <HBox alignment="CENTER" spacing="10">
-                        <Label text="Customer Name" textFill="#2293c3">
+                        <Label fx:id="upcomingCustomerNameLabel" text="Customer Name" textFill="#2293c3">
                             <font><Font size="20.0" /></font>
                         </Label>
-                        <Label text="8:00am" textFill="#2293c3">
+                        <Label fx:id="upcomingCustomerTimeLabel" text="8:00am" textFill="#2293c3">
                             <font><Font size="20.0" /></font>
                         </Label>
                     </HBox>

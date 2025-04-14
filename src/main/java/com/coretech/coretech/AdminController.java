@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -477,7 +478,10 @@ public class AdminController extends BaseController {
     }
 
     @FXML
-    void handleServicing(ActionEvent event) { }
+    private void handleServicing(ActionEvent event) {
+        System.out.println("Servicing Clicked");
+        switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
+    }
 
     @FXML
     void handleAppointments(ActionEvent event) { try {

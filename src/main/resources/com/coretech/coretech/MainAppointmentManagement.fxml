@@ -489,7 +489,7 @@
                                     <TableColumn fx:id="mechanicColumn" text="Mechanic" prefWidth="150" resizable="true"/>
                                     <TableColumn fx:id="servicingDateColumn" text="Servicing Date" prefWidth="150" resizable="true"/>
                                     <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" resizable="true"/>
-<!--                                    <TableColumn fx:id="actionColumn" text="Actions" prefWidth="120" />-->
+                                    <!--                                    <TableColumn fx:id="actionColumn" text="Actions" prefWidth="120" />-->
                                 </columns>
                             </TableView>
                         </HBox>
@@ -527,21 +527,20 @@
                     style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;"
                     text="Cancel Appointment" />
 
-            <!-- Search Appointments Button -->
-            <Button fx:id="searchAppointmentsButton"
-                    layoutX="4.0" layoutY="363.0"
-                    onAction="#handleSearchAppointments"
-                    prefHeight="34.0" prefWidth="196.0"
-                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;"
-                    text="Search Appointments" />
-
             <Button fx:id="viewAppointmentButton"
-                    layoutX="4.0" layoutY="430.0"
+                    layoutX="4.0" layoutY="363.0"
                     onAction="#handleViewAppointment"
                     prefHeight="34.0" prefWidth="196.0"
                     style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;"
                     text="View Appointments" />
 
+            <!-- Search Appointments Button -->
+            <Button fx:id="searchAppointmentsButton"
+                    layoutX="4.0" layoutY="430.0"
+                    onAction="#handleSearchAppointments"
+                    prefHeight="34.0" prefWidth="196.0"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3; -fx-font-weight: bold;"
+                    text="Search Appointments" visible="false" managed="false" />
         </AnchorPane>
     </right>
 </BorderPane>

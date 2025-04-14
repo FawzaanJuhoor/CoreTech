@@ -172,5 +172,39 @@ public class AppointmentDAO {
         return appointments;
     }
 
+    public static List<Appointment> getDashboardAppointments() {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "{call GetDashboardAppointments(?)}";
+
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.registerOutParameter(1, Types.REF_CURSOR); // OracleTypes.CURSOR if using Oracle driver
+            stmt.execute();
+
+            try (ResultSet rs = (ResultSet) stmt.getObject(1)) {
+                while (rs.next()) {
+                    Appointment appt = new Appointment(
+                            rs.getInt("AppointmentID"),
+                            rs.getString("EmailID"),
+                            rs.getString("Make"),
+                            rs.getString("Model"),
+                            rs.getInt("Year"),
+                            rs.getInt("UserID"),
+                            rs.getString("ServiceType"),
+                            rs.getDate("ServiceDate").toLocalDate(),
+                            rs.getString("Status"),
+                            rs.getDouble("TotalCost")
+                    );
+                    appointments.add(appt);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
 
 }

@@ -430,14 +430,15 @@
                     style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
                     text="Remove Vehicle"
                     AnchorPane.topAnchor="240.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
-            <Button fx:id="servicingDetailsButton" onAction="#handleServicingDetails"
-                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
-                    text="Servicing Details"
-                    AnchorPane.topAnchor="310.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
             <Button fx:id="viewVehicleButton" onAction="#handleViewVehicle"
                     style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
                     text="View Vehicle"
+                    AnchorPane.topAnchor="310.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+            <Button fx:id="servicingDetailsButton" onAction="#handleServicingDetails" visible="false" managed="false"
+                    style="-fx-background-color: white; -fx-text-fill: #2293C3; -fx-border-color: #2293C3;"
+                    text="Servicing Details"
                     AnchorPane.topAnchor="380.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" />
+
         </AnchorPane>
     </right>
 </BorderPane>

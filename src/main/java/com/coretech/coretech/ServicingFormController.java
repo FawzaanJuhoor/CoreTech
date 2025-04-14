@@ -45,6 +45,7 @@ public class ServicingFormController extends BaseController {
         cancelAddButton.setOnAction(e -> clearForm());
     }
 
+    @FXML
     private void handleAddService(ActionEvent event) {
         try {
             int appointmentId = Integer.parseInt(addAppointmentIDField.getText().trim());
@@ -71,6 +72,7 @@ public class ServicingFormController extends BaseController {
         }
     }
 
+    @FXML
     private void clearForm() {
         addAppointmentIDField.clear();
         addItemID.clear();

@@ -1,20 +1,31 @@
 package com.coretech.coretech;
 
 import Models.Appointment;
+import Models.AppointmentInvoiceInfo;
 import Models.UserSession;
+import db.AppointmentDAO;
+import db.InvoicePDFGenerator;
+import db.SalesDashboardDAO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class SalesRepDashboardController extends BaseController {
+    @FXML private Label upcomingCustomerNameLabel;
+    @FXML private Label upcomingCustomerTimeLabel;
+
     @FXML
     private Button homeButton, customerButton, vehicleButton, appointmentButton, serviceButton, logoutButton;
 
@@ -39,6 +50,8 @@ public class SalesRepDashboardController extends BaseController {
         setWelcomeMessage(welcomeLabel); // Set welcome message from BaseController
         setupTableColumns();
         loadAppointments();
+        loadDashboardStats(); // 👈 Add this call
+
         // Event handlers
         homeButton.setOnAction(this::handleHome);
         customerButton.setOnAction(this::handleCustomerManagement);
@@ -48,17 +61,24 @@ public class SalesRepDashboardController extends BaseController {
         logoutButton.setOnAction(e -> handleLogout());
 
     }
+
+    @FXML private Label todayCustomerCountLabel;
+
+    private void loadDashboardStats() {
+        int count = SalesDashboardDAO.getTodayCustomerCount();
+        todayCustomerCountLabel.setText(String.valueOf(count));
+
+        Map<String, String> upcoming = SalesDashboardDAO.getUpcomingCustomerToday();
+        upcomingCustomerNameLabel.setText(upcoming.get("name"));
+        upcomingCustomerTimeLabel.setText(upcoming.get("time"));
+
+
+    }
+
     private void loadAppointments() {
-        // Clear any existing data
         appointmentSummaryTable.getItems().clear();
-
-        // Example: Dummy data (replace with AppointmentDAO.getDashboardAppointments() when ready)
-        List<Appointment> dummyAppointments = List.of(
-                new Appointment(1, "john@example.com", "Toyota", "Corolla", 2020, 101, "Oil Change", LocalDate.now(), "Completed", 89.99),
-                new Appointment(2, "jane@example.com", "Honda", "Civic", 2019, 102, "Brake Inspection", LocalDate.now().plusDays(1), "Requested", 120.50)
-        );
-
-        appointmentSummaryTable.getItems().addAll(dummyAppointments);
+        List<Appointment> realAppointments = AppointmentDAO.getDashboardAppointments();
+        appointmentSummaryTable.getItems().addAll(realAppointments);
     }
 
 
@@ -74,31 +94,80 @@ public class SalesRepDashboardController extends BaseController {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         totalCostColumn.setCellValueFactory(new PropertyValueFactory<>("totalCost"));
 
-        actionColumn.setCellFactory(col -> {
-            TableCell<Appointment, Void> cell = new TableCell<>() {
-                private final Button invoiceButton = new Button("Invoice");
 
-                {
-                    invoiceButton.setOnAction(e -> {
-                        Appointment appointment = getTableView().getItems().get(getIndex());
-                        System.out.println("Generate invoice for appointment ID: " + appointment.getAppointmentId());
-                        // Implement your invoice logic here
-                    });
-                }
+        actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button invoiceButton = new Button("Invoice");
 
-                @Override
-                protected void updateItem(Void item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                    } else {
-                        setGraphic(invoiceButton);
+            {
+                invoiceButton.setOnAction(e -> {
+                    Appointment appointment = getTableView().getItems().get(getIndex());
+
+                    System.out.println("🚨 Invoice button clicked!");
+                    System.out.println("Selected Appointment ID: " + appointment.getAppointmentId());
+
+                    AppointmentInvoiceInfo fullInfo = InvoicePDFGenerator.getInvoiceInfo(appointment.getAppointmentId());
+
+                    if (fullInfo == null) {
+                        showAlert(Alert.AlertType.ERROR, "No Data", "No invoice data found for this appointment.");
+                        return;
                     }
+
+                    System.out.println("Customer: " + fullInfo.getCustomerName());
+                    System.out.println("Items: " + (fullInfo.getServiceItems() == null ? "null" : fullInfo.getServiceItems().size()));
+
+                    FileChooser fc = new FileChooser();
+                    fc.setTitle("Save Invoice");
+                    fc.setInitialFileName("Invoice_Appointment_" + fullInfo.getAppointmentId() + ".pdf");
+                    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+                    Window window = ((Node) e.getSource()).getScene().getWindow();
+                    File file = fc.showSaveDialog(window);
+
+                    if (file != null) {
+                        boolean success = InvoicePDFGenerator.generateInvoice(fullInfo, file);
+                        if (success) {
+                            showAlert(Alert.AlertType.INFORMATION, "Invoice Generated", "Saved to:\n" + file.getAbsolutePath());
+                        } else {
+                            showAlert(Alert.AlertType.ERROR, "Failed", "Could not generate invoice.");
+                        }
+                    } else {
+                        System.out.println("⚠️ User cancelled file save dialog.");
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                    return;
                 }
-            };
-            return cell;
+
+                Appointment appointment = getTableView().getItems().get(getIndex());
+                if (appointment.getStatus() != null && appointment.getStatus().equalsIgnoreCase("Completed")) {
+                    setGraphic(invoiceButton); // ✅ Show only if status is "Completed"
+                } else {
+                    setGraphic(null); // ❌ Hide if not completed
+                }
+            }
+
         });
+
     }
+
+
+
+    protected void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
     @FXML
     private void handleHome(ActionEvent event) {
         System.out.println("Home Clicked");
@@ -131,7 +200,6 @@ public class SalesRepDashboardController extends BaseController {
     private void handleServicing(ActionEvent event) {
         System.out.println("Servicing Clicked");
         switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
-
     }
 
 

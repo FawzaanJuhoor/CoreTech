@@ -522,6 +522,7 @@ public class MainCustomerController extends BaseController{
     @FXML
     private void handleServicing(ActionEvent event) {
         System.out.println("Servicing Clicked");
+        switchScene("ServicingForm.fxml", "Appointment", (Node) event.getSource());
     }
 
     @FXML

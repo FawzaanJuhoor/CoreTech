@@ -536,6 +536,41 @@ BEGIN
 END;
 /
 
+CREATE OR REPLACE VIEW AppointmentDashboardView AS
+SELECT
+    sa.AppointmentID,
+    u.EmailID,
+    v.Make,
+    v.Model,
+    v.Year,
+    sa.UserID,
+    sa.ServiceType,
+    sa.ServiceDate,
+    sa.ServiceStatus AS Status,
+    NVL(SUM(i.Price * si.Quantity), 0) AS TotalCost
+FROM
+    ServiceAppointment sa
+JOIN
+    SystemUser u ON sa.UserID = u.UserID
+JOIN
+    Vehicle v ON sa.VehicleID = v.VehicleID
+LEFT JOIN
+    ServiceInventory si ON sa.AppointmentID = si.AppointmentID
+LEFT JOIN
+    Inventory i ON si.ItemID = i.ItemID
+GROUP BY
+    sa.AppointmentID, u.EmailID, v.Make, v.Model, v.Year, sa.UserID,
+    sa.ServiceType, sa.ServiceDate, sa.ServiceStatus;
+
+CREATE OR REPLACE PROCEDURE GetDashboardAppointments(p_cursor OUT SYS_REFCURSOR)
+AS
+BEGIN
+    OPEN p_cursor FOR
+        SELECT * FROM AppointmentDashboardView
+        ORDER BY ServiceDate;
+END;
+/
+
 
 CREATE OR REPLACE PROCEDURE GetVehicleIdByVIN (
     p_VIN IN VARCHAR2,           -- Input parameter for VIN
@@ -701,13 +736,35 @@ VALUES (2, 'Brake Pads', 75, 35.00, 20, TIMESTAMP '2025-04-03 14:15:00');
 
 
 CREATE TABLE ServiceInventory (
-    AppointmentID INT,
-    ItemID INT,
+    AppointmentID NUMBER(38,0),
+    ItemID NUMBER(38,0),
+    Quantity NUMBER(38,0) default 1,
+
     PRIMARY KEY (AppointmentID, ItemID),
     CONSTRAINT fk_service_inventory_appointment FOREIGN KEY (AppointmentID) REFERENCES ServiceAppointment(AppointmentID),
     CONSTRAINT fk_service_inventory_item FOREIGN KEY (ItemID) REFERENCES Inventory(ItemID)
 );
-
+CREATE OR REPLACE PROCEDURE Add_Service_Inventory(
+    p_AppointmentID IN NUMBER,
+    p_ItemID IN NUMBER,
+    p_Quantity IN NUMBER
+) AS
+BEGIN
+    -- Insert into ServiceInventory table
+    INSERT INTO ServiceInventory (AppointmentID, ItemID, Quantity)
+    VALUES (p_AppointmentID, p_ItemID, NVL(p_Quantity, 1));
+    
+    -- Optionally, update Inventory Quantity (subtracting the quantity used)
+    UPDATE Inventory
+    SET Quantity = Quantity - NVL(p_Quantity, 1)
+    WHERE ItemID = p_ItemID;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Handle errors by raising a custom error message
+        RAISE_APPLICATION_ERROR(-20001, 'Error inserting ServiceInventory: ' || SQLERRM);
+END;
+/
 
 -- Procedure for monthly report of inventory
 CREATE OR REPLACE PROCEDURE Get_Inventory_Summary (
@@ -822,3 +879,81 @@ END;
      CLOSE service_cursor;
  END;
  /
+ 
+ 
+CREATE OR REPLACE VIEW FullInvoiceView AS
+SELECT
+    sa.AppointmentID,
+    c.CustomerName,
+    c.PhoneNo,
+    c.EmailID,
+    c.Address,
+    
+    v.Make,
+    v.Model,
+    v.Year,
+    v.VIN,
+    v.ServiceHistory,
+    
+    sa.ServiceType,
+    sa.ServiceDate,
+    sa.ServiceStatus,
+    m.MechanicName,
+    
+    i.ItemID,
+    i.ItemName,
+    si.Quantity AS QuantityUsed,
+    i.Price,
+    (si.Quantity * i.Price) AS LineTotal
+
+FROM ServiceAppointment sa
+JOIN Vehicle v ON sa.VehicleID = v.VehicleID
+JOIN Customer c ON v.CustomerID = c.CustomerID
+JOIN Mechanic m ON sa.MechanicID = m.MechanicID
+LEFT JOIN ServiceInventory si ON sa.AppointmentID = si.AppointmentID
+LEFT JOIN Inventory i ON si.ItemID = i.ItemID;
+
+CREATE OR REPLACE PROCEDURE GetInvoiceDetails (
+    p_AppointmentID IN NUMBER,
+    p_Cursor OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_Cursor FOR
+        SELECT * FROM FullInvoiceView WHERE AppointmentID = p_AppointmentID;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GetTodayCustomerCount (
+    p_Count OUT NUMBER
+) AS
+BEGIN
+    SELECT COUNT(DISTINCT c.CustomerID)
+    INTO p_Count
+    FROM Customer c
+    JOIN Vehicle v ON c.CustomerID = v.CustomerID
+    JOIN ServiceAppointment sa ON sa.VehicleID = v.VehicleID
+    WHERE TRUNC(sa.ServiceDate) = TRUNC(SYSDATE);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GetUpcomingCustomerToday (
+    p_CustomerName OUT VARCHAR2,
+    p_AppointmentTime OUT VARCHAR2
+) AS
+BEGIN
+    SELECT c.CustomerName,
+           TO_CHAR(sa.ServiceDate, 'HH12:MI AM')
+    INTO p_CustomerName, p_AppointmentTime
+    FROM Customer c
+    JOIN Vehicle v ON v.CustomerID = c.CustomerID
+    JOIN ServiceAppointment sa ON sa.VehicleID = v.VehicleID
+    WHERE TRUNC(sa.ServiceDate) = TRUNC(SYSDATE)
+    ORDER BY sa.ServiceDate
+    FETCH FIRST 1 ROWS ONLY;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_CustomerName := 'N/A';
+        p_AppointmentTime := 'N/A';
+END;
+/
+
