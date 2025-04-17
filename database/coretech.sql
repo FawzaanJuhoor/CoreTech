@@ -9,7 +9,6 @@ DROP SEQUENCE seq_mechanic;
 DROP SEQUENCE seq_appointment;
 DROP SEQUENCE seq_invoice;
 DROP SEQUENCE seq_payment;
-DROP SEQUENCE seq_log;
 DROP SEQUENCE seq_item;
 
 -- ========================
@@ -22,7 +21,6 @@ DROP TABLE Mechanic CASCADE CONSTRAINTS;
 DROP TABLE ServiceAppointment CASCADE CONSTRAINTS;
 DROP TABLE Invoice CASCADE CONSTRAINTS;
 DROP TABLE Payment CASCADE CONSTRAINTS;
-DROP TABLE AuditLog CASCADE CONSTRAINTS;
 DROP TABLE Inventory CASCADE CONSTRAINTS;
 DROP TABLE ServiceInventory CASCADE CONSTRAINTS;
 
@@ -709,14 +707,6 @@ CREATE TABLE Payment (
     AmountPaid NUMBER(8,2),
     PaymentDate DATE,
     CONSTRAINT fk_payment_invoice FOREIGN KEY (InvoiceID) REFERENCES Invoice(InvoiceID)
-);
-
-CREATE TABLE AuditLog (
-    LogID INT PRIMARY KEY,
-    UserID INT,
-    Action VARCHAR(50),
-    TimeStamp TIMESTAMP,
-    CONSTRAINT fk_log_user FOREIGN KEY (UserID) REFERENCES SystemUser(UserID)
 );
 
 CREATE TABLE Inventory (
